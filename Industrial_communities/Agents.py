@@ -3,7 +3,7 @@
 """
 @author: rafael
 
-@Address: 
+@Address: https://github.com/rafaelcbfc/InCES_model/blob/master/Industrial_communities/Agents.py
 
 """
 ###Model agents
@@ -27,7 +27,7 @@ from mesa import Agent
 #General variables
 #park_limit = np.random.choice(range(10,20,1))
 park_limit = 15
-strategy = ["energy", "costs"]
+strategy = ["energy", "costs", "A", "B"]
 counter = 0
 n_industries = 10
 n_communities = 10
@@ -57,34 +57,33 @@ def community_name(me, peer):
     
 ##Industry
 class Industry(Agent):
-    def __init__(self, unique_id, pos, model):
-        super().__init__(unique_id, model)
+    def __init__(self, name, pos, model):
+        super().__init__(name, model)
         self.pos = pos
         self.breed = "ind"
         self.energy_amount =  np.random.choice(range(100, 210, 10))  #Use random range see Mesa literature
-        self.strategy = strategy[0] #0 - Increase energy consumption / 1 - reduce costs
-        #self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
-        #self.active = ""
+        #self.strategy = strategy[0] #0 - Increase energy consumption / 1 - reduce costs
+        self.strategy = strategy[random.randrange(0,4)] #0 - Increase energy consumption / 1 - reduce costs
         self.engaged = "not engaged" # not engaged/ engaged / RE installation / Grid energy
         self.eng_lvl = 0
         self.which_community = ""
         self.community_loyalty = 0
         self.period = int(0)
-        self.energy_evaluation_time = 12
+        self.energy_evaluation_time = 2
         self.energy_time_check = list(range(0,240,self.energy_evaluation_time))
         self.CBAi = 0
         self.CBAp = 0
         self.decision_style = "a"
-        self.id = unique_id
+        self.id = name
             
     #Industry functions
      #tick actions 
     def step(self):
         self.update_neighbors()
-        self.CBA_calc()
+        self.CBAi=0
         self.createcommunity()
         #self.community_member_role()
-        print(str(self.unique_id) + " " + str(self.eng_lvl) + " " + str(self.which_community))
+        print(str(self.id) + " " + str(self.eng_lvl) + " " + str(self.which_community))
         self.period = self.period + 1
         
         
@@ -130,26 +129,28 @@ class Industry(Agent):
                 if self.engaged == "not engaged":
                     CBA_peer(self, i)
                     if i.CBAi < (beta+0.1) and i.CBAi > (beta-0.1):
-                        if self.CBAp < (beta-0.1):
+                        if self.CBAp < (beta-0.3):
                             self.eng_lvl = 2
                             self.engaged == "not engaged"
-                        if self.CBAp > (beta - 0.5) and self.CBAp < (beta + 0.5):
+                        if self.CBAp > (beta - 0.3) and self.CBAp < (beta + 0.3):
                             self.eng_lvl = 4
                             self.engaged == "not engaged"
-                        if self.CBAp > (beta+0.1):
+                        if self.CBAp > (beta+0.3):
                             self.eng_lvl = 5
                             self.engaged = "engaged"
              
     def createcommunity(self): #create a community if level of engagement = Engaged
         if self.period in self.energy_time_check:
-            self.engagement()
-            if self.eng_lvl == 5: ## Activate based on a pool
-                vicinity_c = self.c_neighbors
-                neighb = None
-                for neighb in (x for x in vicinity_c if x.active == "No"): break
-                neighb.active = "Yes"
-                self.eng_lvl = 99 ##Community founder
-                self.which_community = neighb.name
+            if self.engaged != "engaged":
+                self.CBA_calc()
+                self.engagement()
+                if self.eng_lvl == 5: ## Activate based on a pool
+                    vicinity_c = self.c_neighbors
+                    neighb = None
+                    for neighb in (x for x in vicinity_c if x.active == "No"): break
+                    neighb.active = "Yes"
+                    self.eng_lvl = 99 ##Community founder
+                    self.which_community = neighb.name
         else:
             pass
 
@@ -168,11 +169,12 @@ class Community(Agent):
         self.breed = "com"
         self.wealth = 0
         self.c_energy = 0
-        self.strategy = strategy[0]
-        #self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
+        #self.strategy = strategy[0]
+        self.strategy = strategy[random.randrange(0,3)] #0 - Increase energy consumption / 1 - reduce costs
         self.active = "No"
         self.name = name
         self.CBAc = 0
+        self.members = 0
         
 #Community functions   
     def step(self):
@@ -182,14 +184,19 @@ class Community(Agent):
         self.businessPlan()
         self.executePlan()
         self.PolicyEntrepeneur()
-        print("C" + str(self.name) + " " + str(self.active))
+        print("C" + str(self.name))
+        for x in self.members:
+            print("I "+ str(x.id))
     
     def CBA_calc(self): #Individial CBA calculation
         self.CBAc = CBA()
         return self.CBAc
     
     def meeting_schedule(self): #Schedule a meeting with its members
-        pass
+         self.neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=10)
+         self.neighbors = self.model.grid.get_cell_list_contents(self.neighborhood)
+         self.neighb = [x for x in self.neighbors if type(x) is Industry]
+         self.members = [x for x in self.neighb if x.which_community == self.name]
         
     def ask_revenue(self): #Ask for revenue if wealth is below 0
         pass
