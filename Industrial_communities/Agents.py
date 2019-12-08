@@ -14,7 +14,7 @@ import random
 import numpy as np
 from mesa import Agent
 
- ## Drop out should consider the return on investment (a percentage of how much money I received based on how much money I putted back)
+ ## Drop out of the community should consider the return on investment (a percentage of how much money I received based on how much money I putted back)
  ## Build a small world network --> See virus simulation --> neighbours influence on decision to join community
  ## Number of industries & capacity of members are important to initiate a community. High capacity investment to start a community.
  ## Initial investment =! 0 
@@ -40,15 +40,16 @@ n_communities = 10
 #Decision style = for each country, normal distribution with center on countries valueRafa!
 
 #Agents functions
+def CBA():
+    #    self.cb = (self.energy_amount * energy_cost) / (self.energy_amount * RE_energy_cost + RE_costs)
+    CBA = random.uniform(0.4, 1.2)
+    return CBA
+
 def CBA_peer(me, peer): #Peer CBA calculation
     #comb_amount = me.energy_amount + peer.energy_amount
     #me.CBAp = (comb_amount + peer.energy_amount * energy_cost) / (comb_amount * RE_energy_cost + RE_costs)
     me.CBAp = random.uniform(0.7, 1.2)
     return me.CBAp
-
-def CBA():
-    CBA = random.uniform(0.4, 1.2)
-    return CBA
 
 def community_name(me, peer):
         me.which_community = peer.name
@@ -61,7 +62,8 @@ class Industry(Agent):
         self.pos = pos
         self.breed = "ind"
         self.energy_amount =  np.random.choice(range(100, 210, 10))  #Use random range see Mesa literature
-        self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
+        self.strategy = strategy[0] #0 - Increase energy consumption / 1 - reduce costs
+        #self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
         self.active = ""
         self.engaged = "not engaged" # not engaged/ engaged / RE installation / Grid energy
         self.eng_lvl = 0
@@ -82,6 +84,7 @@ class Industry(Agent):
         self.CBA_calc()
         self.createcommunity()
         #self.community_member_role()
+        print(str(self.eng_lvl))
         self.period = self.period + 1
         
         
@@ -94,8 +97,6 @@ class Industry(Agent):
         
         
     def CBA_calc(self): #Individial CBA calculation
-        #    self.cb = (self.energy_amount * energy_cost) / (self.energy_amount * RE_energy_cost + RE_costs)
-        #else: self.cb = 0
         self.CBAi = CBA()
         return self.CBAi
         
@@ -142,7 +143,6 @@ class Industry(Agent):
                     if neighb.active == "No":
                         neighb.active = "Yes"
                         self.which_community = neighb.name
-                        print("e" + str(self.which_community))
         else:
             pass
          
@@ -159,19 +159,24 @@ class Community(Agent):
         self.breed = "com"
         self.wealth = 0
         self.c_energy = 0
-        self.strategy = 0
+        self.strategy = strategy[0]
+        #self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
         self.active = "No"
         self.name = name
-        self.CBAc = CBA()
+        self.CBAc = 0
         
 #Community functions   
     def step(self):
+        self.CBA_calc()
         self.meeting_schedule()
         self.ask_revenue()
         self.businessPlan()
         self.executePlan()
         self.PolicyEntrepeneur()
-        print(str(self.name) + "  " +  str(self.active))
+    
+    def CBA_calc(self): #Individial CBA calculation
+        self.CBAc = CBA()
+        return self.CBAc
     
     def meeting_schedule(self): #Schedule a meeting with its members
         pass

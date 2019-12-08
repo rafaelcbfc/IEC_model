@@ -32,7 +32,6 @@ geo = list(itertools.product(x,y))
 shuffle(geo)
 geo_i = geo[:max_ind_size]
 geo_c = geo[max_ind_size:]
- 
 
 ##Model functions
 def countIndustry(model):
@@ -40,7 +39,7 @@ def countIndustry(model):
         return n_ind
 
 def countCommunity(model):
-        n_com =  sum([1 for a in model.schedule.agents if type(a) == Community])
+        n_com =  sum([1 for a in model.schedule.agents if type(a) == Community and a.active == "No"])
         return n_com
     
 def countActive(model):
