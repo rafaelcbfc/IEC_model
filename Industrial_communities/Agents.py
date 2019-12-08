@@ -9,7 +9,7 @@
 ###Model agents
 ##Imports
 import sys
-sys.path.append('/Users/rafael/Google Drive/00 - Thesis/03 - Dataset/Python/Industrial_communities')
+sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
 import random
 import numpy as np
 from mesa import Agent
@@ -64,7 +64,7 @@ class Industry(Agent):
         self.energy_amount =  np.random.choice(range(100, 210, 10))  #Use random range see Mesa literature
         self.strategy = strategy[0] #0 - Increase energy consumption / 1 - reduce costs
         #self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
-        self.active = ""
+        #self.active = ""
         self.engaged = "not engaged" # not engaged/ engaged / RE installation / Grid energy
         self.eng_lvl = 0
         self.which_community = ""
@@ -84,7 +84,7 @@ class Industry(Agent):
         self.CBA_calc()
         self.createcommunity()
         #self.community_member_role()
-        print(str(self.eng_lvl))
+        print(str(self.unique_id) + " " + str(self.eng_lvl) + " " + str(self.which_community))
         self.period = self.period + 1
         
         
@@ -112,40 +112,49 @@ class Industry(Agent):
         elif self.CBAi > (beta-0.3) and self.CBAi < (beta+0.3):
             #Check if there is a community nearby
             for c in self.c_neighbors:
-                    CBA_peer(self, c)
-                    community_name(self, c)
+                if c.active == "No":
+                    pass
+                if c.active == "Yes":
                     if c.strategy == self.strategy:
-                        if self.CBAp > (beta+0.3):
+                        CBA_peer(self, c)
+                        if self.CBAp > (beta+0.1):
                             self.eng_lvl = 10
                             self.engaged = "engaged"
-            
+                            community_name(self, c)
+                            break
+                        
             #If no communities exists, look for industries
             for i in self.i_neighbors:
-                CBA_peer(self, i)
-                if i.CBAi < (beta+0.1) and i.CBAi > (beta-0.1):
-                    if self.CBAp < (beta-0.1):
-                        self.eng_lvl = 2
-                        self.engaged == "not engaged"
-                    if self.CBAp > (beta - 0.5) and self.CBAp < (beta + 0.5):
-                        self.eng_lvl = 4
-                        self.engaged == "not engaged"
-                    if self.CBAp > (beta+0.1):
-                        self.eng_lvl = 5
-                        self.engaged = "engaged"
+                if self.engaged != "not engaged":
+                    pass
+                if self.engaged == "not engaged":
+                    CBA_peer(self, i)
+                    if i.CBAi < (beta+0.1) and i.CBAi > (beta-0.1):
+                        if self.CBAp < (beta-0.1):
+                            self.eng_lvl = 2
+                            self.engaged == "not engaged"
+                        if self.CBAp > (beta - 0.5) and self.CBAp < (beta + 0.5):
+                            self.eng_lvl = 4
+                            self.engaged == "not engaged"
+                        if self.CBAp > (beta+0.1):
+                            self.eng_lvl = 5
+                            self.engaged = "engaged"
              
     def createcommunity(self): #create a community if level of engagement = Engaged
         if self.period in self.energy_time_check:
             self.engagement()
-            if self.eng_lvl == 5: 
-                vicinity = self.model.grid.get_neighbors(self.pos, moore = True, include_center = False, radius=15)
-                neighb = vicinity[random.randrange(int(n_communities))]
-                if type(neighb) is Community:
-                    if neighb.active == "No":
-                        neighb.active = "Yes"
-                        self.which_community = neighb.name
+            if self.eng_lvl == 5: ## Activate based on a pool
+                vicinity_c = self.c_neighbors
+                neighb = None
+                for neighb in (x for x in vicinity_c if x.active == "No"): break
+                neighb.active = "Yes"
+                self.eng_lvl = 99 ##Community founder
+                self.which_community = neighb.name
         else:
             pass
-         
+
+#vicinity_c = self.model.grid.get_neighbors(self.pos, moore = True, include_center = False, radius=15)         
+#neighb = vicinity[random.randrange(int(n_communities))]
             
     def community_member_role(self): #interact with Community
         pass
@@ -173,6 +182,7 @@ class Community(Agent):
         self.businessPlan()
         self.executePlan()
         self.PolicyEntrepeneur()
+        print("C" + str(self.name) + " " + str(self.active))
     
     def CBA_calc(self): #Individial CBA calculation
         self.CBAc = CBA()

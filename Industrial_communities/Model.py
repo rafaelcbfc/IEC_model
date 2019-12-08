@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 @author: rafael Costa
-@Addess: #https://github.com/rafaelcbfc/Thesis.git
+@Addess: #https://github.com/rafaelcbfc/InCES_model.git
 
 """
 ###Model creation
 ##Imports
 import sys
-sys.path.append('/Users/rafael/Google Drive/00 - Thesis/03 - Dataset/Python/Industrial_communities')
+sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
 import itertools
 from random import shuffle
 from mesa import Model

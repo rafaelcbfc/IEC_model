@@ -6,8 +6,7 @@ Created on Sun Dec  1 15:53:56 2019
 @author: rafael
 """
 import sys
-sys.path.append('/Users/rafael/Google Drive/00 - Thesis/03 - Dataset/Python/Industrial_communities')
-
+sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
 from Model import Modelrun
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
