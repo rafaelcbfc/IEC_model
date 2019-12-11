@@ -41,3 +41,4 @@ server = ModularServer(Modelrun, [grid, chart], "InCES Model", model_param)
 server.launch() 
 
 #"n_communities": UserSettableParameter("slider", "Total Communities", 25,25, max_ind_size, 1)
+

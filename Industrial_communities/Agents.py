@@ -18,37 +18,42 @@ from mesa import Agent
  ## Build a small world network --> See virus simulation --> neighbours influence on decision to join community
  ## Number of industries & capacity of members are important to initiate a community. High capacity investment to start a community.
  ## Initial investment =! 0 
- ## Explicit assumption on the grid already existing
+ ## Explicit assumption on the text over the power grid already exists and is going to be used by the industries (Industrial park paper from world bank)
  ## Interest rates added to the CBA calculation for considering if joining a community or not
  ## Cost per MWh
 
 
 ##Variables
 #General variables
-#park_limit = np.random.choice(range(10,20,1))
 park_limit = 15
 strategy = ["energy", "costs", "A", "B"]
 counter = 0
 n_industries = 10
 n_communities = 10
+
+
 #General Variables
-#energy_cost = random.randrange(100, 270, 5) #Random range, to be based on country
-#RE_energy_cost = random.randrange(80, 200, 5) #Based on countries
-#RE_costs = random.randrange(10000, 50000, 100)
+gridtariff = 120
+WindThreshold = 500
+solartariff = 80
+windtariff = 100
+solarCosts = 1000
+windCosts = 5000
+
 
 #Game Theory
-#Decision style = for each country, normal distribution with center on countries valueRafa!
+#Decision style = for each country, normal distribution with center on countries value
 
 #Agents functions
 def CBA():
-    #    self.cb = (self.i_energy * energy_cost) / (self.i_energy * RE_energy_cost + RE_costs)
+    #    self.cb = (self.i_energy * energy_cost) / (self.i_energy * RE_energy_cost + RE_Investment_costs)
     CBA = random.uniform(0.4, 1.2)
     return CBA
 
 
 def CBA_peer(me, peer): #Peer CBA calculation
     #comb_amount = me.energy_amount + peer.energy_amount
-    #me.CBAp = (comb_amount + peer.energy_amount * energy_cost) / (comb_amount * RE_energy_cost + RE_costs)
+    #me.CBAp = (comb_amount + peer.energy_amount * energy_cost) / (comb_amount * RE_energy_cost + RE_Investment_costs)
     me.CBAp = random.uniform(0.7, 1.2)
     return me.CBAp
 
@@ -142,6 +147,7 @@ class Industry(Agent):
                                 self.eng_lvl = 10
                                 self.engaged = "engaged"
                                 community_name(self, c)
+                                ##Pay for entering community
                                 break
                             
                 #If no communities exists, look for industries
@@ -178,6 +184,7 @@ class Industry(Agent):
              self.which_community = com.name
              for f in self.partners:
                  f.which_community = com.name
+                 ##Pay for entering community
         else:
             pass
       
@@ -194,19 +201,24 @@ class Community(Agent):
         self.breed = "com"
         self.wealth = 0
         self.c_energy = 0
-        #self.strategy = strategy[0]
-        self.strategy = strategy[random.randrange(0,3)] #0 - Increase energy consumption / 1 - reduce costs
+        self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
         self.active = "No"
         self.name = name
         self.CBAc = 0
         self.members = 0
         self.memberlist = []
+        self.technoogy = 0
+        self.investment= 0 
+        self.solar_energy = 0
+        self.wind_energy = 0
+        self.stakeholder_input = 0
         
 #Community functions   
     def step(self):
         self.CBA_calc()
         self.meeting_schedule()
         self.ask_revenue()
+        self.Technology()
         self.businessPlan()
         self.executePlan()
         self.PolicyEntrepeneur()
@@ -225,19 +237,66 @@ class Community(Agent):
          
          for x in self.members:
              voting(self, x)
+         self.strategy = 0
      
         
     def ask_revenue(self): #Ask for revenue if wealth is below 0
+        stakeholder_input = 0
         if self.wealth < 0:
             for x in self.members:
                 pass
+                self.wealth = self.wealth + stakeholder_input
+        return self.wealth
     
     
-    def businessPlan(self):
-        #Insert Sum of energy demand by its members
-        for x in self.members:
-            self.c_energy = self.c_energy + x.i_energy      
+    def Technology(self):
+      if self.strategy == 0:
+        for member in self.members:
+            self.c_energy = self.c_energy + member.i_energy    
+            if self.c_energy > WindThreshold:
+                coef = self.energy/WindThreshold
+                if coef < 1:
+                    self.technology = "Solar"
+                    self.solar_energy = self.c_energy
+                if coef > 1:
+                    self.technology = "Mixed"
+                    self.wind_energy = int(self.c_energy/WindThreshold)*WindThreshold
+                    self.solar_energy = self.c_energy % WindThreshold
+            else: 
+                self.technology = "Solar"
 
+      if self.strategy == 1:
+         for member in self.members:
+            self.c_energy = self.c_energy + member.i_energy
+            if self.c_energy > WindThreshold:
+                coef = self.energy/WindThreshold
+                if coef < 1:
+                    self.solar_energy = self.c_energy
+                    self.investment = self.c_energy * solarCosts
+                if coef > 1:
+                    self.wind_energy = int(self.c_energy/WindThreshold)*WindThreshold
+                    self.solar_energy = self.c_energy % WindThreshold
+                    self.investment= self.wind_energy * windCosts + self.solar_energy * solarCosts
+             
+            
+    def businessPlan(self):
+        if self.strategy == 0:
+            self.investment = (self.wind_energy * windtariff + windCosts) + (self.solar_energy * solartariff + solarCosts)
+            if self. investment > self.wealth:
+                self.ask_revenue()
+            if self.investment < self.wealth:
+                self.business_plan = "Approved"
+                pass
+        
+        if self.strategy == 1:
+            if self.investment < self.wealth:
+                #invest
+                pass
+            if self.investment > self.wealth:
+                self.ask_revenue()
+                
+                
+    
     
     def executePlan(self): #Execute the business plan having profit or loss
         pass
