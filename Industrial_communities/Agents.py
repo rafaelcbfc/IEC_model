@@ -61,10 +61,24 @@ def CBA_peer(me, peer): #Peer CBA calculation
 def community_name(me, peer):
         me.which_community = peer.name
         return me.which_community
-
+  
     
 def voting(com, member):
-    pass
+    if com.strategy == member.strategy and com.plan > 0:
+        member.vote = 1
+    else:
+        member.vote = 0
+    return member.vote
+
+
+def askforInvestment(com, member):
+    stakeholder_input = 0
+    if com.request < member.investment:
+        stakeholder_input = stakeholder_input + request
+    else:
+        None          
+    com.wealth = com.wealth + stakeholder_input
+    return com.wealth
 
 
 ##Industry
@@ -90,7 +104,9 @@ class Industry(Agent):
         self.motivated_friends = 0
         self.smallworld_eng = []
         self.partners = []
-            
+        self.vote = 0
+        self.ROI = 0
+        
     #Industry functions
      #tick actions 
     def step(self):
@@ -187,10 +203,14 @@ class Industry(Agent):
                  ##Pay for entering community
         else:
             pass
-      
+     
         
+    def retunofInvestment(self):
+        self.ROI = (self.profit -self.investment)/self.investment
+    
+    
     def community_member_role(self): #interact with Community
-        voting()
+        pass
  
  
 ##Community
@@ -208,10 +228,15 @@ class Community(Agent):
         self.members = 0
         self.memberlist = []
         self.technoogy = 0
-        self.investment= 0 
+        self.projectCost= 0 
         self.solar_energy = 0
         self.wind_energy = 0
         self.stakeholder_input = 0
+        self.generation = 0
+        self.plan = 0
+        self.investment = 0
+        self.request = 0
+        
         
 #Community functions   
     def step(self):
@@ -220,7 +245,6 @@ class Community(Agent):
         self.ask_revenue()
         self.Technology()
         self.businessPlan()
-        self.executePlan()
         self.PolicyEntrepeneur()
     
      
@@ -230,22 +254,20 @@ class Community(Agent):
     
     
     def meeting_schedule(self): #Schedule a meeting with its members
-         self.neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=10)
+         self.neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=15)
          self.neighbors = self.model.grid.get_cell_list_contents(self.neighborhood)
          self.neighb = [x for x in self.neighbors if type(x) is Industry]
          self.members = [x for x in self.neighb if x.which_community == self.name]
-         
-         for x in self.members:
-             voting(self, x)
+
+         for member in self.members:
+             voting(self, member)
          self.strategy = 0
      
         
     def ask_revenue(self): #Ask for revenue if wealth is below 0
-        stakeholder_input = 0
-        if self.wealth < 0:
-            for x in self.members:
-                pass
-                self.wealth = self.wealth + stakeholder_input
+        self.request = self.investment / self.members
+        for member in self.members:
+           askforInvestment(self, member)
         return self.wealth
     
     
@@ -253,18 +275,19 @@ class Community(Agent):
       if self.strategy == 0:
         for member in self.members:
             self.c_energy = self.c_energy + member.i_energy    
-            if self.c_energy > WindThreshold:
-                coef = self.energy/WindThreshold
-                if coef < 1:
-                    self.technology = "Solar"
-                    self.solar_energy = self.c_energy
-                if coef > 1:
-                    self.technology = "Mixed"
-                    self.wind_energy = int(self.c_energy/WindThreshold)*WindThreshold
-                    self.solar_energy = self.c_energy % WindThreshold
-            else: 
+        if self.c_energy > WindThreshold:
+            coef = self.energy/WindThreshold
+            if coef < 1:
                 self.technology = "Solar"
-
+                self.solar_energy = self.c_energy
+            if coef > 1:
+                self.technology = "Mixed"
+                self.wind_energy = int(self.c_energy/WindThreshold)*WindThreshold
+                self.solar_energy = self.c_energy % WindThreshold
+        else: 
+            self.technology = "Solar"
+        self.projectCost = (self.wind_energy * windtariff + windCosts) + (self.solar_energy * solartariff + solarCosts)
+      
       if self.strategy == 1:
          for member in self.members:
             self.c_energy = self.c_energy + member.i_energy
@@ -272,34 +295,34 @@ class Community(Agent):
                 coef = self.energy/WindThreshold
                 if coef < 1:
                     self.solar_energy = self.c_energy
-                    self.investment = self.c_energy * solarCosts
+                    self.projectCost = self.c_energy * solarCosts
                 if coef > 1:
                     self.wind_energy = int(self.c_energy/WindThreshold)*WindThreshold
                     self.solar_energy = self.c_energy % WindThreshold
-                    self.investment= self.wind_energy * windCosts + self.solar_energy * solarCosts
+                    self.projectCost= self.wind_energy * windCosts + self.solar_energy * solarCosts
              
             
     def businessPlan(self):
-        if self.strategy == 0:
-            self.investment = (self.wind_energy * windtariff + windCosts) + (self.solar_energy * solartariff + solarCosts)
-            if self. investment > self.wealth:
-                self.ask_revenue()
-            if self.investment < self.wealth:
+        if self.projectCost < self.wealth:
+            self.business_plan = "Approved"
+        if self.projectCost > self.wealth:
+            self.investment = self.projectCost - self.wealth
+            self.ask_revenue()
+            if self.wealth > self.projectCost: #Check if stakeholder investment approved the business plan
                 self.business_plan = "Approved"
-                pass
+            else:
+                self.business_plan = "Rejected"
+     
         
-        if self.strategy == 1:
-            if self.investment < self.wealth:
-                #invest
-                pass
-            if self.investment > self.wealth:
-                self.ask_revenue()
+    def planexecution(self):
+        if self.business_plan == "Approved":
+            self.wealth = self.wealth - self.projectCost
+        
+        
+        return self.plan
                 
-                
-    
-    
-    def executePlan(self): #Execute the business plan having profit or loss
-        pass
+
+        
     
     
     def PolicyEntrepeneur(self): #report to government how each period was compared to the past one
