@@ -7,15 +7,15 @@ Created on Sun Dec  1 15:53:56 2019
 """
 import sys
 sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
-from Model import Modelrun
+from Oldmodel import Modelrun
 from mesa.visualization.modules import CanvasGrid
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.modules import ChartModule
 from mesa.visualization.UserParam import UserSettableParameter
-from Agents import Community
-import Model
+from Oldagents import Community
+import Oldmodel
 
-max_ind_size = Model.max_ind_size
+max_ind_size = Oldmodel.max_ind_size
 
 #Agent visual element 
 def agent_portrayal(agent):

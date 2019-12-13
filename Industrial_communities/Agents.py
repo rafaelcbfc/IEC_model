@@ -15,13 +15,12 @@ import numpy as np
 from mesa import Agent
 
  ## Drop out of the community should consider the return on investment (a percentage of how much money I received based on how much money I putted back)
- ## Build a small world network --> See virus simulation --> neighbours influence on decision to join community
- ## Number of industries & capacity of members are important to initiate a community. High capacity investment to start a community.
- ## Initial investment =! 0 
+ ## Build a small world network -->  Adjust based on the networkx library
  ## Explicit assumption on the text over the power grid already exists and is going to be used by the industries (Industrial park paper from world bank)
  ## Interest rates added to the CBA calculation for considering if joining a community or not
  ## Cost per MWh
-
+ ## trade certificates --> how many cenrtificates a community generates during the simulation
+ ## Drop out rule needs to be well designed --> ROI 
 
 ##Variables
 #General variables
