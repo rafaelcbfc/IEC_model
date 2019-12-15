@@ -13,7 +13,9 @@ sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communiti
 import random
 import numpy as np
 from mesa import Agent
+import Hofstede
 
+### To DO
  ## Drop out of the community should consider the return on investment (a percentage of how much money I received based on how much money I putted back)
  ## Build a small world network -->  Adjust based on the networkx library
  ## Explicit assumption on the text over the power grid already exists and is going to be used by the industries (Industrial park paper from world bank)
@@ -21,6 +23,14 @@ from mesa import Agent
  ## Cost per MWh
  ## trade certificates --> how many cenrtificates a community generates during the simulation
  ## Drop out rule needs to be well designed --> ROI 
+
+
+
+
+Country_hofstede = [0, 1, 2, 3, 4, 5]
+
+# Country = [gridtariff, solartariff, windtariff, windthrshold, solarCosts, windCosts]
+
 
 ##Variables
 #General variables
@@ -40,9 +50,22 @@ solarCosts = 1000
 windCosts = 5000
 
 
-
 #Game Theory
 #Decision style = for each country, normal distribution with center on countries value
+#Decision style distribution per country
+AUS_Decision_style = Hofstede.AUSDS
+AUS_Decision_rule = Hofstede.AUSDR
+BRA_Decision_style = Hofstede.BRADS
+BRA_Decision_rule = Hofstede.BRADR
+IRA_Decision_style = Hofstede.IRADS
+IRA_Decision_rule = Hofstede.IRADR
+JPN_Decision_style = Hofstede.JPNDS
+JPN_Decision_rule = Hofstede.JPNDR
+NLD_Decision_style = Hofstede.NLDDS
+NLD_Decision_rule = Hofstede.NLDDR
+USA_Decision_style = Hofstede.USADS
+USA_Decision_rule = Hofstede.USADR
+
 
 #Interaction functions
 def askforInvestment(com, member): #for project execution ask for investment by shareholders

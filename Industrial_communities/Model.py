@@ -26,6 +26,8 @@ max_com_size = 100
 total = width * height
  
 #Geographical locations 
+Country_list = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]
+
 x = [i for i in range(width)]
 y = [i for i in range(height)]
 geo = list(itertools.product(x,y))
