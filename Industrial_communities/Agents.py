@@ -13,7 +13,9 @@ sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communiti
 import random
 import numpy as np
 from mesa import Agent
-import Hofstede
+
+import Data
+
 
 ### To DO
  ## Drop out of the community should consider the return on investment (a percentage of how much money I received based on how much money I putted back)
@@ -25,13 +27,6 @@ import Hofstede
  ## Drop out rule needs to be well designed --> ROI 
 
 
-
-
-Country_hofstede = [0, 1, 2, 3, 4, 5]
-
-# Country = [gridtariff, solartariff, windtariff, windthrshold, solarCosts, windCosts]
-
-
 ##Variables
 #General variables
 park_limit = 15
@@ -40,31 +35,48 @@ counter = 0
 n_industries = 10
 n_communities = 10
 
+def country():
+    country.country_selection = "BRA"
+
 
 #General Variables
-gridtariff = 120
-WindThreshold = 500
-solartariff = 80
-windtariff = 100
-solarCosts = 1000
-windCosts = 5000
+country()
+if country.country_selection == "AUS":
+    gridtariff = Data.BRA_gridtariff
+    solarCosts = Data.BRA_solarCosts
+    windCosts = Data.BRA_windCosts
+
+if country.country_selection == "BRA":
+    gridtariff = Data.BRA_gridtariff
+    solarCosts = Data.BRA_solarCosts
+    windCosts = Data.BRA_windCosts
+
+if country.country_selection == "IRA":
+    gridtariff = Data.IRA_gridtariff
+    solarCosts = Data.IRA_solarCosts
+    windCosts = Data.IRA_windCosts
+
+if country.country_selection == "JPN":
+    gridtariff = Data.JPN_gridtariff
+    solarCosts = Data.JPN_solarCosts
+    windCosts = Data.JPN_windCosts
+
+if country.country_selection == "NLD":
+    gridtariff = Data.NLD_gridtariff
+    solarCosts = Data.NLD_solarCosts
+    windCosts = Data.NLD_windCosts
+
+if country.country_selection == "USA":
+    gridtariff = Data.USA_gridtariff
+    solarCosts = Data.USA_solarCosts
+    windCosts = Data.USA_windCosts
 
 
-#Game Theory
-#Decision style = for each country, normal distribution with center on countries value
-#Decision style distribution per country
-AUS_Decision_style = Hofstede.AUSDS
-AUS_Decision_rule = Hofstede.AUSDR
-BRA_Decision_style = Hofstede.BRADS
-BRA_Decision_rule = Hofstede.BRADR
-IRA_Decision_style = Hofstede.IRADS
-IRA_Decision_rule = Hofstede.IRADR
-JPN_Decision_style = Hofstede.JPNDS
-JPN_Decision_rule = Hofstede.JPNDR
-NLD_Decision_style = Hofstede.NLDDS
-NLD_Decision_rule = Hofstede.NLDDR
-USA_Decision_style = Hofstede.USADS
-USA_Decision_rule = Hofstede.USADR
+
+#CBA Calculations 
+solartariff = 10
+windtariff = 10
+WindThreshold = 5000 #KWh
 
 
 #Interaction functions
@@ -154,7 +166,7 @@ class Industry(Agent):
              if self.which_community == 0: 
                   vicinity_c = self.c_neighbors
                   com = None
-                  for com in (x for x in vicinity_c if x.active == "No"): break
+                  for com in (com for com in vicinity_c if com.active == "No"): break
                   com.active = "Yes"
                   self.which_community = com.name
                   for f in self.partners:
@@ -232,9 +244,9 @@ class Industry(Agent):
 
 ##Community
 class Community(Agent):
-    def __init__(self, name, pos, model):
+    def __init__(self, name, pos, active, model):
         super().__init__(name, model)
-        self.active = "No"
+        self.active = active
         self.breed = "com"
         self.business_plan = "" 
         self.c_energy = 0
@@ -261,7 +273,9 @@ class Community(Agent):
         
 #Community functions   
     def step(self):
-        if self.active == "Yes":
+         if self.active == "No":
+            pass
+         else:
             self.membersList()
             self.initialInvestment()
             self.totalDemand()
@@ -272,9 +286,8 @@ class Community(Agent):
             self.policyEntrepeneur()
             self.project_cost = 0
             self.period = self.period + 1 
-        
-        if self.active == "No":
-            pass
+            
+       
     
     
     def membersList(self): #update every tick the member list
@@ -289,7 +302,10 @@ class Community(Agent):
             self.c_energy = 0
             self.totalDemand()
             self.technologySelector()
-            capital = self.project_cost/len(self.members)  
+            try:
+                capital = self.project_cost/len(self.members)  
+            except:
+                pass
             for member in self.members:
                 member.wealth = member.wealth - capital
                 self.wealth = self.wealth + capital
@@ -346,7 +362,11 @@ class Community(Agent):
      
         
     def askRevenue(self): #Ask for revenue if wealth is below 0
-        self.request = self.investment / len(self.members)
+        try:
+            self.request = self.investment / len(self.members)
+        except:
+            pass
+            pass
         for member in self.members:
            askforInvestment(self, member)
         return self.wealth

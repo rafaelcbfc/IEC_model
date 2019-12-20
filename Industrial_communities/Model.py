@@ -25,9 +25,12 @@ max_ind_size = 100
 max_com_size = 100
 total = width * height
  
-#Geographical locations 
-Country_list = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]
+#Country
+def country_select():
+    selection = Model.Modelrun.country 
+    return selection
 
+#Industrial Park geo-location
 x = [i for i in range(width)]
 y = [i for i in range(height)]
 geo = list(itertools.product(x,y))
@@ -50,35 +53,35 @@ def countActive(model):
     
 ##Model Definitions
 class Modelrun(Model):
-    def __init__(self, n_industries, n_communities, max_ticks = 240):
+    def __init__(self, n_industries, n_communities, country = "BRA", max_ticks = 240):
         super().__init__()
-        self.schedule = RandomActivation(self)
-        self.n_industries = n_industries
-        self.n_communities = n_communities
+        self.agent_reporters = {'WhichCommunity': lambda i: getattr(i, "which_community", None)}  
+        self.country = country
         self.width = width
         self.height = height
         self.grid = MultiGrid(self.width, self.height, torus=True)
         self.max_ticks = max_ticks
         self.model_reporters = {'Communities': lambda m: countCommunity(m),
                                 'Active Communities': lambda m: countActive(m),
-                                'Industries': lambda m: countIndustry(m)}
-        self.agent_reporters = {'WhichCommunity': lambda i: getattr(i, "which_community", None)}        
-        self.datacollector = DataCollector(model_reporters = self.model_reporters) #Not working as expected
+                                'Industries': lambda m: countIndustry(m)} 
+        self.datacollector = DataCollector(model_reporters = self.model_reporters)
+        self.n_industries = n_industries
+        self.n_communities = n_communities
         self.running = True
-        self.datacollector.collect(self)
+        self.schedule = RandomActivation(self)
         self.tick = 0
-
+       
         
         #Add industries        
         for i in range(self.n_industries):
             ind = Industry(i, geo_i[i], self)
             self.schedule.add(ind)
             self.grid.place_agent(ind, geo_i[i])
-            
+        self.datacollector.collect(self)
+        
          #Add community       
         for c in range(self.n_communities):
-            com = Community(c, geo_c[c], self)
-            com.active = "No"
+            com = Community(c, geo_c[c], "No", self)
             self.schedule.add(com)
             self.grid.place_agent(com, geo_c[c])  
         self.datacollector.collect(self)
