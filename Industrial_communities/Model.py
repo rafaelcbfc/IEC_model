@@ -16,6 +16,7 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from Agents import Industry, Community
+import networkx as nx
 
 ##Variables
 #Model variables
@@ -55,10 +56,11 @@ def countActive(model):
 class Modelrun(Model):
     def __init__(self, n_industries, n_communities, country = "BRA", max_ticks = 240):
         super().__init__()
-        self.agent_reporters = {'WhichCommunity': lambda i: getattr(i, "which_community", None)}  
+        self.total = n_industries + n_communities
         self.country = country
         self.width = width
         self.height = height
+        self.G = nx.watts_strogatz_graph(self.total,2, 0.2)
         self.grid = MultiGrid(self.width, self.height, torus=True)
         self.max_ticks = max_ticks
         self.model_reporters = {'Communities': lambda m: countCommunity(m),

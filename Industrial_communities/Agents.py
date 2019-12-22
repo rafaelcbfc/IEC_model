@@ -13,27 +13,23 @@ sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communiti
 import random
 import numpy as np
 from mesa import Agent
-
+from scipy.stats import uniform
 import Data
-
+import networkx as nx
 
 ### To DO
  ## Drop out of the community should consider the return on investment (a percentage of how much money I received based on how much money I putted back)
  ## Build a small world network -->  Adjust based on the networkx library
- ## Explicit assumption on the text over the power grid already exists and is going to be used by the industries (Industrial park paper from world bank)
  ## Interest rates added to the CBA calculation for considering if joining a community or not
- ## Cost per MWh
  ## trade certificates --> how many cenrtificates a community generates during the simulation
  ## Drop out rule needs to be well designed --> ROI 
 
 
 ##Variables
 #General variables
-park_limit = 15
-strategy = ["energy", "costs", "A", "B"]
-counter = 0
-n_industries = 10
-n_communities = 10
+park_limit = 15 #Size of the park grid layout (15 x 15 squares)
+strategy = ["energy generation", "profit increase"] #Energy strategy for industries and communities
+energy_demand = uniform.rvs(size=10000, loc = 20, scale=30000) #uniform distribution from 20KWh till 30MWh
 
 def country():
     country.country_selection = "BRA"
@@ -42,45 +38,45 @@ def country():
 #General Variables
 country()
 if country.country_selection == "AUS":
-    gridtariff = Data.BRA_gridtariff
-    solarCosts = Data.BRA_solarCosts
-    windCosts = Data.BRA_windCosts
+    gridtariff = Data.AUS_gridtariff #Price paid for KWh for energy from the grid
+    solarCosts = random.choice(Data.AUS_solarCosts) #Cost of installation for solar generation
+    windCosts = random.choice(Data.AUS_windCosts) #Cost for installation for wind generation
 
 if country.country_selection == "BRA":
     gridtariff = Data.BRA_gridtariff
-    solarCosts = Data.BRA_solarCosts
-    windCosts = Data.BRA_windCosts
+    solarCosts = random.choice(Data.BRA_solarCosts)
+    windCosts = random.choice(Data.BRA_windCosts)
 
 if country.country_selection == "IRA":
     gridtariff = Data.IRA_gridtariff
-    solarCosts = Data.IRA_solarCosts
-    windCosts = Data.IRA_windCosts
+    solarCosts = random.choice(Data.IRA_solarCosts)
+    windCosts = random.choice(Data.IRA_windCosts)
 
 if country.country_selection == "JPN":
     gridtariff = Data.JPN_gridtariff
-    solarCosts = Data.JPN_solarCosts
-    windCosts = Data.JPN_windCosts
+    solarCosts = random.choice(Data.JPN_solarCosts)
+    windCosts = random.choice(Data.JPN_windCosts)
 
 if country.country_selection == "NLD":
     gridtariff = Data.NLD_gridtariff
-    solarCosts = Data.NLD_solarCosts
-    windCosts = Data.NLD_windCosts
+    solarCosts = random.choice(Data.NLD_solarCosts)
+    windCosts = random.choice(Data.NLD_windCosts)
 
 if country.country_selection == "USA":
     gridtariff = Data.USA_gridtariff
-    solarCosts = Data.USA_solarCosts
-    windCosts = Data.USA_windCosts
+    solarCosts = random.choice(Data.USA_solarCosts)
+    windCosts = random.choice(Data.USA_windCosts)
 
 
 
 #CBA Calculations 
-solartariff = 10
-windtariff = 10
-WindThreshold = 5000 #KWh
+solartariff = 10 #Calculated tariff when producing solar energy
+windtariff = 10 #Calculated tariff when producing wind energy
+WindThreshold = 5000 #in KW, minimum value to make it a possibility for wind energy production - https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 
 
 #Interaction functions
-def askforInvestment(com, member): #for project execution ask for investment by shareholders
+def askforInvestment(com, member): #for project execution ask for investment to shareholders
     stakeholder_input = 0
     if com.request < member.wealth:
         stakeholder_input = stakeholder_input + com.request
@@ -112,7 +108,7 @@ def voting(com, member): #Voting process during meetings
 
 
 ##Industry
-class Industry(Agent):
+class Industry(Agent): #Industry agent propoerties
     def __init__(self, name, pos, model):
         super().__init__(name, model)
         self.breed = "ind"
@@ -125,14 +121,14 @@ class Industry(Agent):
         self.engaged = "not engaged" # not engaged/ engaged / RE installation / Grid energy
         self.eng_lvl = 0
         self.id = name 
-        self.i_energy =  np.random.choice(range(100, 210, 10))  #Use random range see Mesa literature -- to be updated every period
+        self.i_energy = np.random.choice(energy_demand)  #randomly picks one value from the uniform distribution
         self.motivated_friends = 0
         self.partners = []
         self.period = int(0)
         self.pos = pos
         self.ROI = 0
         self.smallworld_eng = []
-        self.strategy = strategy[random.randrange(0,4)] #0 - Increase energy consumption / 1 - reduce costs
+        self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
         #self.strategy = strategy[0] #0 - Increase energy consumption / 1 - reduce costs 
         self.vote = 0
         self.wealth = 100000000
@@ -219,16 +215,22 @@ class Industry(Agent):
                                 self.engaged = "enthusiast"
 
 
-    def industryNetwork(self): #Small-network definition --to be updated
-            self.small_network = self.model.grid.get_neighborhood(self.pos, moore=True, radius=5)
-            self.smallworld = self.model.grid.get_cell_list_contents(self.small_network)
-            self.ind_smallworld = [x for x in self.smallworld if type(x) is Industry]
-            for f in self.ind_smallworld:
-                  self.smallworld_eng.append(f.eng_lvl)   
-                  if f.eng_lvl == 5 and f.engaged != "engaged":
-                      self.partners.append(f)
-                      self.motivated_friends =+ 1
-                  
+
+
+
+    def industryNetwork(self): #Small-network definition --to be updated    
+                self.neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=15)
+                neighbors_nodes = self.model.grid.get_cell_list_contents(self.neighborhood)
+                print(neighbors_nodes)
+                vicinity = self.model.G.neighbors(self.id)
+                smallworld = [agent for agent in vicinity if type(agent) is Industry]
+                for f in smallworld:
+                      self.smallworld_eng.append(f.eng_lvl)   
+                      if f.eng_lvl == 5 and f.engaged != "engaged":
+                          self.partners.append(f)
+                          self.motivated_friends =+ 1
+
+           
                   
     def retunofInvestment(self): #Return of Investment function used on voting
         self.ROI = (self.profit -self.investment)/self.investment
