@@ -15,7 +15,7 @@ import numpy as np
 from mesa import Agent
 from scipy.stats import uniform
 import Data
-import networkx as nx
+
 
 ### To DO
  ## Drop out of the community should consider the return on investment (a percentage of how much money I received based on how much money I putted back)
@@ -95,7 +95,7 @@ def cbaPeer(me, peer): #Peer CBA calculation
 
 def communityName(ind, com): #Assign a member to a community
         ind.which_community = com.name
-        return ind.which_community
+        
 
     
 def voting(com, member): #Voting process during meetings
@@ -118,7 +118,7 @@ class Industry(Agent): #Industry agent propoerties
         self.decision_style = "a"
         self.energy_evaluation_time = 12
         self.energy_time_check = list(range(0,240,self.energy_evaluation_time))
-        self.engaged = "not engaged" # not engaged/ engaged / RE installation / Grid energy
+        self.engaged = "not_engaged" # not engaged/ engaged / RE installation / Grid energy
         self.eng_lvl = 0
         self.id = name 
         self.i_energy = np.random.choice(energy_demand)  #randomly picks one value from the uniform distribution
@@ -127,7 +127,7 @@ class Industry(Agent): #Industry agent propoerties
         self.period = int(0)
         self.pos = pos
         self.ROI = 0
-        self.smallworld_eng = []
+        self.smallworld = []
         self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
         #self.strategy = strategy[0] #0 - Increase energy consumption / 1 - reduce costs 
         self.vote = 0
@@ -140,7 +140,9 @@ class Industry(Agent): #Industry agent propoerties
     def step(self):
         self.updateNeighbors()
         self.engagementLevel()
+        self.industryNetwork()
         self.createCommunity()
+        self.joinCommunity()
         self.period = self.period + 1
         #print("I " + str(self.id) + " " + str(self.i_energy) + " " + "C" + str(self.which_community))
         
@@ -153,36 +155,29 @@ class Industry(Agent): #Industry agent propoerties
     
     def createCommunity(self): #create a community
         if self.period in self.energy_time_check:
-             self.industryNetwork()
-             if self.eng_lvl != 99:
-                if self.motivated_friends/len(self.smallworld_eng) >0.5: #Link to scharpf decision style
-                  self.eng_lvl = 99
-                  for f in self.partners:
-                      f.eng_lvl = 99
-             if self.which_community == 0: 
-                  vicinity_c = self.c_neighbors
-                  com = None
-                  for com in (com for com in vicinity_c if com.active == "No"): break
-                  com.active = "Yes"
-                  self.which_community = com.name
-                  for f in self.partners:
-                      f.which_community = com.name
-                        ##Pay for entering community
-        else:
-            pass
+            if self.eng_lvl == 99 and self.which_community == 0: 
+                 com = None
+                 for com in [x for x in self.c_neighbors if x.active == "No"]: break
+                 com.active = "Yes"
+                 self.which_community = com.name
+                 for f in self.partners:
+                     f.which_community = com.name
+                       ##Pay for entering community
+        print("id " + str(self.id) + " eng_lvl " + str(self.eng_lvl) + " com " + str(self.which_community))
         
     
     def engagementLevel(self): #Define engagement level
+        beta = 0.8 #Pareto 80% principle
         if self.eng_lvl != 99:
             self.cbaCalc()
-            beta = 0.8 #Pareto 80% principle
             if self.CBAi < (beta-0.3):
                 self.eng_lvl = 1
-                self.engaged = "Grid Energy"
+                self.engaged = "Grid_Energy"
             elif self.CBAi > (beta+0.3):
                 self.eng_lvl = 3
-                self.engaged = "RE installation"
+                self.engaged = "RE_installation"
             elif self.CBAi > (beta-0.3) and self.CBAi < (beta+0.3):
+                
                 #Check if there is a community nearby
                 for c in self.c_neighbors:
                     if c.active == "No":
@@ -192,63 +187,63 @@ class Industry(Agent): #Industry agent propoerties
                             cbaPeer(self, c)
                             if self.CBAp > (beta+0.1):
                                 self.eng_lvl = 10
-                                self.engaged = "engaged"
-                                communityName(self, c)
-                                ##Pay for entering community
-                                break
+                                self.engaged = "engaged"          
                             
                 #If no communities exists, look for industries
                 for i in self.i_neighbors:
-                    if self.engaged != "not engaged":
-                        pass
-                    if self.engaged == "not engaged":
+                    if self.engaged == "not_engaged":
                         cbaPeer(self, i)
                         if i.CBAi < (beta+0.1) and i.CBAi > (beta-0.1):
                             if self.CBAp < (beta-0.3):
                                 self.eng_lvl = 2
-                                self.engaged == "not engaged"
+                                self.engaged == "not_engaged"
                             if self.CBAp > (beta - 0.3) and self.CBAp < (beta + 0.3):
                                 self.eng_lvl = 4
-                                self.engaged == "not engaged"
+                                self.engaged == "not_engaged"
                             if self.CBAp > (beta+0.3):
                                 self.eng_lvl = 5
                                 self.engaged = "enthusiast"
 
-
-
-
-
-    def industryNetwork(self): #Small-network definition --to be updated    
-                self.neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=15)
-                neighbors_nodes = self.model.grid.get_cell_list_contents(self.neighborhood)
-                print(neighbors_nodes)
-                vicinity = self.model.G.neighbors(self.id)
-                smallworld = [agent for agent in vicinity if type(agent) is Industry]
-                for f in smallworld:
-                      self.smallworld_eng.append(f.eng_lvl)   
-                      if f.eng_lvl == 5 and f.engaged != "engaged":
-                          self.partners.append(f)
-                          self.motivated_friends =+ 1
-
+    def joinCommunity(self):
+            if self.eng_lvl == 10:
+                pass
+                
+            if self.eng_lvl == 5:
+                pass
+            
+            
+    def industryNetwork(self): 
+            neighbors = [agent for agent in self.i_neighbors if type(agent) == Industry]
+            vicinity = list(self.model.G.neighbors(self.id))
+            self.smallworld = [agent for agent in neighbors if agent.id in vicinity]
+            for f in self.smallworld:
+                if f.engaged == "enthusiast":
+                    self.partners.append(f)
+            print("id " + str(self.id) + " partners " + str(len(self.partners)) + " small world " + str(len(self.smallworld)))        
+            if len(self.partners) > 0 and len(self.partners)/len(self.smallworld) >= 0.5: 
+                     self.eng_lvl = 99
+                     for f in self.partners:
+                         f.eng_lvl = 99
            
+
                   
     def retunofInvestment(self): #Return of Investment function used on voting
         self.ROI = (self.profit -self.investment)/self.investment
     
     
     def updateNeighbors(self): #create a list of neighbors in the Industrial Park
-                global c_neighbors, i_neighbors
-                self.neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=10)
-                self.neighbors = self.model.grid.get_cell_list_contents(self.neighborhood)
-                self.c_neighbors = [x for x in self.neighbors if type(x) is Community]
-                self.i_neighbors = [x for x in self.neighbors if type(x) is Industry]
+            global c_neighbors, i_neighbors
+            self.neighborhood = self.model.grid.get_neighborhood(self.pos, moore=True, radius=20)
+            self.neighbors = self.model.grid.get_cell_list_contents(self.neighborhood)
+            self.c_neighbors = [x for x in self.neighbors if type(x) is Community]
+            self.i_neighbors = [x for x in self.neighbors if type(x) is Industry]
  
 
 ##Community
 class Community(Agent):
-    def __init__(self, name, pos, active, model):
+    def __init__(self, name, pos, activity, model):
         super().__init__(name, model)
-        self.active = active
+        self.active = activity
         self.breed = "com"
         self.business_plan = "" 
         self.c_energy = 0

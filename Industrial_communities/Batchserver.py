@@ -17,7 +17,7 @@ import pandas as pd
 
 #Run parameters 
 m_step_data = pd.DataFrame()
-n_industries = [50]
+n_industries = [40]
 n_communities = [25]
 total = n_industries + n_communities
 country = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]
@@ -25,7 +25,7 @@ country = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]
 model_param = {"n_industries": n_industries, "n_communities": n_communities, "country": country} 
 
 #Batchrun settings      
-batch_run = BatchRunner(Modelrun, model_param, iterations = 1, max_steps = 24, model_reporters = {"Data Collector": lambda m: m.datacollector}, display_progress=True)
+batch_run = BatchRunner(Modelrun, model_param, iterations = 1, max_steps = 1, model_reporters = {"Data Collector": lambda m: m.datacollector}, display_progress=True)
 batch_run.run_all()
 
 #Data generation

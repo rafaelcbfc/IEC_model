@@ -18,6 +18,7 @@ from mesa.datacollection import DataCollector
 from Agents import Industry, Community
 import networkx as nx
 
+
 ##Variables
 #Model variables
 width = 15
@@ -60,7 +61,7 @@ class Modelrun(Model):
         self.country = country
         self.width = width
         self.height = height
-        self.G = nx.watts_strogatz_graph(self.total,2, 0.2)
+        self.G = nx.erdos_renyi_graph(n_industries, 0.2)
         self.grid = MultiGrid(self.width, self.height, torus=True)
         self.max_ticks = max_ticks
         self.model_reporters = {'Communities': lambda m: countCommunity(m),
@@ -71,22 +72,22 @@ class Modelrun(Model):
         self.n_communities = n_communities
         self.running = True
         self.schedule = RandomActivation(self)
-        self.tick = 0
-       
+        self.tick = 0    
+        self.network = []
         
         #Add industries        
         for i in range(self.n_industries):
             ind = Industry(i, geo_i[i], self)
             self.schedule.add(ind)
             self.grid.place_agent(ind, geo_i[i])
-        self.datacollector.collect(self)
+            self.network.append(ind)
         
          #Add community       
         for c in range(self.n_communities):
             com = Community(c, geo_c[c], "No", self)
             self.schedule.add(com)
             self.grid.place_agent(com, geo_c[c])  
-        self.datacollector.collect(self)
+        
         
     def step(self): #what is done each step on the simulation
                 self.datacollector.collect(self)
