@@ -61,7 +61,7 @@ class Modelrun(Model):
         self.country = country
         self.width = width
         self.height = height
-        self.G = nx.erdos_renyi_graph(n_industries, 0.2)
+        self.G = nx.watts_strogatz_graph(n_industries, 4, 0.2)
         self.grid = MultiGrid(self.width, self.height, torus=True)
         self.max_ticks = max_ticks
         self.model_reporters = {'Communities': lambda m: countCommunity(m),
@@ -90,10 +90,9 @@ class Modelrun(Model):
         
         
     def step(self): #what is done each step on the simulation
-                self.datacollector.collect(self)
-                self.schedule.step()
-                self.tick += 1
-                if self.tick >= self.max_ticks:
-                    self.running = False
-
+            self.datacollector.collect(self)
+            self.schedule.step()
+            self.tick += 1
+            if self.tick >= self.max_ticks:
+                self.running = False
 
