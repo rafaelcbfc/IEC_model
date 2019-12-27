@@ -28,7 +28,7 @@ import Data
 park_limit = 15 #Size of the park grid layout (15 x 15 squares)
 strategy = [0, 1] #Energy strategy for industries and communities. 0 - "energy generation" / 1 - "profit increase"
 wind_threshold = 5000 #in KW, minimum value to make it a possibility for wind energy production - https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
-beta = 0.8 #Pareto 80% principle
+pareto = 0.8 #Pareto 80% principle
 pool_financial_investments = ["feed-in-tariff", "tax-incentive", "tradable-certificates"]
 
 financial_investment = "tax-incentive"
@@ -130,7 +130,7 @@ class Industry(Agent): #Industry agent propoerties
         self.engaged = "not_engaged" # not engaged/ engaged / RE installation / Grid energy
         self.eng_lvl = 0
         self.id = name 
-        self.i_energy = np.random.choice(uniform.rvs(size=10000, loc = 20, scale=3000)) #value in KWh from a distribution between 20KWh and 3MWh
+        self.i_energy = np.random.choice(uniform.rvs(size=10000, loc = 20, scale=3000)) #value in KWh from a distribution between 20KWh and 6MWh
         self.motivated_friends = 0
         self.partners = []
         self.period = int(0)
@@ -154,18 +154,14 @@ class Industry(Agent): #Industry agent propoerties
         
        
     def cbaCalc(self): #Individial CBA calculation
-        demand = self.i_energy * 12
-        project = 0
-        if self.strategy == 0: #Strategy 0 - supply new energy demand
+        demand = self.i_energy * 12 #yearly
+        depreciation_period= 20 #years
+         margin = 0.3
+        if strategy == 0: #Strategy 0 - supply new energy demand
             #Baseline
-            initial_investment = 0
-            bly1 = (demand * gridtariff)/(1+discount_rate)**12
-            bly2 = (demand * gridtariff)/(1+discount_rate)**24
-            bly3 = (demand * gridtariff)/(1+discount_rate)**36
-            bly4 = (demand * gridtariff)/(1+discount_rate)**48
-            bly5 = (demand * gridtariff)/(1+discount_rate)**60
-            
-            NPV_baseline = initial_investment - bly1 - bly2 - bly3 - bly4 - bly5
+            NPV_baseline = 0
+            for i in range(20):
+                NPV_baseline = NPV_baseline + ((demand * gridtariff)/(1+discount_rate)**(i*12))
             
             #renewable energy 
             if financial_investment == "tax-incentive":
@@ -178,84 +174,88 @@ class Industry(Agent): #Industry agent propoerties
                 wind_tariff_s1 = 0
                 
                 solar_energy_s1 = demand
-                investment_solar_s1 = solar_energy_s1 * solar_implement_Costs
-                solar_tariff_s1 = investment_solar_s1/demand
+                investment_solar_s1 = solar_energy_s1 * solar_implement_Costs * 1.05
+                solar_tariff_s1 = investment_solar_s1/(solar_energy_s1 * depreciation_period)
                 
-                s1y1 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**12
-                s1y2 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**24
-                s1y3 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**36
-                s1y4 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**48
-                s1y5 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**60
-                NPV_investment = investment_solar_s1 - s1y1 - s1y2 - s1y3 - s1y4 - s1y5
-                
+                NPV_investment = 0
+                for i in range(depreciation_period):
+                    NPV_investment = NPV_investment + ((wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**(i*12))
+
             if coef > 1:
                 wind_energy_s2 = int(demand/wind_threshold)*wind_threshold
-                investment_wind_s2 = wind_energy_s2 * wind_implement_Costs
-                wind_tariff_s2 = investment_wind_s2/wind_energy_s2
+                investment_wind_s2 = wind_energy_s2 * wind_implement_Costs * 1.05
+                wind_tariff_s2 = investment_wind_s2/(wind_energy_s2 * depreciation_period)
                 
                 solar_energy_s2 = demand % wind_threshold
-                investment_solar_s2 = solar_energy_s2 * solar_implement_Costs
-                solar_tariff_s2 = investment_solar_s2/solar_energy_s2
+                investment_solar_s2 = solar_energy_s2 * solar_implement_Costs * 1.05
+                solar_tariff_s2 = investment_solar_s2/(solar_energy_s2 * depreciation_period)
                 
-                s2y1 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**12
-                s2y2 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**24
-                s2y3 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**36
-                s2y4 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**48
-                s2y5 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**60
-                NPV_investment = investment_wind_s2 + investment_solar_s2 - s2y1 - s2y2 - s2y3 - s2y4 - s2y5 - s2y5
-                
+                NPV_investment = 0
+                for i in range(depreciation_period):
+                    NPV_investment = NPV_investment + ((wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**(i*12))
+            
+            self.CBAi = NPV_investment / NPV_baseline
+            
+            if (NPV_investment / NPV_baseline) > (pareto + margin):
+                self.CBAi = "higher"
+            elif (NPV_investment / NPV_baseline) < (pareto - margin):
+                self.CBAi = "lower"
+            else:
+                self.CBAi = "approximate"
+            
         if self.strategy == 1: #Strategy 1 - profit
             NPV_baseline = discount_rate
-        
+            
             if financial_investment == "tax-incentive":
                 solar_implement_Costs = solar_implement_Costs * 0.6
                 wind_implement_Costs = wind_implement_Costs * 0.6
             
             coef = demand/wind_threshold
-            #scenario 1
             if coef < 1:
                 wind_energy_s1 = 0
                 wind_tariff_s1 = 0
+                investment_wind_s1 = 0
                 
-                solar_energy_s1 = demand
+                solar_energy_s1 = demand ##Random value for being a base to calculations
                 investment_solar_s1 = solar_energy_s1 * solar_implement_Costs
+                
                 if financial_investment == "feed-in-tariff":
                     solar_tariff_s1 = 1.1 * gridtariff
                 else:
                     solar_tariff_s1 = investment_solar_s1/demand
                 
-                s1y1 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**12
-                s1y2 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**24
-                s1y3 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**36
-                s1y4 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**48
-                s1y5 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**60
-                NPV_investment = investment_solar_s1 - s1y1 - s1y2 - s1y3 - s1y4 - s1y5
-           
-            #scenario2    
+                NPV_return = 0
+                for i in range(depreciation_period):
+                    NPV_return = NPV_return + ((wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**(i*12))
+                initial_investment = investment_solar_s1 + investment_wind_s1
+            
             if coef > 1:
                 wind_energy_s2 = int(demand/wind_threshold)*wind_threshold
                 investment_wind_s2 = wind_energy_s2 * wind_implement_Costs
-                if financial_investment == "feed-in-tariff":
-                    wind_tariff_s2 = 1.1 * gridtariff
-                else:
-                    wind_tariff_s2 = investment_wind_s2/wind_energy_s2
                 
                 solar_energy_s2 = demand % wind_threshold
                 investment_solar_s2 = solar_energy_s2 * solar_implement_Costs
-               
+                
                 if financial_investment == "feed-in-tariff":
+                    wind_tariff_s2 = 1.1 * gridtariff
                     solar_tariff_s2 = 1.1 * gridtariff
                 else:
-                    solar_tariff_s2 = investment_solar_s2/solar_energy_s2
-                
-                s2y1 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**12
-                s2y2 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**24
-                s2y3 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**36
-                s2y4 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**48
-                s2y5 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**60
-                NPV_investment = investment_wind_s2 + investment_solar_s2 - s2y1 - s2y2 - s2y3 - s2y4 - s2y5 - s2y5
+                    wind_tariff_s2 = investment_wind_s2/wind_energy_s2 * depreciation_period
+                    solar_tariff_s2 = investment_solar_s2/solar_energy_s2 * depreciation_period 
+                    
+                NPV_return = 0
+                for i in range(depreciation_period):
+                    NPV_return = NPV_return + ((wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**(i*12))
+                    
+                initial_investment = investment_solar_s2 + investment_wind_s2
         
-        self.CBAi = NPV_investment / NPV_baseline
+            NPV_investment = NPV_return / initial_investment
+            if NPV_investment > (NPV_baseline + margin):
+                self.CBAi = "higher"
+            elif NPV_investment < (NPV_baseline - margin):
+                self.CBAi = "lower"
+            else:
+                self.CBAi = "approximate"
         
         return self.CBAi  
     
@@ -275,17 +275,17 @@ class Industry(Agent): #Industry agent propoerties
         
     
     def engagementLevel(self): #Define engagement level --> Adjust this engagement level so industries with communities don't create new ones
-        margin = 0.3
+       
         if self.eng_lvl in [0, 1, 2, 3, 4, 5]:
             self.eng_lvl = 0
             self.cbaCalc()
-            if self.CBAi < (beta - margin):
+            if self.CBAi == "lower":
                 self.eng_lvl = 1
                 self.engaged = "Grid_Energy"
-            elif self.CBAi > (beta + margin):
+            elif self.CBAi == "higher":
                 self.eng_lvl = 3
                 self.engaged = "RE_installation"
-            elif self.CBAi > (beta - margin) and self.CBAi < (beta + margin):
+            elif self.CBAi == "approximate":
                 #Check if there is a community to join
                     for c in self.c_neighbors:
                         if self.eng_lvl not in [10, 99]:
@@ -294,7 +294,7 @@ class Industry(Agent): #Industry agent propoerties
                             if c.active == "Yes":
                                 if c.strategy == self.strategy:
                                     cbaPeer(self, c)
-                                    if self.CBAp > (beta + margin):
+                                    if self.CBAp == "higher":
                                         self.eng_lvl = 10
                                         self.engaged = "member"
                                         self.which_community == c.name
