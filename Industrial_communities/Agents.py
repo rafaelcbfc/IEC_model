@@ -26,70 +26,66 @@ import Data
 ##Variables
 #General variables
 park_limit = 15 #Size of the park grid layout (15 x 15 squares)
-strategy = ["energy generation", "profit increase"] #Energy strategy for industries and communities
-energy_demand = uniform.rvs(size=10000, loc = 20, scale=30000) #uniform distribution from 20KWh till 30MWh
+strategy = [0, 1] #Energy strategy for industries and communities. 0 - "energy generation" / 1 - "profit increase"
+wind_threshold = 5000 #in KW, minimum value to make it a possibility for wind energy production - https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+beta = 0.8 #Pareto 80% principle
+pool_financial_investments = ["feed-in-tariff", "tax-incentive", "tradable-certificates"]
 
+financial_investment = "tax-incentive"
+
+#General Variables
 def country():
     country.country_selection = "BRA"
 
-
-#General Variables
 country()
 if country.country_selection == "AUS":
-    decision_style = Data.AUSDecision_style_mean
-    decision_rule = Data.AUSDecision_rule_mean
+    decision_style = Data.AUSDecision_style_mean #Decision style based on hofstede's insight
+    decision_rule = Data.AUSDecision_rule_mean #Decision rule based on hofstede's insight
     gridtariff = Data.AUS_gridtariff #Price paid for KWh for energy from the grid
-    solarCosts = random.choice(Data.AUS_solarCosts) #Cost of installation for solar generation
-    windCosts = random.choice(Data.AUS_windCosts) #Cost for installation for wind generation
-    discount_rate = Data.AUS_discount_rate
+    solar_implement_Costs = random.choice(Data.AUS_solarCosts) #Cost of installation for solar generation
+    wind_implement_Costs = random.choice(Data.AUS_windCosts) #Cost for installation for wind generation
+    discount_rate = Data.AUS_discount_rate #Applied discount rate for infrastructure or development projects
 
 if country.country_selection == "BRA":
-    decision_style = Data.BRADecision_style_mean
+    decision_style = Data.BRADecision_style_mean 
     decision_rule = Data.BRADecision_rule_mean
     gridtariff = Data.BRA_gridtariff
-    solarCosts = random.choice(Data.BRA_solarCosts)
-    windCosts = random.choice(Data.BRA_windCosts)
+    solar_implement_Costs = random.choice(Data.BRA_solarCosts)
+    wind_implement_Costs = random.choice(Data.BRA_windCosts)
     discount_rate = Data.BRA_discount_rate
 
 if country.country_selection == "IRA":
     decision_style = Data.IRADecision_style_mean
     decision_rule = Data.IRADecision_rule_mean
     gridtariff = Data.IRA_gridtariff
-    solarCosts = random.choice(Data.IRA_solarCosts)
-    windCosts = random.choice(Data.IRA_windCosts)
+    solar_implement_Costs = random.choice(Data.IRA_solarCosts)
+    wind_implement_Costs = random.choice(Data.IRA_windCosts)
     discount_rate = Data.IRA_discount_rate
 
 if country.country_selection == "JPN":
     decision_style = Data.JPNDecision_style_mean
     decision_rule = Data.JPNDecision_rule_mean
     gridtariff = Data.JPN_gridtariff
-    solarCosts = random.choice(Data.JPN_solarCosts)
-    windCosts = random.choice(Data.JPN_windCosts)
+    solar_implement_Costs = random.choice(Data.JPN_solarCosts)
+    wind_implement_Costs = random.choice(Data.JPN_windCosts)
     discount_rate = Data.JPN_discount_rate
 
 if country.country_selection == "NLD":
     decision_style = Data.NLDDecision_style_mean
     decision_rule = Data.NLDDecision_rule_mean
     gridtariff = Data.NLD_gridtariff
-    solarCosts = random.choice(Data.NLD_solarCosts)
-    windCosts = random.choice(Data.NLD_windCosts)
+    solar_implement_Costs = random.choice(Data.NLD_solarCosts)
+    wind_implement_Costs = random.choice(Data.NLD_windCosts)
     discount_rate = Data.NLD_discount_rate
 
 if country.country_selection == "USA":
     decision_style = Data.USADecision_style_mean
     decision_rule = Data.USADecision_rule_mean
     gridtariff = Data.USA_gridtariff
-    solarCosts = random.choice(Data.USA_solarCosts)
-    windCosts = random.choice(Data.USA_windCosts)
+    solar_implement_Costs = random.choice(Data.USA_solarCosts)
+    wind_implement_Costs = random.choice(Data.USA_windCosts)
     discount_rate = Data.USA_discount_rate
-
-
-
-#CBA Calculations 
-solartariff = 10 #Calculated tariff when producing solar energy
-windtariff = 10 #Calculated tariff when producing wind energy
-WindThreshold = 5000 #in KW, minimum value to make it a possibility for wind energy production - https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
-beta = 0.8 #Pareto 80% principle
+    
 
 #Interaction functions
 def askforInvestment(com, member): #for project execution ask for investment to shareholders
@@ -103,8 +99,6 @@ def askforInvestment(com, member): #for project execution ask for investment to 
 
 
 def cbaPeer(me, peer): #Peer CBA calculation
-    #comb_amount = me.energy_amount + peer.energy_amount
-    #me.CBAp = (comb_amount + peer.energy_amount * energy_cost) / (comb_amount * RE_energy_cost + RE_Investment_costs)
     me.CBAp = random.uniform(0.7, 1.2)
     return me.CBAp
 
@@ -112,7 +106,6 @@ def cbaPeer(me, peer): #Peer CBA calculation
 def communityName(ind, com): #Assign a member to a community
         ind.which_community = com.name
         
-
     
 def voting(com, member): #Voting process during meetings
     if com.strategy == member.strategy and com.business_plan == "Feasible":
@@ -120,7 +113,6 @@ def voting(com, member): #Voting process during meetings
     else:
         member.vote = -1
     com.voting_result = com.voting_result + member.vote
-
 
 
 ##Industry
@@ -138,15 +130,14 @@ class Industry(Agent): #Industry agent propoerties
         self.engaged = "not_engaged" # not engaged/ engaged / RE installation / Grid energy
         self.eng_lvl = 0
         self.id = name 
-        self.i_energy = np.random.choice(energy_demand)  #randomly picks one value from the uniform distribution
+        self.i_energy = np.random.choice(uniform.rvs(size=10000, loc = 20, scale=3000)) #value in KWh from a distribution between 20KWh and 3MWh
         self.motivated_friends = 0
         self.partners = []
         self.period = int(0)
         self.pos = pos
         self.ROI = 0
         self.smallworld = []
-        self.strategy = strategy[random.randrange(0,2)] #0 - Increase energy consumption / 1 - reduce costs
-        #self.strategy = strategy[0] #0 - Increase energy consumption / 1 - reduce costs 
+        self.strategy = strategy[random.randrange(0,2)] 
         self.vote = 0
         self.wealth = 100000000
         self.which_community = 0 
@@ -154,7 +145,7 @@ class Industry(Agent): #Industry agent propoerties
         
 #Industry functions
 #tick actions 
-    def step(self):
+    def step(self): #Action per tick
         self.updateNeighbors()
         self.engagementLevel()
         self.createCommunity()
@@ -163,8 +154,109 @@ class Industry(Agent): #Industry agent propoerties
         
        
     def cbaCalc(self): #Individial CBA calculation
-        #    self.cb = (self.i_energy * energy_cost) / (self.i_energy * RE_energy_cost + RE_Investment_costs)
-        self.CBAi = random.uniform(0.4, 1.2)
+        demand = self.i_energy * 12
+        project = 0
+        if self.strategy == 0: #Strategy 0 - supply new energy demand
+            #Baseline
+            initial_investment = 0
+            bly1 = (demand * gridtariff)/(1+discount_rate)**12
+            bly2 = (demand * gridtariff)/(1+discount_rate)**24
+            bly3 = (demand * gridtariff)/(1+discount_rate)**36
+            bly4 = (demand * gridtariff)/(1+discount_rate)**48
+            bly5 = (demand * gridtariff)/(1+discount_rate)**60
+            
+            NPV_baseline = initial_investment - bly1 - bly2 - bly3 - bly4 - bly5
+            
+            #renewable energy 
+            if financial_investment == "tax-incentive":
+                solar_implement_Costs = solar_implement_Costs * 0.6
+                wind_implement_Costs = wind_implement_Costs * 0.6
+                
+            coef = demand/wind_threshold
+            if coef < 1:
+                wind_energy_s1 = 0
+                wind_tariff_s1 = 0
+                
+                solar_energy_s1 = demand
+                investment_solar_s1 = solar_energy_s1 * solar_implement_Costs
+                solar_tariff_s1 = investment_solar_s1/demand
+                
+                s1y1 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**12
+                s1y2 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**24
+                s1y3 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**36
+                s1y4 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**48
+                s1y5 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**60
+                NPV_investment = investment_solar_s1 - s1y1 - s1y2 - s1y3 - s1y4 - s1y5
+                
+            if coef > 1:
+                wind_energy_s2 = int(demand/wind_threshold)*wind_threshold
+                investment_wind_s2 = wind_energy_s2 * wind_implement_Costs
+                wind_tariff_s2 = investment_wind_s2/wind_energy_s2
+                
+                solar_energy_s2 = demand % wind_threshold
+                investment_solar_s2 = solar_energy_s2 * solar_implement_Costs
+                solar_tariff_s2 = investment_solar_s2/solar_energy_s2
+                
+                s2y1 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**12
+                s2y2 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**24
+                s2y3 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**36
+                s2y4 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**48
+                s2y5 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**60
+                NPV_investment = investment_wind_s2 + investment_solar_s2 - s2y1 - s2y2 - s2y3 - s2y4 - s2y5 - s2y5
+                
+        if self.strategy == 1: #Strategy 1 - profit
+            NPV_baseline = discount_rate
+        
+            if financial_investment == "tax-incentive":
+                solar_implement_Costs = solar_implement_Costs * 0.6
+                wind_implement_Costs = wind_implement_Costs * 0.6
+            
+            coef = demand/wind_threshold
+            #scenario 1
+            if coef < 1:
+                wind_energy_s1 = 0
+                wind_tariff_s1 = 0
+                
+                solar_energy_s1 = demand
+                investment_solar_s1 = solar_energy_s1 * solar_implement_Costs
+                if financial_investment == "feed-in-tariff":
+                    solar_tariff_s1 = 1.1 * gridtariff
+                else:
+                    solar_tariff_s1 = investment_solar_s1/demand
+                
+                s1y1 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**12
+                s1y2 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**24
+                s1y3 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**36
+                s1y4 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**48
+                s1y5 = (wind_energy_s1 * wind_tariff_s1 + solar_energy_s1 * solar_tariff_s1)/(1+discount_rate)**60
+                NPV_investment = investment_solar_s1 - s1y1 - s1y2 - s1y3 - s1y4 - s1y5
+           
+            #scenario2    
+            if coef > 1:
+                wind_energy_s2 = int(demand/wind_threshold)*wind_threshold
+                investment_wind_s2 = wind_energy_s2 * wind_implement_Costs
+                if financial_investment == "feed-in-tariff":
+                    wind_tariff_s2 = 1.1 * gridtariff
+                else:
+                    wind_tariff_s2 = investment_wind_s2/wind_energy_s2
+                
+                solar_energy_s2 = demand % wind_threshold
+                investment_solar_s2 = solar_energy_s2 * solar_implement_Costs
+               
+                if financial_investment == "feed-in-tariff":
+                    solar_tariff_s2 = 1.1 * gridtariff
+                else:
+                    solar_tariff_s2 = investment_solar_s2/solar_energy_s2
+                
+                s2y1 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**12
+                s2y2 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**24
+                s2y3 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**36
+                s2y4 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**48
+                s2y5 = (wind_energy_s2 * wind_tariff_s2 + solar_energy_s2 * solar_tariff_s2)/(1+discount_rate)**60
+                NPV_investment = investment_wind_s2 + investment_solar_s2 - s2y1 - s2y2 - s2y3 - s2y4 - s2y5 - s2y5
+        
+        self.CBAi = NPV_investment / NPV_baseline
+        
         return self.CBAi  
     
     
@@ -339,7 +431,7 @@ class Community(Agent):
  
     
     def technologySelector(self): #technology definition based on energy demand  ##--> adjust demand to already implemented energy
-        coef = self.c_energy/WindThreshold
+        coef = self.c_energy/wind_threshold
         if coef < 1:
             self.technology = "Solar"
             self.solar_energy = self.c_energy
@@ -348,8 +440,8 @@ class Community(Agent):
         if coef > 1:
             if self.strategy == 0:
                 self.technology = "Mixed"
-                self.wind_energy = int(self.c_energy/WindThreshold)*WindThreshold
-                self.solar_energy = self.c_energy % WindThreshold
+                self.wind_energy = int(self.c_energy/wind_threshold)*wind_threshold
+                self.solar_energy = self.c_energy % wind_threshold
             
             if self.strategy == 1:
                 self.technology = "Mixed" 
@@ -357,16 +449,16 @@ class Community(Agent):
                 solar_s1 = self.c_energy
                 pc_s1 = solar_s1 * solarCosts
                 #Scenario 2 = Mixed
-                wind_s2 = int(self.c_energy/WindThreshold)*WindThreshold
-                solar_s2= self.c_energy % WindThreshold
+                wind_s2 = int(self.c_energy/wind_threshold)*wind_threshold
+                solar_s2= self.c_energy % wind_threshold
                 pc_s2 = wind_s2 * windCosts + solar_s2 * solarCosts 
                 pc = max(pc_s1, pc_s2)
                 if pc == pc_s1:
                     self.solar_energy = self.c_energy
                     self.wind_energy = 0
                 if pc == pc_s2:
-                    self.wind_energy = int(self.c_energy/WindThreshold)*WindThreshold
-                    self.solar_energy = self.c_energy % WindThreshold
+                    self.wind_energy = int(self.c_energy/wind_threshold)*wind_threshold
+                    self.solar_energy = self.c_energy % wind_threshold
         
         self.project_cost = (self.wind_energy * windtariff + windCosts) + (self.solar_energy * solartariff + solarCosts)    
 
