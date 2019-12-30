@@ -11,6 +11,7 @@ sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communiti
 import pandas as pd
 import numpy as np
 import statistics
+import random
 from scipy import stats
 import matplotlib.pylab as plt
 from itertools import cycle, islice
@@ -75,8 +76,10 @@ AUS_Decision_style = [x for x in AUSDS if float(x) > 0 and float(x) < 100]
 AUSDR = np.random.normal(loc = AUSDecision_rule_mean, scale = decision_style_std, size=200)
 AUS_Decision_rule = [x for x in AUSDR if float(x) > 0 and float(x) < 100]
 AUS_gridtariff = 0.05773 #usd/kwh 2018 Average National USDAUD = 1.41 - https://www.aer.gov.au/wholesale-markets/wholesale-statistics/annual-volume-weighted-average-spot-prices-regions
-solarCosts = range(800, 2000, 50) # usd/kw 2018 National https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
-windCosts = range(1300, 2000, 50) #usd/kw - 2018 pg35 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+solarCosts = random.uniform(0.8, 2) # usd/kw 2018 National https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+windCosts = random.uniform(1.3, 2) #usd/kw - 2018 pg35 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+AUS_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+AUS_wind_OM = random.uniform(0.02, 0.03) #usd/kwh pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 AUS_discount_rate = 0.07 ## http://www.economia.gov.br/acesso-a-informacao/participacao-social/consultas-publicas/arquivos/TDTaxaSocialdeDesconto.pdf
 
 #Brazil
@@ -87,8 +90,10 @@ BRA_Decision_style = [x for x in BRADS if float(x) > 0 and float(x) < 100]
 BRADR = np.random.normal(loc = BRADecision_rule_mean, scale = decision_style_std, size=200)
 BRA_Decision_rule = [x for x in BRADR if float(x) > 0 and float(x) < 100]
 BRA_gridtariff = 0.06011 # USD/kwh 2019 National average USDBRL = 3.87 (31/12/18 - https://www.bcb.gov.br/conversao) -  http://relatorios.aneel.gov.br/_layouts/xlviewer.aspx?id=/RelatoriosSAS/RelSampRegCC.xlsx&Source=http://relatorios.aneel.gov.br/RelatoriosSAS/Forms/AllItems.aspx&DefaultItemOpen=1
-BRA_solarCosts = range(800, 2000, 50) #2018 usd/kwh National USD https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
-BRA_windCosts = range(1200, 2500, 50) #2018 USD/kWh  National USD/kwh https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+BRA_solarCosts = random.uniform(0.8, 2) #2018 usd/kwh National USD https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+BRA_windCosts = random.uniform(1.2, 2.5) #2018 USD/kWh  National USD/kwh https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+BRA_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+BRA_wind_OM = random.uniform(0.02, 0.03) #usd/kwh pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 BRA_discount_rate = 0.1 #http://www.economia.gov.br/acesso-a-informacao/participacao-social/consultas-publicas/arquivos/TDTaxaSocialdeDesconto.pdf
 
 #Iran
@@ -101,6 +106,8 @@ IRA_Decision_rule = [x for x in IRADR if float(x) > 0 and float(x) < 100]
 IRA_gridtariff = 0.052 #usd/kwh https://www.doingbusiness.org/content/dam/doingBusiness/country/i/iran/IRN.pdf
 IRA_solarCosts = range(800, 1300, 50) #usd/kwh peered from saudi arabia- https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 IRA_windCosts = range (1100, 2100,50) #usd/kw - 2018 pg35 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+IRA_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+IRA_wind_OM = random.uniform(0.02, 0.03) #usd/kwh pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 IRA_discount_rate = 0.058 #https://journalofeconomicstructures.springeropen.com/articles/10.1186/s40008-018-0127-x
 
 #Japan
@@ -113,6 +120,8 @@ JPN_Decision_rule = [x for x in JPNDR if float(x) > 0 and float(x) < 100]
 JPN_gridtariff = 0.1205 #USD/kwh Average https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/834368/table_531.xlsx
 JPN_solarCosts = range(1400, 2100, 50) #usd/kwh 2018 National USD https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 JPN_windCosts = range(1600, 2600, 50) #usd/kwh 2018 pg35  https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+JPN_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+JPN_wind_OM = random.uniform(0.02, 0.03) #usd/kwh pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 JPN_discount_rate = 0.04 #http://press-files.anu.edu.au/downloads/press/p345233/pdf/app04.pdf
 
 #Netherlands
@@ -125,6 +134,8 @@ NLD_Decision_rule = [x for x in NLDDR if float(x) > 0 and float(x) < 100]
 NLD_gridtariff = 0.0754 #usd/kwh Average USDEUR=0.874 - /kwh https://appsso.eurostat.ec.europa.eu/nui/submitViewTableAction.do
 NLD_solarCosts = range(230, 920, 50) # usd/kw USDEUR=0.874 - 2014 http://spinlab.vu.nl/wp-content/uploads/2016/09/Economic_Feasibility_of_roof_top_solar_panels_in_Amsterdam-Michel_Paardekooper.pdf
 NLD_windCosts = range(1000, 3100, 50) #usd/kw USDEUR=0.874 - 2018 pg35 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+NLD_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+NLD_wind_OM = random.uniform(0.02, 0.03) #usd/kwh pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 NLD_discount_rate = 0.03 #http://www.economia.gov.br/acesso-a-informacao/participacao-social/consultas-publicas/arquivos/TDTaxaSocialdeDesconto.pdf
 
 #USA
@@ -138,6 +149,8 @@ USA_gridtariff = 0.0797  # usd/kwh Oct/2019 national https://www.eia.gov/electri
 USA_solarCosts = range(800, 2000, 50) # usd/kw 2018 National https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 USA_windCosts = range(1200, 2500, 50) #usd/kw 2018 National USD/kwh https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 USA_discount_rate = 0.03 ##http://www.economia.gov.br/acesso-a-informacao/participacao-social/consultas-publicas/arquivos/TDTaxaSocialdeDesconto.pdf
+USA_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
+USA_wind_OM = random.uniform(0.02, 0.03) #usd/kwh pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 
 ##Graphs
 #Selected Countries
@@ -202,10 +215,57 @@ plt.show()
 
 
 
+"""
+def country():
+    country.country_selection = "BRA"
 
+country()
+if country.country_selection == "AUS":
+    decision_style = Data.AUSDecision_style_mean #Decision style based on hofstede's insight
+    decision_rule = Data.AUSDecision_rule_mean #Decision rule based on hofstede's insight
+    gridtariff = Data.AUS_gridtariff #Price paid for KWh for energy from the grid
+    solar_implement_Costs = random.choice(Data.AUS_solarCosts) #Cost of installation for solar generation
+    wind_implement_Costs = random.choice(Data.AUS_windCosts) #Cost for installation for wind generation
+    discount_rate = Data.AUS_discount_rate #Applied discount rate for infrastructure or development projects
 
+if country.country_selection == "BRA":
+    decision_style = Data.BRADecision_style_mean 
+    decision_rule = Data.BRADecision_rule_mean
+    gridtariff = Data.BRA_gridtariff
+    solar_implement_Costs = random.choice(Data.BRA_solarCosts)
+    wind_implement_Costs = random.choice(Data.BRA_windCosts)
+    discount_rate = Data.BRA_discount_rate
 
+if country.country_selection == "IRA":
+    decision_style = Data.IRADecision_style_mean
+    decision_rule = Data.IRADecision_rule_mean
+    gridtariff = Data.IRA_gridtariff
+    solar_implement_Costs = random.choice(Data.IRA_solarCosts)
+    wind_implement_Costs = random.choice(Data.IRA_windCosts)
+    discount_rate = Data.IRA_discount_rate
 
+if country.country_selection == "JPN":
+    decision_style = Data.JPNDecision_style_mean
+    decision_rule = Data.JPNDecision_rule_mean
+    gridtariff = Data.JPN_gridtariff
+    solar_implement_Costs = random.choice(Data.JPN_solarCosts)
+    wind_implement_Costs = random.choice(Data.JPN_windCosts)
+    discount_rate = Data.JPN_discount_rate
 
+if country.country_selection == "NLD":
+    decision_style = Data.NLDDecision_style_mean
+    decision_rule = Data.NLDDecision_rule_mean
+    gridtariff = Data.NLD_gridtariff
+    solar_implement_Costs = random.choice(Data.NLD_solarCosts)
+    wind_implement_Costs = random.choice(Data.NLD_windCosts)
+    discount_rate = Data.NLD_discount_rate
 
+if country.country_selection == "USA":
+    decision_style = Data.USADecision_style_mean
+    decision_rule = Data.USADecision_rule_mean
+    gridtariff = Data.USA_gridtariff
+    solar_implement_Costs = random.choice(Data.USA_solarCosts)
+    wind_implement_Costs = random.choice(Data.USA_windCosts)
+    discount_rate = Data.USA_discount_rate
 
+"""
