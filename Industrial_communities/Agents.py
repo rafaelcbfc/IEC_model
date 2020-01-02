@@ -34,7 +34,7 @@ pool_financial_investments = ["feed-in-tariff", "tax-incentive", "tradable-certi
 pool_countries = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]
 
 #General Variables
-financial_investment = "tax-incentive"
+financial_investment = 0 #"tax-incentive"
 country = "BRA"
 discount_rate = Data.BRA_discount_rate
 gridtariff = Data.BRA_gridtariff
@@ -54,87 +54,59 @@ def askforInvestment(com, member): #for project execution ask for investment to 
 
 
 def cbaCalc(me, peer = None): #CBA calculation
-    me.CBAp = 0
+    result = []
     if peer != None:
-        demand = (me.energy + peer.energy) * 12 #yearly
+        annual_demand = (me.energy + peer.energy)
     else:
-        demand = me.energy * 12 #yearly   
-    solar_implement_Costs = Data.BRA_solarCosts
+        annual_demand = me.energy 
+    solar_implement_Costs = Data.BRA_solarCosts  ##!!!###
     wind_implement_Costs = Data.BRA_windCosts
     solar_OM = Data.BRA_solar_OM
     wind_OM = Data.BRA_wind_OM
+    
+    #Tax Incentive
+    if financial_investment == "tax-incentive":
+        solar_implement_Costs = solar_implement_Costs * 0.6
+        wind_implement_Costs = wind_implement_Costs * 0.6
    
-    #baseline
-    NPV_baseline = 0
+    #wind
+    wind_energy = (int(annual_demand/wind_threshold)*wind_threshold)
+    installation_wind = wind_energy / Data.BRA_wind_dist
+    investment_wind = installation_wind * wind_implement_Costs
+    wind_OM = wind_OM * wind_energy
+    
+    #Solar
+    solar_energy = annual_demand % wind_threshold
+    installation_solar = solar_energy / Data.BRA_sunshine
+    investment_solar = installation_solar * solar_implement_Costs
+    
+    try:
+        LCOE_solar =  (investment_solar/(solar_energy * depreciation_period)) 
+    except: 
+        LCOE_solar = 0
+    
+    solar_OM = solar_OM * LCOE_solar * solar_energy
+    
+    #NPV calculation
+    Revenue = annual_demand * gridtariff
+    Costs =  wind_OM + solar_OM + (investment_solar + investment_wind)/depreciation_period
     for i in range(depreciation_period):
-        NPV_baseline = NPV_baseline + ((demand * gridtariff)/(1+discount_rate)**(i*12))
-        
-    #renewable energy 
-    coef = demand/wind_threshold
-    #Scenario 1 = Strategy 0, solar energy
-    if coef < 1:
-        wind_energy_s1 = 0
-        wind_tariff_s1 = 0
-        wind_OM_s1 = 0
-         
-        solar_energy_s1 = demand
-        investment_solar_s1 = solar_energy_s1 * solar_implement_Costs
+        result.append(Revenue - Costs)
     
-        if financial_investment == "tax-incentive":
-            solar_implement_Costs = solar_implement_Costs * 0.6
-            wind_implement_Costs = wind_implement_Costs * 0.6
-   
-        solar_tariff_s1 = investment_solar_s1/(solar_energy_s1 * depreciation_period)
-        solar_OM_s1 = solar_OM * solar_tariff_s1
-        
-        NPV_investment = 0
-        for i in range(depreciation_period):
-            NPV_investment = NPV_investment + ((wind_energy_s1 * (wind_tariff_s1) - wind_OM_s1) + 
-                                             (solar_energy_s1 * (solar_tariff_s1 - solar_OM_s1))) /((1+discount_rate)**(i*12))
-        
-    #Scenario 2 = Strategy 0, mixed energy
-    if coef >= 1:
-        wind_energy_s2 = int(demand/wind_threshold)*wind_threshold
-        investment_wind_s2 = wind_energy_s2 * wind_implement_Costs
-    
-        solar_energy_s2 = demand % wind_threshold
-        investment_solar_s2 = solar_energy_s2 * solar_implement_Costs 
-    
-        if financial_investment == "tax-incentive":
-            solar_implement_Costs = solar_implement_Costs * 0.6
-            wind_implement_Costs = wind_implement_Costs * 0.6
-    
-        wind_tariff_s2 = (investment_wind_s2/(wind_energy_s2 * depreciation_period))
-        try:
-            solar_tariff_s2 =  (investment_solar_s2/(solar_energy_s2 * depreciation_period))
-        except:
-            solar_tariff_s2 = 0
-        wind_OM_s2 = wind_OM * wind_energy_s2
-        solar_OM_s2 = solar_OM * solar_tariff_s2
-    
-        NPV_investment = -(solar_implement_Costs + wind_implement_Costs)
-        for i in range(depreciation_period):
-            NPV_investment = NPV_investment + ((wind_energy_s2 * (wind_tariff_s2) - wind_OM_s2) + 
-                                             (solar_energy_s2 * (solar_tariff_s2 - solar_OM_s2))) /((1+discount_rate)**(i*12))
-    NPV_investment = round(NPV_investment,4)
-    NPV_baseline = round(NPV_baseline,4)         
-    if (NPV_baseline / NPV_investment) > 1:
+    NPV = np.npv(discount_rate, result)
+    if NPV > 0:
         me.CBA = "favorable"
-    elif (NPV_baseline / NPV_investment) < 1 - margin:
+    if NPV <= 0:
         me.CBA = "unfavorable"
-    else:
-        me.CBA = "approximate"
-    #print(NPV_baseline / NPV_investment)
-    return me.CBA
+    return me.CBA      
         
-    
 def voting(com, member): #Voting process during meetings
-    if com.project_margin > discount_rate and com.business_plan == "Feasible":
+    if com.project_margin >= member.ROI and com.business_plan == "Feasible":
         member.vote = 1
     else:
         member.vote = -1
     com.voting_result = com.voting_result + member.vote
-    print(com.voting_result)
+    print(str(com.voting_result) + " " + str(member.ROI))
 
 ##Industry
 class Industry(Agent): #Industry agent propoerties
@@ -146,17 +118,19 @@ class Industry(Agent): #Industry agent propoerties
         self.community_loyalty = 0
         self.decision_style = decision_style
         self.decision_rule = decision_rule
-        self.energy = np.random.choice(uniform.rvs(size=10000, loc = 20, scale=3000)) #value in KWh from a distribution between 20KWh and 6MWh
+        self.energy = np.random.choice(uniform.rvs(size=10000, loc = 200, scale=30000)) #value in KWh from a distribution between 200KWh and 30MWh
         self.energy_evaluation_time = 12
         self.energy_time_check = list(range(0,240,self.energy_evaluation_time))
         self.engaged = "not_engaged" # not engaged/ engaged / RE installation / Grid energy
         self.eng_lvl = 0
         self.id = name 
+        self.invested = 0
         self.motivated_friends = 0
         self.partners = []
         self.period = int(0)
         self.pos = pos
         self.ROI = 0
+        self.rtn = 0
         self.smallworld = []
         self.strategy = random.randrange(0,2) #0 - "energy generation" / 1 - "profit increase"
         self.vote = 0
@@ -197,10 +171,11 @@ class Industry(Agent): #Industry agent propoerties
                     self.eng_lvl = 1
                     self.engaged = "Grid_Energy"
                 elif self.CBA == "favorable":
-                    self.eng_lvl = 3
-                    self.engaged = "RE installation" 
-                elif self.CBA == "approximate":
+                    #self.eng_lvl = 3
+                    #self.engaged = "RE installation" 
+                #elif self.CBA == "approximate":
                     #Check if there is a community to join
+
                         for c in self.c_neighbors:
                             if self.eng_lvl not in [10, 99]:
                                 if c.active == "No":
@@ -215,7 +190,7 @@ class Industry(Agent): #Industry agent propoerties
                                             self.wealth = self.wealth - (c.fee * self.energy)
                                             c.wealth = c.wealth + (c.fee * self.energy)
                                             break
-                        
+
                         #If no communities exists, look for industries
                         for i in self.i_neighbors:
                             if self.eng_lvl not in [1, 10, 99]:
@@ -234,7 +209,6 @@ class Industry(Agent): #Industry agent propoerties
             #pay to enter
             #calculate a ROI
                 
-
             
     def industryNetwork(self): 
         self.smallworld = []    
@@ -252,8 +226,8 @@ class Industry(Agent): #Industry agent propoerties
 
                   
     def retunofInvestment(self): #Return of Investment function used on voting
-        self.ROI = (self.profit -self.investment)/self.investment
-        ## how to deal with dividends
+        self.ROI = (self.rtn -self.investment)/self.investment
+
     
     def updateNeighbors(self): #create a list of neighbors in the Industrial Park
         global c_neighbors, i_neighbors
@@ -301,20 +275,20 @@ class Community(Agent):
          if self.active == "Yes":
             self.communityEnergy()
             self.initialInvestment()
-            self.technologySelector()
+            self.projectSelector()
             self.businessPlan()
             self.meetings()
             self.planExecution()
             self.policyEntrepeneur()
-            self.project_cost = 0
             self.newMemberFee()
+            
+            self.project_cost = 0 #Add this to a function
             self.period = self.period + 1 
          else:
             None
              
     def newMemberFee(self):
-        pass
-        #self.fee = self.invested_capital / self.energy
+        self.fee = self.invested_capital / self.energy
     
     
     def communityEnergy(self): #update every tick the member list
@@ -326,7 +300,7 @@ class Community(Agent):
     
     def initialInvestment(self):#Initial investment by founders
         if self.active == 'Yes' and self.period == 0:
-            self.technologySelector()
+            self.projectSelector()
             self.invested_capital = self.project_cost/len(self.members)  
             for member in self.members:
                 try:
@@ -336,65 +310,52 @@ class Community(Agent):
                 self.wealth = self.wealth + self.invested_capital
     
     
-    def technologySelector(self): #technology definition based on energy demand  ##--> adjust demand to already implemented energy
-        coef = self.energy/wind_threshold
+    def projectSelector(self): #technology definition based on energy demand  ##--> adjust demand to already implemented energy
+        rev = []
+        cos = [] 
+        annual_demand = self.energy 
         solar_implement_Costs = Data.BRA_solarCosts
         wind_implement_Costs = Data.BRA_windCosts
         solar_OM = Data.BRA_solar_OM
-        wind_OM = Data.BRA_solar_OM
-        
+        wind_OM = Data.BRA_wind_OM
         if financial_investment == "tax-incentive":
             solar_implement_Costs = solar_implement_Costs * 0.6
             wind_implement_Costs = wind_implement_Costs * 0.6
-       
-        if coef < 1:
-            self.technology = "Solar"
-            solar_energy = self.energy
-            wind_energy = 0
         
-        if coef > 1:
-            if self.strategy == 0:
-                self.technology = "Mixed"
-                wind_energy = int(self.energy/wind_threshold)*wind_threshold
-                solar_energy = self.energy % wind_threshold
-            
-            if self.strategy == 1:
-                self.technology = "Mixed" 
-                #Scenario 1 = all solar
-                solar_s1 = self.energy
-                pc_s1 = solar_s1 * solar_implement_Costs
-                #Scenario 2 = Mixed
-                wind_s2 = int(self.energy/wind_threshold)*wind_threshold
-                solar_s2= self.energy % wind_threshold
-                pc_s2 = wind_s2 * wind_implement_Costs + solar_s2 * solar_implement_Costs 
-                pc = min(pc_s1, pc_s2)
-                if pc == pc_s1:
-                    wind_energy = 0
-                    solar_energy = self.energy
-                if pc == pc_s2:
-                    wind_energy = int(self.energy/wind_threshold)*wind_threshold
-                    solar_energy = self.energy % wind_threshold
-       
-        investment_wind = wind_energy * wind_implement_Costs
-        investment_solar = solar_energy * solar_implement_Costs 
-        try:
-            self.wind_tariff = (investment_wind/(wind_energy * depreciation_period))
-        except:
-            self.wind_tariff = 0
-        try:
-            self.solar_tariff = (investment_solar/(solar_energy * depreciation_period))
-        except:
-            self.solar_tariff = 0
+        #wind
+        wind_energy = (int(annual_demand/wind_threshold)*wind_threshold)
+        installation_wind = wind_energy / Data.BRA_wind_dist
+        investment_wind = installation_wind * wind_implement_Costs
         wind_OM = wind_OM * wind_energy
-        solar_OM = solar_OM * self.solar_tariff
         
-        project_revenue = 0
+        #Solar
+        solar_energy = annual_demand % wind_threshold
+        installation_solar = solar_energy / Data.BRA_sunshine
+        investment_solar = installation_solar * solar_implement_Costs
+        try:
+            LCOE_solar =  (investment_solar/(solar_energy * depreciation_period)) 
+        except: 
+            LCOE_solar = 0
+        solar_OM = solar_OM * LCOE_solar * solar_energy
+        
+        #margin calculation - strategy 0
+        r = annual_demand * gridtariff
+        c =  wind_OM + solar_OM + (investment_solar + investment_wind)/depreciation_period
+        
         for i in range(depreciation_period):
-            project_revenue = project_revenue + (((wind_energy * self.wind_tariff)) + (solar_energy * (self.solar_tariff))) / ((1+discount_rate)**(i*12))
-        project_revenue = round(project_revenue, 4)
-        self.project_cost = round(investment_wind + investment_solar ,4)
-        self.project_margin = round((project_revenue - self.project_cost) / (100 * project_revenue),4)
-       
+            rev.append(r)
+            cos.append(c)
+        
+        project_revenue = np.npv(discount_rate, rev)
+        self.project_cost = np.npv(discount_rate, cos)
+        self.project_margin = ((project_revenue-self.project_cost)/project_revenue)*100
+    
+        #margin calculation - strategy 1
+        
+        
+        
+        
+        
         print("start com id" + str(self.name) )
         print("wind energy " + str(wind_energy) + " wind tariff " + str(self.wind_tariff) + " wind OM " + str(wind_OM) + " wind inv " + str(investment_wind))
         print("solar energy " + str(solar_energy) + " solar tariff " + str(self.solar_tariff) + " solar OM " + str(solar_OM) + " solar inv " + str(investment_solar))
@@ -402,17 +363,20 @@ class Community(Agent):
         print("project margin " + str(self.project_margin))
         
     def businessPlan(self):
-        if self.project_cost < self.wealth:
-            self.business_plan = "Feasible"
-        if self.project_cost > self.wealth:
+        if self.project_margin < 0:
+            self.business_plan = "Unfeasible" 
+        if self.project_margin > 0:
+            if self.project_cost > self.wealth:
+                self.askRevenue()
+            
+                if self.project_cost < self.wealth:
+                    self.business_plan = "Feasible"
+                else:
+                    self.business_plan = "Unfeasible"   
+       
+        if self.business_plan == "Feasible":  
             self.investment = self.project_cost - self.wealth
-            self.askRevenue()
-            if self.wealth > self.project_cost: #Check if stakeholder investment approved the business plan
-                self.business_plan = "Feasible"
-            else:
-                self.business_plan = "Unfeasible"   
-     
-        
+    
     def askRevenue(self): #Ask for revenue if wealth is below 0
         try:
             self.request = self.investment / len(self.members)
@@ -436,14 +400,16 @@ class Community(Agent):
     def planExecution(self):
         if self.plan_execution == "Approved":
             self.wealth = self.wealth - self.project_cost
-            solar_revenue = self.solar_energy * self.solar_tariff
-            wind_revenue = self.wind_energy * self.wind_tariff
-            self.wealth = self.wealth + solar_revenue + wind_revenue
+            self.revenue = self.solar_energy * self.solar_tariff + self.wind_energy * self.wind_tariff
+            self.wealth = self.wealth + self.revenue
             self.invested_capital = self.invested_capital + self.project_cost
-            print("A")    
+            print("approved")    
         if self.plan_execution == "Rejected":
-            print("B")
-        
+            print("rejected")
+    
+    def rtnFunc(self):
+        for member in self.members:
+            member.rtn = member.rtn + (self.revenue/len(self.members))
     
     def policyEntrepeneur(self): #report to government how each period was compared to the past one
         pass
