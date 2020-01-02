@@ -62,7 +62,7 @@ class Modelrun(Model):
         self.width = width
         self.height = height
         self.G = nx.watts_strogatz_graph(n_industries, 4, 0.2)
-        self.grid = MultiGrid(self.width, self.height, torus=True)
+        self.grid = MultiGrid(self.width, self.height, torus = True)
         self.max_ticks = max_ticks
         self.model_reporters = {'Communities': lambda m: countCommunity(m),
                                 'Active Communities': lambda m: countActive(m),
