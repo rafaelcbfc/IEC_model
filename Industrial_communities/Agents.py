@@ -326,21 +326,24 @@ class Community(Agent):
         wind_energy = (int(annual_demand/wind_threshold)*wind_threshold)
         installation_wind = wind_energy / Data.BRA_wind_dist
         investment_wind = installation_wind * wind_implement_Costs
-        wind_OM = wind_OM * wind_energy
+        OM_wind = wind_OM * wind_energy
         
         #Solar
         solar_energy = annual_demand % wind_threshold
         installation_solar = solar_energy / Data.BRA_sunshine
         investment_solar = installation_solar * solar_implement_Costs
         try:
-            LCOE_solar =  (investment_solar/(solar_energy * depreciation_period)) 
+            solar_tariff =  (investment_solar/(solar_energy * depreciation_period)) 
         except: 
-            LCOE_solar = 0
-        solar_OM = solar_OM * LCOE_solar * solar_energy
+            solar_tariff = 0
+        OM_solar = solar_OM * solar_tariff * solar_energy
+       
+        LCOE_solar = (investment_solar + OM_solar * depreciation_period)/(solar_energy * depreciation_period) 
+        LCOE_wind = (investment_wind + OM_wind * depreciation_period)/(solar_energy * depreciation_period) 
         
         #margin calculation - strategy 0
         r = annual_demand * gridtariff
-        c =  wind_OM + solar_OM + (investment_solar + investment_wind)/depreciation_period
+        c =  OM_wind + OM_solar + (investment_solar + investment_wind)/depreciation_period
         
         for i in range(depreciation_period):
             rev.append(r)
