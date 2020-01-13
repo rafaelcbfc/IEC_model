@@ -75,7 +75,7 @@ AUSDS = np.random.normal(loc = AUSDecision_style_mean, scale = decision_style_st
 AUS_Decision_style = [x for x in AUSDS if float(x) > 0 and float(x) < 100]
 AUSDR = np.random.normal(loc = AUSDecision_rule_mean, scale = decision_style_std, size=200)
 AUS_Decision_rule = [x for x in AUSDR if float(x) > 0 and float(x) < 100]
-AUS_gridtariff = 0.05773 #usd/kwh 2018 Average National USDAUD = 1.41 - https://www.aer.gov.au/wholesale-markets/wholesale-statistics/annual-volume-weighted-average-spot-prices-regions
+AUS_gridtariff = random.uniform(0.0519, 0.0635) #usd/kwh 2018 Average National USDAUD = 1.41 - https://www.aer.gov.au/wholesale-markets/wholesale-statistics/annual-volume-weighted-average-spot-prices-regions
 solarCosts = random.uniform(800, 2000) # usd/kw 2018 National https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 windCosts = random.uniform(1300, 2000) #usd/kw - 2018 pg35 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 AUS_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
@@ -107,7 +107,7 @@ IRADS = np.random.normal(loc = IRADecision_style_mean, scale = decision_style_st
 IRA_Decision_style = [x for x in IRADS if float(x) > 0 and float(x) < 100]
 IRADR = np.random.normal(loc = IRADecision_rule_mean, scale = decision_style_std, size=200)
 IRA_Decision_rule = [x for x in IRADR if float(x) > 0 and float(x) < 100]
-IRA_gridtariff = 0.052 #usd/kwh https://www.doingbusiness.org/content/dam/doingBusiness/country/i/iran/IRN.pdf
+IRA_gridtariff = random.uniform(0.0468, 0.0572) #usd/kwh https://www.doingbusiness.org/content/dam/doingBusiness/country/i/iran/IRN.pdf
 IRA_solarCosts = random.uniform(800, 1300) #usd/kwh peered from saudi arabia- https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 IRA_windCosts = random.uniform(1100, 2100) #usd/kw - 2018 pg35 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 IRA_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
@@ -123,7 +123,7 @@ JPNDS = np.random.normal(loc = AUSDecision_style_mean, scale = decision_style_st
 JPN_Decision_style = [x for x in JPNDS if float(x) > 0 and float(x) < 100]
 JPNDR = np.random.normal(loc = JPNDecision_rule_mean, scale = decision_style_std, size=200)
 JPN_Decision_rule = [x for x in JPNDR if float(x) > 0 and float(x) < 100]
-JPN_gridtariff = 0.1205 #USD/kwh Average https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/834368/table_531.xlsx
+JPN_gridtariff = random.uniform(0.1084, 0.1325) #USD/kwh Average https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/834368/table_531.xlsx
 JPN_solarCosts = random.uniform(1400, 2100) #usd/kwh 2018 National USD https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 JPN_windCosts = random.uniform(1600, 2600) #usd/kwh 2018 pg35  https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 JPN_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
@@ -155,7 +155,7 @@ USADS = np.random.normal(loc = USADecision_style_mean, scale = decision_style_st
 USA_Decision_style = [x for x in USADS if float(x) > 0 and float(x) < 100]
 USADR = np.random.normal(loc = USADecision_rule_mean, scale = decision_style_std, size=200)
 USA_Decision_rule  = [x for x in USADR if float(x) > 0 and float(x) < 100]
-USA_gridtariff = 0.0797  # usd/kwh Oct/2019 national https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_06_a
+USA_gridtariff = random.uniform(0.0717, 0.0876)  # usd/kwh Oct/2019 national https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_06_a
 USA_solarCosts = random.uniform(800, 2000) # usd/kw 2018 National https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 USA_windCosts = random.uniform(1200, 2500) #usd/kw 2018 National USD/kwh https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 USA_solar_OM = random.uniform(0.2, 0.25) #in % pg 82 https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
