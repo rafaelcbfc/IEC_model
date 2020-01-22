@@ -40,7 +40,7 @@ shuffle(geo)
 geo_i = geo[:max_ind_size]
 geo_c = geo[max_ind_size:]
 
-##Model functions
+##Evaluations metrics
 def countIndustry(model):
         n_ind =  sum([1 for a in model.schedule.agents if type(a) == Industry])
         return n_ind
@@ -52,6 +52,15 @@ def countCommunity(model):
 def countActive(model):
         n_act =  sum([1 for a in model.schedule.agents if type(a) == Community and a.active == "Yes"])
         return n_act
+
+def countEntrepeneurrole(model):
+    pass
+
+def communityMembers(model):
+    pass
+
+def solarEnergyProduced(model):
+    pass
     
 ##Model Definitions
 class Modelrun(Model):
