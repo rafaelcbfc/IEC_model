@@ -78,28 +78,32 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     NPV10 = revenue10-costs1
     NPV11 = revenue11-costs1
     
-##Case 2 - All wind
-    wind_energy2 = annual_demand
-    installation_wind2 = wind_energy2 / wind_dist
-    investment_wind2 = installation_wind2 * wind_implement_Costs
-    OM_wind2 = wind_OM * wind_energy2
-    LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
-    
-    r20 = (gridtariff - LCOE_wind2) * wind_energy2 * 1.1 #Sell energy
-    r21 = gridtariff * wind_energy2                      #Produce energy
-    c2 =  OM_wind2
-    
-    for i in range(depreciation_period):
-        rev20.append(r20)
-        rev21.append(r21)
-        cos2.append(c2)
-    
-    revenue20 = np.npv(discount_rate, rev20)
-    revenue21 = np.npv(discount_rate, rev21)
-    costs2 = investment_wind2 + np.npv(discount_rate, cos2)
-    
-    NPV20 = revenue20 - costs2
-    NPV21 = revenue21-costs2
+##Case 2 - All wind 
+    if annual_demand > wind_threshold:
+        wind_energy2 = annual_demand
+        installation_wind2 = wind_energy2 / wind_dist
+        investment_wind2 = installation_wind2 * wind_implement_Costs
+        OM_wind2 = wind_OM * wind_energy2
+        LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
+        
+        r20 = (gridtariff - LCOE_wind2) * wind_energy2 * 1.1 #Sell energy
+        r21 = gridtariff * wind_energy2                      #Produce energy
+        c2 =  OM_wind2
+        
+        for i in range(depreciation_period):
+            rev20.append(r20)
+            rev21.append(r21)
+            cos2.append(c2)
+        
+        revenue20 = np.npv(discount_rate, rev20)
+        revenue21 = np.npv(discount_rate, rev21)
+        costs2 = investment_wind2 + np.npv(discount_rate, cos2)
+        
+        NPV20 = revenue20 - costs2
+        NPV21 = revenue21-costs2
+    else:
+        NPV20 = -10000000
+        NPV21 = -10000000
     
 ##Case 3- Mixed sources
   #wind
@@ -168,7 +172,7 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
            me.cba_lvl = 2 #Producing has a higher NPV than selling
            option = produce.index(max(produce))
         else:
-           me.cba_lvl = 3 #Selling has a higher NPV than selling
+           me.cba_lvl = 3 #Selling has a higher NPV than producing
            option = sell.index(max(sell))
         
         #What is the levelized cost of my option  
@@ -220,27 +224,31 @@ def cbaCalcPeer(me, peer):
     NPVp11 = revenue11-costs1
    
 #Case 2 - All wind
-    wind_energy2 = annual_demand
-    installation_wind2 = wind_energy2 / wind_dist
-    investment_wind2 = installation_wind2 * wind_implement_Costs
-    OM_wind2 = wind_OM * wind_energy2
-    LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
-    
-    r20 = (gridtariff - LCOE_wind2) * wind_energy2 * 1.1 #Sell energy
-    r21 = gridtariff * wind_energy2                      #Produce energy
-    c2 =  OM_wind2
-    
-    for i in range(depreciation_period):
-        rev20.append(r20)
-        rev21.append(r21)
-        cos2.append(c2)
-    
-    revenue20 = np.npv(discount_rate, rev20)
-    revenue21 = np.npv(discount_rate, rev21)
-    costs2 = (0.15 * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
-    
-    NPVp20 = revenue20 - costs2
-    NPVp21 = revenue21-costs2
+    if annual_demand > wind_threshold:
+        wind_energy2 = annual_demand
+        installation_wind2 = wind_energy2 / wind_dist
+        investment_wind2 = installation_wind2 * wind_implement_Costs
+        OM_wind2 = wind_OM * wind_energy2
+        LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
+        
+        r20 = (gridtariff - LCOE_wind2) * wind_energy2 * 1.1 #Sell energy
+        r21 = gridtariff * wind_energy2                      #Produce energy
+        c2 =  OM_wind2
+        
+        for i in range(depreciation_period):
+            rev20.append(r20)
+            rev21.append(r21)
+            cos2.append(c2)
+        
+        revenue20 = np.npv(discount_rate, rev20)
+        revenue21 = np.npv(discount_rate, rev21)
+        costs2 = (0.15 * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
+        
+        NPVp20 = revenue20 - costs2
+        NPVp21 = revenue21-costs2
+    else:
+        NPVp20 = -10000000
+        NPVp21 = -10000000
     
 #Case 3- Mixed sources
   #wind
@@ -352,29 +360,33 @@ def projectSelector(me):
     marginc11 = (revenue11 - costs1)/(revenue11 *100)
    
 #Case 2 - All wind
-    energy2 = annual_demand
-    installation_wind2 = energy2 / wind_dist
-    investment_wind2 = installation_wind2 * wind_implement_Costs
-    OM_wind2 = wind_OM * energy2
-    LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(energy2 * depreciation_period) 
-    
-    r20 = (gridtariff - LCOE_wind2) * energy2 * 1.1 #Sell energy
-    r21 = gridtariff * energy2                      #Produce energy
-    c2 =  OM_wind2
-    
-    for i in range(depreciation_period):
-        rev20.append(r20)
-        rev21.append(r21)
-        cos2.append(c2)
-    
-    revenue20 = np.npv(discount_rate, rev20)
-    revenue21 = np.npv(discount_rate, rev21)
-    costs2 = ((0.3/float(len(me.members))) * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
-    
-    NPVc20 = revenue20 - costs2
-    NPVc21 = revenue21-costs2
-    marginc20 = (revenue20 - costs2)/(revenue20 *100)
-    marginc21 = (revenue21 - costs2)/(revenue21 *100)
+    if annual_demand > wind_threshold:
+        energy2 = annual_demand
+        installation_wind2 = energy2 / wind_dist
+        investment_wind2 = installation_wind2 * wind_implement_Costs
+        OM_wind2 = wind_OM * energy2
+        LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(energy2 * depreciation_period) 
+        
+        r20 = (gridtariff - LCOE_wind2) * energy2 * 1.1 #Sell energy
+        r21 = gridtariff * energy2                      #Produce energy
+        c2 =  OM_wind2
+        
+        for i in range(depreciation_period):
+            rev20.append(r20)
+            rev21.append(r21)
+            cos2.append(c2)
+        
+        revenue20 = np.npv(discount_rate, rev20)
+        revenue21 = np.npv(discount_rate, rev21)
+        costs2 = ((0.3/float(len(me.members))) * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
+        
+        NPVc20 = revenue20 - costs2
+        NPVc21 = revenue21-costs2
+        marginc20 = (revenue20 - costs2)/(revenue20 *100)
+        marginc21 = (revenue21 - costs2)/(revenue21 *100)
+    else:
+        NPVc20 = -10000000
+        NPVc21 = -10000000
     
 #Case 3- Mixed sources
   #wind
