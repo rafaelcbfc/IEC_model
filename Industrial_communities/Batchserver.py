@@ -17,7 +17,7 @@ import pandas as pd
 
 #Run parameters 
 m_step_data = pd.DataFrame()
-n_industries = [40]
+n_industries = [50]
 n_communities = [25]
 total = n_industries + n_communities
 country = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]

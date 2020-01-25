@@ -21,8 +21,8 @@ from scipy.stats import uniform
 #General variables
 park_limit = 15 #Size of the park grid layout (15 x 15 squares)
 gridtariff = Data.gridtariff
-decision_style = Data.Decision_style 
-decision_rule = Data.Decision_rule
+decision_style = Data.decision_style 
+decision_rule = Data.decision_rule
 
 
 ## Interaction functions
@@ -54,16 +54,19 @@ def voting(com, member): #Voting process during meetings
 class Industry(Agent): #Industry agent propoerties
     def __init__(self, name, pos, model):
         super().__init__(name, model)
-        self.CBA = 0
-        self.CBAp = 0
+        self.cba_lvl = 0
+        self.cba_lvlc = 0
+        self.cba_lvlp = 0
         self.community_loyalty = 0
         self.decision_style = random.choice(decision_style)
         self.decision_rule = random.choice(decision_rule)
-        self.energy = np.random.choice(uniform.rvs(size=10000, loc = 200, scale=30000)) #value in KWh from a distribution between 200KWh and 30MWh
+        self.energy = 0
         self.energy_time_check = list(range(0,240,12))
         self.eng_lvl = 0
         self.id = name 
         self.invested = 0
+        self.LCOE = 0
+        self.max_re = 0
         self.motivated_friends = 0
         self.friends = []
         self.period = int(0)
@@ -81,11 +84,10 @@ class Industry(Agent): #Industry agent propoerties
 #tick actions 
     def step(self): #Action per tick
         self.updateNeighbors()
+        self.energyLevel()
         self.engagementLevel()
         self.createCommunity()
-        self.joinCommunity()
-        if self.eng_lvl == 1 or 2:
-            print(" id " + str(self.id) + " eng_lvl " + str(self.CBA))
+        self.leaveCommunity()
         self.period = self.period + 1
        
     
@@ -103,47 +105,45 @@ class Industry(Agent): #Industry agent propoerties
                         f.which_community = com.name
                         com.members.append(f)
         
-    
+
     def engagementLevel(self): #Define engagement level of each industry
-        if self.period in self.energy_time_check:
-            self.energy = np.random.choice(uniform.rvs(size=10000, loc = 200, scale=30000))
-            if self.eng_lvl in [0, 1, 2, 5]:
-                Data.cbaCalc(self)
-                if self.CBA == "unfavorable":
+        if self.period in self.energy_time_check and self.eng_lvl not in [10, 99]:
+            Data.cbaCalc(self)
+            if self.cba_lvl in [1, 2, 3]:
+                if self.cba_lvl == 1:
                     self.eng_lvl = 1
-                elif self.CBA == "favorable":
-                        for c in self.c_neighbors:
+                elif self.cba_lvl in [2,3]:
+                        for c in self.c_neighbors: #Search for a community to join
                             if c.active == "No":
                                 pass
                             if c.active == "Yes":
                                 if c.strategy == self.strategy:
-                                    Data.cbaCalc(self, c)
-                                    if self.CBAp == "favorable":
+                                    Data.cbaCalcCom(self, c)
+                                    if self.cba_lvlc == 1:
                                         self.eng_lvl = 10
                                         self.which_community == c.name
+                                        self.joinCommunity()
                                         break
-                                    else: 
-                                        pass
-
-                        #If no communities exists, look for industries
-                        for i in self.i_neighbors:
-                            if self.eng_lvl not in [1, 10]:
-                                Data.cbaCalc(self, i)
-                                if self.CBA == "unfavorable":
-                                    self.eng_lvl = 2
-                                if self.CBA == "favorable":
+                                    
+                if self.eng_lvl not in [1, 10, 99]:
+                        for i in self.i_neighbors: #If no communities exists, look for industries
+                            Data.cbaCalcPeer(self, i)
+                            if self.cba_lvlp == 1:
+                                    self.eng_lvl = 3
+                            if self.cba_lvlp == 2:
                                     self.eng_lvl = 5
-        else:
-            pass
-    
-
-    def joinCommunity(self):
-            pass
-                #print("3 id2 " + str(self.id) + " eng_lvl " + str(self.eng_lvl) + " com " + str(self.which_community))
-            #pay to enter
+                                    self.strategy = 0
+                            if self.cba_lvlp == 3:
+                                    self.eng_lvl = 5
+                                    self.strategy = 1
+            else:
+                pass
            
-                
-            
+    def energyLevel(self):  #value in KWh from a distribution between 200KWh and 30MWh
+        if self.period in self.energy_time_check:
+            self.energy = np.random.choice(uniform.rvs(size=10000, loc = 200, scale=30000))      
+       
+        
     def industryNetwork(self): #Creates the strong network
         self.smallworld = []    
         neighbors = [agent for agent in self.i_neighbors if type(agent) == Industry]
@@ -158,9 +158,16 @@ class Industry(Agent): #Industry agent propoerties
                 if f.id in self.friends:
                     f.eng_lvl = 99
 
+    
+    def joinCommunity(self):
+            pass
+                #print("3 id2 " + str(self.id) + " eng_lvl " + str(self.eng_lvl) + " com " + str(self.which_community))
+            #pay to enter
+
 
     def leaveCommunity(self):
         pass
+
               
     def retunofInvestment(self): #Return of Investment function used on voting
         if self.rtn == 0: #if received energy
@@ -188,6 +195,8 @@ class Community(Agent):
         self.active = activity
         self.business_plan = 0 
         self.energy = 0
+        self.energy_solar = 0
+        self.energy_wind = 0
         self.dividend_time = list(range(0,240,12))
         self.invested_capital = 0
         self.investment = 0
@@ -196,13 +205,16 @@ class Community(Agent):
         self.period = 0
         self.pos = pos
         self.premium = 0
-        self.project_cost= 0 
+        self.project_cba = 0
+        self.project_cost = 0 
         self.project_margin = 0
+        self.project_tariff = 0
         self.plan_execution = "" 
         self.request = 0
         self.revenue = 0
         self.solar_tariff = 0
         self.strategy = 0
+        self.technology = 0
         self.voting_result = 0
         self.wealth = 0 
         self.wind_tariff = 0
@@ -213,7 +225,7 @@ class Community(Agent):
          if self.active == "Yes":
             self.communityEnergy()
             self.initialInvestment()
-            Data.projectSelector(self)
+            self.projectDefinition()
             self.businessPlan()
             self.meetings()
             self.planExecution()
@@ -248,7 +260,7 @@ class Community(Agent):
     
     def initialInvestment(self):#Initial investment by founders
         if self.active == 'Yes' and self.period == 0:
-            self.projectSelector()
+            Data.projectSelector(self)
             self.invested_capital = self.project_cost/len(self.members)  
             for member in self.members:
                 try:
@@ -286,10 +298,16 @@ class Community(Agent):
             self.plan_execution = "Rejected"
        
         
+    def projectDefinition(self):
+        Data.projectSelector(self)
+        if self.project_cost >= self.wealth:
+            self.askRevenue()
+       
+        
     def planExecution(self):
         if self.plan_execution == "Approved":
             self.wealth = self.wealth - self.project_cost
-            rvn = self.solar_energy * self.solar_tariff + self.wind_energy * self.wind_tariff
+            rvn = self.energy_solar * self.solar_tariff + self.energy_wind * self.wind_tariff
             self.wealth = self.wealth + rvn
             self.invested_capital = self.invested_capital + self.project_cost
             self.revenue =+ rvn
