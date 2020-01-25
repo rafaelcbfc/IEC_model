@@ -43,6 +43,7 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     wind_implement_Costs = Hofstede.BRA_windCosts
     solar_OM = Hofstede.BRA_solar_OM
     wind_OM = Hofstede.BRA_wind_OM
+    treta = 0
     
     rev0, rev10, rev11, rev20, rev21, rev30, rev31, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], [], []
     annual_demand = me.energy
@@ -80,30 +81,29 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     
 ##Case 2 - All wind 
     if annual_demand > wind_threshold:
-        wind_energy2 = annual_demand
-        installation_wind2 = wind_energy2 / wind_dist
-        investment_wind2 = installation_wind2 * wind_implement_Costs
-        OM_wind2 = wind_OM * wind_energy2
-        LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
+        treta = 1
+    wind_energy2 = annual_demand
+    installation_wind2 = wind_energy2 / wind_dist
+    investment_wind2 = installation_wind2 * wind_implement_Costs
+    OM_wind2 = wind_OM * wind_energy2
+    LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
+    
+    r20 = (gridtariff - LCOE_wind2) * wind_energy2 * 1.1 #Sell energy
+    r21 = gridtariff * wind_energy2                      #Produce energy
+    c2 =  OM_wind2
+    
+    for i in range(depreciation_period):
+        rev20.append(r20)
+        rev21.append(r21)
+        cos2.append(c2)
+    
+    revenue20 = np.npv(discount_rate, rev20)
+    revenue21 = np.npv(discount_rate, rev21)
+    costs2 = investment_wind2 + np.npv(discount_rate, cos2)
         
-        r20 = (gridtariff - LCOE_wind2) * wind_energy2 * 1.1 #Sell energy
-        r21 = gridtariff * wind_energy2                      #Produce energy
-        c2 =  OM_wind2
-        
-        for i in range(depreciation_period):
-            rev20.append(r20)
-            rev21.append(r21)
-            cos2.append(c2)
-        
-        revenue20 = np.npv(discount_rate, rev20)
-        revenue21 = np.npv(discount_rate, rev21)
-        costs2 = investment_wind2 + np.npv(discount_rate, cos2)
-        
-        NPV20 = revenue20 - costs2
-        NPV21 = revenue21-costs2
-    else:
-        NPV20 = -10000000
-        NPV21 = -10000000
+    NPV20 = revenue20 - costs2
+    NPV21 = revenue21-costs2
+    
     
 ##Case 3- Mixed sources
   #wind
@@ -147,6 +147,9 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     
 ##Avaliation
   #Variables
+    if treta == 1:
+        NPV20 = -100000
+        NPV21 = -100000
     costs = [costs1, costs2, costs3]
     produce = [NPV11, NPV21, NPV31]
     sell = [NPV10, NPV20, NPV30]
@@ -196,6 +199,7 @@ def cbaCalcPeer(me, peer):
     wind_implement_Costs = Hofstede.BRA_windCosts
     solar_OM = Hofstede.BRA_solar_OM
     wind_OM = Hofstede.BRA_wind_OM
+    treta = 0
     
     rev10, rev11, rev20, rev21, rev30, rev31, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], []
     annual_demand = (me.energy + peer.energy)
@@ -225,30 +229,30 @@ def cbaCalcPeer(me, peer):
    
 #Case 2 - All wind
     if annual_demand > wind_threshold:
-        wind_energy2 = annual_demand
-        installation_wind2 = wind_energy2 / wind_dist
-        investment_wind2 = installation_wind2 * wind_implement_Costs
-        OM_wind2 = wind_OM * wind_energy2
-        LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
+        treta = 1
+    wind_energy2 = annual_demand
+    installation_wind2 = wind_energy2 / wind_dist
+    investment_wind2 = installation_wind2 * wind_implement_Costs
+    OM_wind2 = wind_OM * wind_energy2
+    LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
+    
+    r20 = (gridtariff - LCOE_wind2) * wind_energy2 * 1.1 #Sell energy
+    r21 = gridtariff * wind_energy2                      #Produce energy
+    c2 =  OM_wind2
+    
+    for i in range(depreciation_period):
+        rev20.append(r20)
+        rev21.append(r21)
+        cos2.append(c2)
+     
         
-        r20 = (gridtariff - LCOE_wind2) * wind_energy2 * 1.1 #Sell energy
-        r21 = gridtariff * wind_energy2                      #Produce energy
-        c2 =  OM_wind2
-        
-        for i in range(depreciation_period):
-            rev20.append(r20)
-            rev21.append(r21)
-            cos2.append(c2)
-        
-        revenue20 = np.npv(discount_rate, rev20)
-        revenue21 = np.npv(discount_rate, rev21)
-        costs2 = (0.15 * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
-        
-        NPVp20 = revenue20 - costs2
-        NPVp21 = revenue21-costs2
-    else:
-        NPVp20 = -10000000
-        NPVp21 = -10000000
+    revenue20 = np.npv(discount_rate, rev20)
+    revenue21 = np.npv(discount_rate, rev21)
+    costs2 = (0.15 * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
+    
+    NPVp20 = revenue20 - costs2
+    NPVp21 = revenue21-costs2
+   
     
 #Case 3- Mixed sources
   #wind
@@ -288,6 +292,9 @@ def cbaCalcPeer(me, peer):
     NPVp31 = revenue31-costs3
     
 ##Avaliation
+    if treta == 1:
+       NPVp20 = -100000
+       NPVp21 = -100000
     produce_p = [NPVp11, NPVp21, NPVp31]
     sell_p = [NPVp10, NPVp20, NPVp30]
     
@@ -329,6 +336,7 @@ def projectSelector(me):
     wind_implement_Costs = Hofstede.BRA_windCosts
     solar_OM = Hofstede.BRA_solar_OM
     wind_OM = Hofstede.BRA_wind_OM
+    treta = 0
     
     rev10, rev11, rev20, rev21, rev30, rev31, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], []
     me.project_cost = 0
@@ -361,32 +369,31 @@ def projectSelector(me):
    
 #Case 2 - All wind
     if annual_demand > wind_threshold:
-        energy2 = annual_demand
-        installation_wind2 = energy2 / wind_dist
-        investment_wind2 = installation_wind2 * wind_implement_Costs
-        OM_wind2 = wind_OM * energy2
-        LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(energy2 * depreciation_period) 
-        
-        r20 = (gridtariff - LCOE_wind2) * energy2 * 1.1 #Sell energy
-        r21 = gridtariff * energy2                      #Produce energy
-        c2 =  OM_wind2
-        
-        for i in range(depreciation_period):
-            rev20.append(r20)
-            rev21.append(r21)
-            cos2.append(c2)
-        
-        revenue20 = np.npv(discount_rate, rev20)
-        revenue21 = np.npv(discount_rate, rev21)
-        costs2 = ((0.3/float(len(me.members))) * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
-        
-        NPVc20 = revenue20 - costs2
-        NPVc21 = revenue21-costs2
-        marginc20 = (revenue20 - costs2)/(revenue20 *100)
-        marginc21 = (revenue21 - costs2)/(revenue21 *100)
-    else:
-        NPVc20 = -10000000
-        NPVc21 = -10000000
+        treta = 1
+    energy2 = annual_demand
+    installation_wind2 = energy2 / wind_dist
+    investment_wind2 = installation_wind2 * wind_implement_Costs
+    OM_wind2 = wind_OM * energy2
+    LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(energy2 * depreciation_period) 
+    
+    r20 = (gridtariff - LCOE_wind2) * energy2 * 1.1 #Sell energy
+    r21 = gridtariff * energy2                      #Produce energy
+    c2 =  OM_wind2
+    
+    for i in range(depreciation_period):
+        rev20.append(r20)
+        rev21.append(r21)
+        cos2.append(c2)
+    
+    revenue20 = np.npv(discount_rate, rev20)
+    revenue21 = np.npv(discount_rate, rev21)
+    costs2 = ((0.3/float(len(me.members))) * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
+    
+    NPVc20 = revenue20 - costs2
+    NPVc21 = revenue21-costs2
+    marginc20 = (revenue20 - costs2)/(revenue20 *100)
+    marginc21 = (revenue21 - costs2)/(revenue21 *100)
+    
     
 #Case 3- Mixed sources
   #wind
@@ -430,6 +437,9 @@ def projectSelector(me):
     ratio_wind = energy3_wind / (energy3_wind+energy3_solar)
    
 ##Avaliation
+    if treta == 1:
+        NPVc20 = -1000000
+        NPVc21 = -1000000
     produce_c = [NPVc11, NPVc21, NPVc31]
     sell_c = [NPVc10, NPVc20, NPVc30]
     
