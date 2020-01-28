@@ -84,19 +84,20 @@ class Modelrun(Model):
         self.tick = 0    
         self.network = []
         
+         #Add community       
+        for c in range(self.n_communities):
+            com = Community(c, geo_c[c], "No", self)
+            self.schedule.add(com)
+            self.grid.place_agent(com, geo_c[c])  
+            
+            
         #Add industries        
         for i in range(self.n_industries):
             ind = Industry(i, geo_i[i], self)
             self.schedule.add(ind)
             self.grid.place_agent(ind, geo_i[i])
             self.network.append(ind)
-        
-         #Add community       
-        for c in range(self.n_communities):
-            com = Community(c, geo_c[c], "No", self)
-            self.schedule.add(com)
-            self.grid.place_agent(com, geo_c[c])  
-        
+
         
     def step(self): #what is done each step on the simulation
             self.datacollector.collect(self)

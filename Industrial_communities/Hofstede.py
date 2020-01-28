@@ -60,20 +60,18 @@ dirty_graph_ivr = df["ivr"]
 g_ivr = pd.DataFrame([x for x in dirty_graph_ivr if str(x) != 'nan'])
 m_ivr, s_ivr = stats.norm.fit(g_ivr)  
 
-##Analytics
-decision_style_mean = statistics.mean([m_pdi, m_lto, m_ivr])
+##Analytics - Combination of different dimensions
 decision_style_std = np.sqrt(s_pdi**2 + s_lto**2 + s_ivr**2)
-decision_rule_mean = statistics.mean([m_mas, m_uai, m_idv])
-decision_style_std = np.sqrt(s_mas**2 + s_uai**2 + s_idv**2)
+decision_rule_std = np.sqrt(s_mas**2 + s_uai**2 + s_idv**2)
 
 
 #Data per country
 #Australia
-AUSDecision_style_mean = statistics.mean([float(dt.iloc[0,1]), float(dt.iloc[4,1]), float(dt.iloc[5,1])])
-AUSDecision_rule_mean = statistics.mean([float(dt.iloc[1,1]), float(dt.iloc[2,1]), float(dt.iloc[3,1])])
+AUSDecision_style_mean = statistics.mean([float(dt.iloc[0,0]), float(dt.iloc[4,0]), float(dt.iloc[5,0])]) #PDI, LTO, IVR
+AUSDecision_rule_mean = statistics.mean([float(dt.iloc[1,0]), float(dt.iloc[2,0]), float(dt.iloc[3,0])]) #IDV, MAS, UAI
 AUSDS = np.random.normal(loc = AUSDecision_style_mean, scale = decision_style_std, size=200)
 AUS_Decision_style = [x for x in AUSDS if float(x) > 0 and float(x) < 100]
-AUSDR = np.random.normal(loc = AUSDecision_rule_mean, scale = decision_style_std, size=200)
+AUSDR = np.random.normal(loc = AUSDecision_rule_mean, scale = decision_rule_std, size=200)
 AUS_Decision_rule = [x for x in AUSDR if float(x) > 0 and float(x) < 100]
 AUS_gridtariff = random.uniform(0.0519, 0.0635) #usd/kwh 2018 Average National USDAUD = 1.41 - https://www.aer.gov.au/wholesale-markets/wholesale-statistics/annual-volume-weighted-average-spot-prices-regions
 solarCosts = random.uniform(800, 2000) # usd/kw 2018 National https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
@@ -85,11 +83,11 @@ AUS_sunshine = 2270.2 #Sydney - Mean Annual hours of sunshine http://data.un.org
 AUS_wind_dist = 2525.8 #Sydney - Hours of high/medium wind speed http://windfinder.com 
 
 #Brazil
-BRADecision_style_mean = statistics.mean([float(dt.iloc[0,2]), float(dt.iloc[4,2]), float(dt.iloc[5,2])])
-BRADecision_rule_mean = statistics.mean([float(dt.iloc[1,2]), float(dt.iloc[2,2]), float(dt.iloc[3,2])])
+BRADecision_style_mean = statistics.mean([float(dt.iloc[0,1]), float(dt.iloc[4,1]), float(dt.iloc[5,1])]) #PDI, LTO, IVR
+BRADecision_rule_mean = statistics.mean([float(dt.iloc[1,1]), float(dt.iloc[2,1]), float(dt.iloc[3,1])]) #PDI, LTO, IVR
 BRADS = np.random.normal(loc = BRADecision_style_mean, scale = decision_style_std, size=200)
 BRA_Decision_style = [x for x in BRADS if float(x) > 0 and float(x) < 100]
-BRADR = np.random.normal(loc = BRADecision_rule_mean, scale = decision_style_std, size=200)
+BRADR = np.random.normal(loc = BRADecision_rule_mean, scale = decision_rule_std, size=200)
 BRA_Decision_rule = [x for x in BRADR if float(x) > 0 and float(x) < 100]
 BRA_gridtariff = random.uniform(0.09612, 0.11748) # USD/kwh 2019 SP state average USDBRL = 3.87 (31/12/18 - https://www.bcb.gov.br/conversao) - https://www.aneel.gov.br/dados/tarifas
 BRA_solarCosts = random.uniform(800, 2000) #2018 usd/kwh National USD https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
@@ -101,11 +99,11 @@ BRA_sunshine = 1732.7 #São Paulo - Mean Annual hours of sunshine http://data.un
 BRA_wind_dist = 1673.16 #São Paulo - Hours of high/medium wind speed http://windfinder.com 
 
 #Iran
-IRADecision_style_mean = statistics.mean([float(dt.iloc[0,2]), float(dt.iloc[4,2]), float(dt.iloc[5,2])])
-IRADecision_rule_mean = statistics.mean([float(dt.iloc[1,2]), float(dt.iloc[2,2]), float(dt.iloc[3,2])])
+IRADecision_style_mean = statistics.mean([float(dt.iloc[0,2]), float(dt.iloc[4,2]), float(dt.iloc[5,2])]) #PDI, LTO, IVR
+IRADecision_rule_mean = statistics.mean([float(dt.iloc[1,2]), float(dt.iloc[2,2]), float(dt.iloc[3,2])]) #PDI, LTO, IVR
 IRADS = np.random.normal(loc = IRADecision_style_mean, scale = decision_style_std, size=200)
 IRA_Decision_style = [x for x in IRADS if float(x) > 0 and float(x) < 100]
-IRADR = np.random.normal(loc = IRADecision_rule_mean, scale = decision_style_std, size=200)
+IRADR = np.random.normal(loc = IRADecision_rule_mean, scale = decision_rule_std, size=200)
 IRA_Decision_rule = [x for x in IRADR if float(x) > 0 and float(x) < 100]
 IRA_gridtariff = random.uniform(0.0468, 0.0572) #usd/kwh https://www.doingbusiness.org/content/dam/doingBusiness/country/i/iran/IRN.pdf
 IRA_solarCosts = random.uniform(800, 1300) #usd/kwh peered from saudi arabia- https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
@@ -117,11 +115,11 @@ IRA_sunshine = 2951.8 #Arak - Mean Annual hours of sunshine http://data.un.org/D
 IRA_wind_dist = 2760.86 #Arak - Hours of high/medium wind speed http://windfinder.com
 
 #Japan
-JPNDecision_style_mean = statistics.mean([float(dt.iloc[0,3]), float(dt.iloc[4,3]), float(dt.iloc[5,3])])
-JPNDecision_rule_mean = statistics.mean([float(dt.iloc[1,3]), float(dt.iloc[2,3]), float(dt.iloc[3,3])])
+JPNDecision_style_mean = statistics.mean([float(dt.iloc[0,3]), float(dt.iloc[4,3]), float(dt.iloc[5,3])]) #PDI, LTO, IVR
+JPNDecision_rule_mean = statistics.mean([float(dt.iloc[1,3]), float(dt.iloc[2,3]), float(dt.iloc[3,3])]) #PDI, LTO, IVR
 JPNDS = np.random.normal(loc = AUSDecision_style_mean, scale = decision_style_std, size=200)
 JPN_Decision_style = [x for x in JPNDS if float(x) > 0 and float(x) < 100]
-JPNDR = np.random.normal(loc = JPNDecision_rule_mean, scale = decision_style_std, size=200)
+JPNDR = np.random.normal(loc = JPNDecision_rule_mean, scale = decision_rule_std, size=200)
 JPN_Decision_rule = [x for x in JPNDR if float(x) > 0 and float(x) < 100]
 JPN_gridtariff = random.uniform(0.1084, 0.1325) #USD/kwh Average https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/834368/table_531.xlsx
 JPN_solarCosts = random.uniform(1400, 2100) #usd/kwh 2018 National USD https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
@@ -133,11 +131,11 @@ JPN_sunshine = 1773.29 #Kyoto - Mean Annual hours of sunshine http://data.un.org
 JPN_wind_dist = 979.66 #Kyoto - Hours of high/medium wind speed http://windfinder.com
 
 #Netherlands
-NLDDecision_style_mean = statistics.mean([float(dt.iloc[0,3]), float(dt.iloc[4,3]), float(dt.iloc[5,3])])
-NLDDecision_rule_mean = statistics.mean([float(dt.iloc[1,3]), float(dt.iloc[2,3]), float(dt.iloc[3,3])])
+NLDDecision_style_mean = statistics.mean([float(dt.iloc[0,4]), float(dt.iloc[4,4]), float(dt.iloc[5,4])]) #PDI, LTO, IVR
+NLDDecision_rule_mean = statistics.mean([float(dt.iloc[1,4]), float(dt.iloc[2,4]), float(dt.iloc[3,4])]) #PDI, LTO, IVR
 NLDDS = np.random.normal(loc = NLDDecision_style_mean, scale = decision_style_std, size=200)
 NLD_Decision_style = [x for x in NLDDS if float(x) > 0 and float(x) < 100]
-NLDDR = np.random.normal(loc = NLDDecision_rule_mean, scale = decision_style_std, size=200)
+NLDDR = np.random.normal(loc = NLDDecision_rule_mean, scale = decision_rule_std, size=200)
 NLD_Decision_rule = [x for x in NLDDR if float(x) > 0 and float(x) < 100]
 NLD_gridtariff = random.uniform(0.06786, 0.08294) #usd/kwh Average USDEUR=0.874 - /kwh https://appsso.eurostat.ec.europa.eu/nui/submitViewTableAction.do
 NLD_solarCosts = random.uniform(900, 3490) # usd/kw USDEUR=0.874 - 2014  page 3 http://spinlab.vu.nl/wp-content/uploads/2016/09/Economic_Feasibility_of_roof_top_solar_panels_in_Amsterdam-Michel_Paardekooper.pdf
@@ -149,11 +147,11 @@ NLD_sunshine = 1542.3  #Rotterdam - Mean Annual hours of sunshine http://data.un
 NLD_wind_dist = 3749.28 #Rotterdam - Hours of high/medium wind speed http://windfinder.com
 
 #USA
-USADecision_style_mean = statistics.mean([float(dt.iloc[0,3]), float(dt.iloc[4,3]), float(dt.iloc[5,3])])
-USADecision_rule_mean = statistics.mean([float(dt.iloc[1,3]), float(dt.iloc[2,3]), float(dt.iloc[3,3])])
+USADecision_style_mean = statistics.mean([float(dt.iloc[0,5]), float(dt.iloc[4,5]), float(dt.iloc[5,5])]) #PDI, LTO, IVR
+USADecision_rule_mean = statistics.mean([float(dt.iloc[1,5]), float(dt.iloc[2,5]), float(dt.iloc[3,5])]) #PDI, LTO, IVR
 USADS = np.random.normal(loc = USADecision_style_mean, scale = decision_style_std, size=200)
 USA_Decision_style = [x for x in USADS if float(x) > 0 and float(x) < 100]
-USADR = np.random.normal(loc = USADecision_rule_mean, scale = decision_style_std, size=200)
+USADR = np.random.normal(loc = USADecision_rule_mean, scale = decision_rule_std, size=200)
 USA_Decision_rule  = [x for x in USADR if float(x) > 0 and float(x) < 100]
 USA_gridtariff = random.uniform(0.0717, 0.0876)  # usd/kwh Oct/2019 national https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_06_a
 USA_solarCosts = random.uniform(800, 2000) # usd/kw 2018 National https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
