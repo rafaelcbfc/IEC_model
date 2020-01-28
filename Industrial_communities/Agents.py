@@ -45,8 +45,7 @@ def voting(com, member): #Voting process during meetings
     elif com.strategy == 1:
         if com.project_margin >= member.expected_return and com.business_plan == "Feasible":
             member.vote = 1
-        else:
-            member.vote = 0
+        else: member.vote = 0
     
     com.voting_result +=  member.vote
     member.community_vote = com.voting_result / len(com.members)   
@@ -80,6 +79,7 @@ class Industry(Agent): #Industry agent propoerties
         self.energy_rtn = 0
         self.smallworld = []
         self.strategy = random.randrange(0,2) #0 - "energy generation" / 1 - "profit increase"
+        self.threshold = 12
         self.vote = 0
         self.which_community = 0 
         
@@ -190,25 +190,44 @@ class Industry(Agent): #Industry agent propoerties
         else: 
             pass
  
-    def decisionStyle(self):
+    def decisionStyle(self): #community voted how I believe?
         ratio = self.community_vote
         if self.decision_style <= 33: #Unanimity
-
             if ratio >=0.8:
                 self.loyalty += 1
-        elif self.decision_style > 33 and self.decision_style <= 66:
-            hofstede = "majority"
+            if ratio <= 0.3:
+                self.loyalty += -1
+        elif self.decision_style > 33 and self.decision_style <= 66: #Majority
             if ratio >= 0.5:
                 self.loyalty += 1
-        elif self.decision_style > 66:
-            hofstede = "hierarchy"
-            if ratio < 0.5:
+            if self.ratio < 0.5:
                 self.loyalty += -1
-        
-    
+        elif self.decision_style > 66:#Hierarchy
+            if ratio < 0.5:
+                self.loyalty += 1
+            if ratio > 0.5:
+                self.ratio += -1
+            
+    def decisionRule(self): #Was my option chosen?
+        if self.decision_rule <= 33: #confrontation
+            if self.vote == 1 and self.community_vote > 0: 
+                self.loyalty += 1
+            else:
+                self.loyalty += -1
+        if self.decision_rule > 33 and self.decision_rule <=66: #bargaining
+            self.threshold = 24 #longer slack for tolerance
+            if self.vote == 1 and self.community_vote > 0: 
+                self.loyalty += 1
+            else:
+                self.loyalty += -1
+        if self.decision_rule > 66:
+            if self.vote ==1 and self.community_vote > 0:
+                self.loyalty += 1
+            else:
+                self.loyalty += 0
 
     def leaveCommunity(self): #leaving the community ---> Add decision style here
-            if self.loyalty >= 12:
+            if self.loyalty >= self.threshold:
                 if self.ROI < 0.1:# -----> To be defined
                     self.which_community = 0
 
@@ -413,7 +432,6 @@ class Community(Agent):
          for member in self.members:
             member.energy = 0
             member.LCOE = 0
-            member.vote = 0
             member.delta = 0         
         
         
