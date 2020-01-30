@@ -175,11 +175,11 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     count = 0
     for cost in costs:
         if Baseline_cost >= cost: #Grid energy expensier
-           count += 1
+           count = count + 1
         if max(produce) >= 0: #at least one positive NPV for producing
-            count += 1
+            count = count + 1
         if max(sell) >= 0: #at least one positive NPV for selling
-            count += 1
+            count = count + 1
     
     if count == 0:
         me.cba_lvl = 1 #Grid energy is cheaper than RE and no positive NPV
@@ -323,11 +323,11 @@ def cbaCalcPeer(me, peer):
     count2 = 0 
     max_npvp = max(produce_p + sell_p)
     if max_npvp <= 0: #Negative NPV
-        count2 += 1
+        count2 = count2 + 1
     if me.max_re > max_npvp: #Producing individually is cheaper
-        count2 += 1
+        count2 = count2 + 1
     if peer.max_re > max_npvp: #Producing individually is cheaper
-        count2 += 1
+        count2 = count2 + 1
     
     if count2 > 0:
         me.cba_lvlp == 1 #producing individually is cheper than in group
@@ -485,8 +485,10 @@ def projectSelector(me):
     NPVc31 = revenue31-costs3
     marginc30 = (revenue30 - costs3)/(revenue30 *100)
     marginc31 = (revenue31 - costs3)/(revenue31 *100)
-    ratio_solar = energy3_solar/(energy3_wind+energy3_solar)
-    ratio_wind = energy3_wind / (energy3_wind+energy3_solar)
+    try:
+        ratio_solar = energy3_solar/(energy3_wind+energy3_solar)
+        ratio_wind = energy3_wind / (energy3_wind+energy3_solar)
+    except: None
     
     if g3 != r30:
         fit3 = np.npv(discount_rate, rg3)
@@ -508,7 +510,7 @@ def projectSelector(me):
     count2 = 0 
     max_npvc = max(produce_c + sell_c)
     if max_npvc <= 0: #Negative NPV
-        count2 += 1
+        count2 = count2 + 1
     
     if count2 > 0:
         project_cba == 1 #producing individually is cheper than in group

@@ -24,13 +24,8 @@ import networkx as nx
 width = 15
 height = 15
 max_ind_size = 100
-max_com_size = 100
 total = width * height
  
-#Country
-def country_select():
-    selection = Model.Modelrun.country 
-    return selection
 
 #Industrial Park geo-location
 x = [i for i in range(width)]
@@ -42,23 +37,23 @@ geo_c = geo[max_ind_size:]
 
 ##Evaluations metrics
 def countIndustry(model):
-        n_ind =  sum([1 for a in model.schedule.agents if type(a) == Industry])
-        return n_ind
+        n_ind =  [a for a in model.schedule.agents if type(a) == Industry]
+        return len(n_ind)
 
 def countCommunity(model):
-        n_com =  sum([1 for a in model.schedule.agents if type(a) == Community and a.active == "No"])
-        return n_com
+        n_com =  [b for b in model.schedule.agents if type(b) == Community]
+        return len(n_com)
     
 def countActive(model):
-        n_act =  sum([1 for a in model.schedule.agents if type(a) == Community and a.active == "Yes"])
-        return n_act
+        n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
+        return len(n_act)
 
 def countEntrepeneurrole(model):
     pass
 
 def communityMembers(model):
-    n_members = sum([a.members for a in model.schedule.agents if type(a) == Community])
-    return n_members
+    n_members = [d.members for d in model.schedule.agents if type(d) == Community]
+    return len(n_members)
 
 def solarEnergyProduced(model):
     pass
@@ -72,12 +67,12 @@ class Modelrun(Model):
         self.height = height
         self.G = nx.watts_strogatz_graph(n_industries, 4, 0.2)
         self.grid = MultiGrid(self.width, self.height, torus = True)
-        self.max_ticks = max_ticks
-        self.model_reporters = {'Communities': lambda m: countCommunity(m),
-                                'Active Communities': lambda m: countActive(m),
-                                'Industries': lambda m: countIndustry(m),
-                                'Total Members': lambda m:communityMembers(m)} 
-        self.datacollector = DataCollector(model_reporters = self.model_reporters)
+        self.max_ticks = max_ticks        
+        self.datacollector = DataCollector(model_reporters={
+                                           "Communities": countCommunity,
+                                           #"ActiveCommunities": countActive,
+                                           "Industries": countIndustry})
+        
         self.n_industries = n_industries
         self.n_communities = n_communities
         self.running = True
@@ -85,12 +80,6 @@ class Modelrun(Model):
         self.tick = 0    
         self.network = []
         
-         #Add community       
-        for c in range(self.n_communities):
-            com = Community(c, geo_c[c], "No", self)
-            self.schedule.add(com)
-            self.grid.place_agent(com, geo_c[c])  
-            
             
         #Add industries        
         for i in range(self.n_industries):
@@ -98,6 +87,12 @@ class Modelrun(Model):
             self.schedule.add(ind)
             self.grid.place_agent(ind, geo_i[i])
             self.network.append(ind)
+        
+        #Add community       
+        for c in range(self.n_communities):
+            com = Community(c, geo_c[c], 0, self)
+            self.schedule.add(com)
+            self.grid.place_agent(com, geo_c[c])  
 
         
     def step(self): #what is done each step on the simulation
