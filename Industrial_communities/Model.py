@@ -64,9 +64,8 @@ def solarEnergyProduced(model):
     
 ##Model Definitions
 class Modelrun(Model):
-    def __init__(self, n_industries, n_communities, country = "BRA", max_ticks = 240):
+    def __init__(self, n_communities, n_industries, country = "BRA", max_ticks = 240):
         super().__init__()
-        self.total = n_industries + n_communities
         self.country = country
         self.width = width
         self.height = height

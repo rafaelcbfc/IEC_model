@@ -29,14 +29,10 @@ def askforInvestment(com, member): #for project execution ask for investment to 
     com.wealth += com.request
     member.invested += com.request
     member.loyalty -= 1
-  
-def joinCommunity(industry, community): #Pay to enter the community  
-       payment = industry.energy * community.premium
-       industry.invested += payment
-       community.wealth += payment
  
        
 def voting(com, member): #Voting process during meetings
+    com.voting_result = 0
     if com.strategy == 0:
         if com.project_tariff < gridtariff and com.business_plan == "Feasible":
             member.vote = 1
@@ -59,6 +55,7 @@ class Industry(Agent): #Industry agent propoerties
         self.cba_lvl = 0
         self.cba_lvlc = 0
         self.cba_lvlp = 0
+        self.com_premium = 0
         self.community_vote = 0
         self.decision_style = random.choice(decision_style)
         self.decision_rule = random.choice(decision_rule)
@@ -71,6 +68,7 @@ class Industry(Agent): #Industry agent propoerties
         self.invested = 0
         self.LCOE = 0
         self.loyalty = 0
+        self.max_re = 0
         self.payment = 0
         self.period = 0
         self.pos = pos
@@ -82,10 +80,13 @@ class Industry(Agent): #Industry agent propoerties
         self.threshold = 12
         self.vote = 0
         self.which_community = 0 
+       
         
 #Industry functions
 #tick actions 
     def step(self): #Action per tick
+        self.energy = 0
+        self.LCOE = 0
         self.updateNeighbors()
         self.energyLevel()
         self.engagementLevel()
@@ -94,8 +95,8 @@ class Industry(Agent): #Industry agent propoerties
         self.leaveCommunity()
         self.period = self.period + 1
         #print("ID " + str(self.id) + ' style ' + str(self.decision_style) + ' rule ' + str(self.decision_rule))
-        print("ID " + str(self.id) + ' cba_lvl ' + str(self.cba_lvl) + ' cba_lvlp ' + str(self.cba_lvlp) + ' cba_lvlc ' + str(self.cba_lvlc) + ' eng_lvl ' + str(self.eng_lvl))
-        print("ID " + str(self.id) +  ' LCOE ' + str(self.LCOE))
+        #print("ID " + str(self.id) + ' cba_lvl ' + str(self.cba_lvl) + ' cba_lvlp ' + str(self.cba_lvlp) + ' cba_lvlc ' + str(self.cba_lvlc) + ' eng_lvl ' + str(self.eng_lvl))
+        #print("ID " + str(self.id) +  ' LCOE ' + str(self.LCOE) + ' com ' + str(self.which_community))
         
  
     def updateNeighbors(self): #create a list of nglobal c_neighbors, i_neighbors
@@ -103,68 +104,64 @@ class Industry(Agent): #Industry agent propoerties
         self.neighbors = self.model.grid.get_cell_list_contents(self.neighborhood)
         self.c_neighbors = [x for x in self.neighbors if type(x) is Community]
         self.i_neighbors = [x for x in self.neighbors if type(x) is Industry]      
-    
+        
     
     def energyLevel(self):  #value in KWh from a distribution between 200KWh and 30MWh
         if self.period in self.energy_time_check:
             self.energy = np.random.choice(uniform.rvs(size=10000, loc = 200, scale=30000))     
-    
+
     
     def engagementLevel(self): #Define engagement level of each industry
-        if self.period in self.energy_time_check and self.eng_lvl not in [5, 10, 99]:
+        if self.period in self.energy_time_check and self.eng_lvl not in [5, 10, 98, 99]:
                 Data.cbaCalc(self)
                 if self.cba_lvl in [1, 2, 3]:
                     if self.cba_lvl == 1:
                         self.eng_lvl = 1
-                    elif self.cba_lvl in [2,3]:
+                    if self.cba_lvl in [2,3]:
                             for community in self.c_neighbors: #Search for a community to join
-                                if community.active == "No":
-                                    pass
-                                elif community.active == "Yes":
+                                if community.active == "Yes":
                                     Data.cbaCalcCom(self, community)
                                     if self.cba_lvlc == 1:
                                         self.eng_lvl = 10
-                                        self.which_community == community.name
+                                        self.which_community = community.name
                                         community.members.append(self)
-                                        joinCommunity(self, community)
+                                        self.joinCommunity()
                                         break
-                                    if self.cba_lvlc == 0:
-                                        pass
-                                        
-                    elif self.eng_lvl not in [1, 10, 99]:
+                                    
+                    if self.eng_lvl not in [1, 10, 98, 99]:
                             for neighbor in self.i_neighbors: #If no communities exists, look for industries
                                 Data.cbaCalcPeer(self, neighbor)
                                 if self.cba_lvlp == 1:
                                         self.eng_lvl = 2
-                                elif self.cba_lvlp == 2:
+                                if self.cba_lvlp == 2:
                                         self.eng_lvl = 5
                                         neighbor.eng_lvl = 5
                                         self.strategy = 0
                                         neighbor.strategy = 0
                                         break
-                                elif self.cba_lvlp == 3:
+                                if self.cba_lvlp == 3:
                                         self.eng_lvl = 5
                                         neighbor.eng_lvl = 5
                                         self.strategy = 1
                                         neighbor.strategy = 1
                                         break
         else:
-            pass 
-
+            pass
+        
             
     def createCommunity(self): #create a community
         if self.period in self.energy_time_check and self.eng_lvl == 5:
             self.industryNetwork()
             if self.eng_lvl == 99 and self.which_community == 0: 
-                for com in [x for x in self.c_neighbors if x.active == "No"]: break
-                self.which_community = com.name
-                com.members.append(self)
-                com.strategy = self.strategy
-                com.active = "Yes"
+                for community in [x for x in self.c_neighbors if x.active == "No"]: break
+                self.which_community = community.name
+                community.members.append(self)
+                community.strategy = self.strategy
+                community.active = "Yes"
                 for f in self.smallworld:
-                    if f.id in self.friends:
-                        f.which_community = com.name
-                        com.members.append(f)
+                    if f.eng_lvl == 98:
+                       f.which_community = community.name
+                       community.members.append(f)
     
                
     def industryNetwork(self): #Creates the strong network
@@ -181,15 +178,29 @@ class Industry(Agent): #Industry agent propoerties
             self.eng_lvl = 99
             for f in self.smallworld:
                 if f.id in self.friends:
-                    f.eng_lvl = 99
+                    f.eng_lvl = 98
     
+        
+    def joinCommunity(self):
+        print('id ' + str(self.id) + ' invested ' + str(self.invested))
+        if self.invested == 0 or self.com_premium == 0:
+            self.invested = self.energy * gridtariff
+        else:
+            self.invested += self.energy + self.com_premium
+        print('ID ' + str(self.id) +  ' invested ' + str(self.invested))
+        
               
     def returnofInvestment(self): #Return of Investment function used on voting
+        
         if self.which_community != 0:
-            self.ROI = self.retrn / self.invested      
-        else: 
-            pass
+            print('ID ' + str(self.id) + ' com ' + str(self.which_community) + ' premium ' + str(self.com_premium))
+            if self.com_premium == 0: pass
+            else: self.ROI = self.retrn / self.invested 
+            print('ROI ' + str(self.ROI))
+           
+        else: pass
  
+    
     def decisionStyle(self): #community voted how I believe?
         ratio = self.community_vote
         if self.decision_style <= 33: #Unanimity
@@ -200,14 +211,15 @@ class Industry(Agent): #Industry agent propoerties
         elif self.decision_style > 33 and self.decision_style <= 66: #Majority
             if ratio >= 0.5:
                 self.loyalty += 1
-            if self.ratio < 0.5:
+            if ratio < 0.5:
                 self.loyalty += -1
         elif self.decision_style > 66:#Hierarchy
             if ratio < 0.5:
                 self.loyalty += 1
             if ratio > 0.5:
-                self.ratio += -1
-            
+                self.loyalty += -1
+     
+        
     def decisionRule(self): #Was my option chosen?
         if self.decision_rule <= 33: #confrontation
             if self.vote == 1 and self.community_vote > 0: 
@@ -226,8 +238,11 @@ class Industry(Agent): #Industry agent propoerties
             else:
                 self.loyalty += 0
 
+
     def leaveCommunity(self): #leaving the community ---> Add decision style here
-            if self.loyalty >= self.threshold:
+        self.decisionStyle()
+        self.decisionRule()
+        if self.loyalty >= self.threshold:
                 if self.ROI < 0.1:# -----> To be defined
                     self.which_community = 0
 
@@ -238,7 +253,6 @@ class Community(Agent):
         self.active = activity
         self.business_plan = 0 
         self.costs = 0
-        self.dividend = 0
         self.energy = 0
         self.energy_solar = 0
         self.energy_wind = 0
@@ -275,6 +289,10 @@ class Community(Agent):
         
 #Community functions   
     def step(self):
+        self.energy = 0
+        self.plan_execution = 0
+        self.request = 0
+        self.sale = 0
         if self.active == 'Yes':
            self.energyDemand()
            self.initialInvestment()
@@ -284,7 +302,6 @@ class Community(Agent):
            self.policyEntrepeneur()
            self.newMemberFee()
            self.rtnFunc()
-           self.clearValues()
            self.period = self.period + 1 
         
         if self.active == 'No':
@@ -304,7 +321,7 @@ class Community(Agent):
     def initialInvestment(self):#Initial investment by founders
         if self.active == 'Yes' and self.period == 0:
             Data.projectSelector(self)
-            invested_capital = (self.project_cost * 1.2)/len(self.members)  
+            invested_capital = (self.project_cost * 1.2)/len(self.members) 
             self.wealth += invested_capital * len(self.members)
             for member in self.members:
                 member.invested = invested_capital
@@ -384,6 +401,8 @@ class Community(Agent):
             LCOE_solar = 0
         
         self.premium = (LCOE_solar * ratios) + (LCOE_wind * ratiow) 
+        for member in self.members:
+            member.com_premium = self.premium
         
     
     def rtnFunc(self): #Financial return if strategy = 1
@@ -412,28 +431,7 @@ class Community(Agent):
             elif self.revenue/self.costs <= 1:
                 self.policy_entrepreneur += -1
             
-            
-    def clearValues(self):
-         self.business_plan = 0
-         self.dividend = 0
-         self.energy = 0
-         self.energy_solar = 0
-         self.energy_wind = 0
-         self.incentive_fit = 0
-         self.incentive_tax = 0
-         self.investment = 0
-         self.plan_execution = 0
-         self.project_cost = 0 
-         self.project_tariff = 0
-         self.project_margin = 0
-         self.request = 0
-         self.sale = 0
-         self.voting_result = 0
-         for member in self.members:
-            member.energy = 0
-            member.LCOE = 0
-            member.delta = 0         
-        
+
         
         
         

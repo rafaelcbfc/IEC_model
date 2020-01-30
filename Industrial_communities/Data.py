@@ -163,7 +163,7 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     costs = [costs1, costs2, costs3]
     produce = [NPV11, NPV21, NPV31]
     sell = [NPV10, NPV20, NPV30]
-    
+    me.max_re = max(produce + sell)
   #1st evaluation => is grid energy more expensive than construct RE?
     count = 0
     for cost in costs:
@@ -311,6 +311,7 @@ def cbaCalcPeer(me, peer):
     produce_p = [NPVp11, NPVp21, NPVp31]
     sell_p = [NPVp10, NPVp20, NPVp30]
     
+    
   #1st evaluation => doing business with peer is more advantageous?
     count2 = 0 
     max_npvp = max(produce_p + sell_p)
@@ -333,7 +334,14 @@ def cbaCalcPeer(me, peer):
            me.cba_lvlp = 3 #Selling has a higher NPV than selling
 
         
-def projectSelector(me): 
+def projectSelector(me):
+    me.energy_solar = 0
+    me.energy_wind = 0
+    me.incentive_fit = 0
+    me.incentive_tax = 0
+    me.project_cost = 0 
+    me.project_tariff = 0
+    me.project_margin = 0
 ##Variables    
   #Global variables  
     rev10, rev11, rev20, rev21, rev30, rev31, rg1, rg2, rg3, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], [], [], [], []

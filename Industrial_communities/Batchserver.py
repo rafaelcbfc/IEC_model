@@ -17,8 +17,8 @@ import pandas as pd
 
 #Run parameters 
 m_step_data = pd.DataFrame()
-n_industries = [25]
 n_communities = [25]
+n_industries = [25]
 
 model_param = {"n_industries": n_industries, "n_communities": n_communities} #All variables in place - Everything that can be changed enters here
 
