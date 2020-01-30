@@ -191,7 +191,6 @@ class Industry(Agent): #Industry agent propoerties
         
               
     def returnofInvestment(self): #Return of Investment function used on voting
-        
         if self.which_community != 0:
             print('ID ' + str(self.id) + ' com ' + str(self.which_community) + ' premium ' + str(self.com_premium))
             if self.com_premium == 0: pass
@@ -232,8 +231,8 @@ class Industry(Agent): #Industry agent propoerties
                 self.loyalty += 1
             else:
                 self.loyalty += -1
-        if self.decision_rule > 66:
-            if self.vote ==1 and self.community_vote > 0:
+        if self.decision_rule > 66: #Problem solving
+            if self.vote ==1 and self.community_vote > 0: 
                 self.loyalty += 1
             else:
                 self.loyalty += 0

@@ -57,7 +57,8 @@ def countEntrepeneurrole(model):
     pass
 
 def communityMembers(model):
-    pass
+    n_members = sum([a.members for a in model.schedule.agents if type(a) == Community])
+    return n_members
 
 def solarEnergyProduced(model):
     pass
@@ -74,7 +75,8 @@ class Modelrun(Model):
         self.max_ticks = max_ticks
         self.model_reporters = {'Communities': lambda m: countCommunity(m),
                                 'Active Communities': lambda m: countActive(m),
-                                'Industries': lambda m: countIndustry(m)} 
+                                'Industries': lambda m: countIndustry(m),
+                                'Total Members': lambda m:communityMembers(m)} 
         self.datacollector = DataCollector(model_reporters = self.model_reporters)
         self.n_industries = n_industries
         self.n_communities = n_communities

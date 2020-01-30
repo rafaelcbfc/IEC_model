@@ -36,7 +36,8 @@ model_param = {"n_industries": UserSettableParameter("slider", "Total Industries
 grid = CanvasGrid(agent_portrayal, 15, 15, 500, 500)
 chart = ChartModule([{"Label": "Industries", "Color": "#0055ff"},
                       {"Label": "Communities", "Color": "#cccccc"},
-                      {"Label": "Active Communities", "Color": "#85e085"}])
+                      {"Label": "Active Communities", "Color": "#85e085"},
+                      {"Label": "Total Members", "Color": "#ffa500"}])
 server = ModularServer(Modelrun, [grid, chart], "InCES Model", model_param)
 server.launch() 
 

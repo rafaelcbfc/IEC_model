@@ -9,6 +9,8 @@ Created on Sun Jan 19 17:03:06 2020
 import sys
 sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
 import Hofstede
+import random
+
 import numpy as np
 
 
@@ -18,8 +20,12 @@ country =pool_countries[1]
 discount_rate = Hofstede.BRA_discount_rate
 sunshine = Hofstede.BRA_sunshine
 wind_dist = Hofstede.BRA_wind_dist
+solar_costs = Hofstede.BRA_solarCosts
+wind_costs = Hofstede.BRA_windCosts
 decision_style = Hofstede.BRA_Decision_style
 decision_rule = Hofstede.BRA_Decision_rule
+solar_OM = Hofstede.BRA_solar_OM
+wind_OM = Hofstede.BRA_wind_OM
  
 gridtariff = Hofstede.BRA_gridtariff 
 wind_threshold = 5000 #in KW, minimum value to make it a possibility for wind energy production - https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
@@ -48,17 +54,18 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
 ##Variables 
   #Global vairables
     rev0, rev10, rev11, rev20, rev21, rev30, rev31, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], [], []
-    gridtariff = Hofstede.BRA_gridtariff
-    solar_implement_Costs = Hofstede.BRA_solarCosts  * tax_incentive
-    wind_implement_Costs = Hofstede.BRA_windCosts * tax_incentive
-    solar_OM = Hofstede.BRA_solar_OM
-    wind_OM = Hofstede.BRA_wind_OM
+    gridtariff1 = random.choice(gridtariff)
+    solar_implement_Costs =random.choice(solar_costs) * tax_incentive
+    wind_implement_Costs =random.choice(wind_costs) * tax_incentive
+    solar_OM1 = random.choice(solar_OM)
+    wind_OM1 = random.choice(wind_OM)
     test = 0
+
   #Individuals variable  
     annual_demand = me.energy
     
 ##Case 0 - Grid energy
-    r0 = gridtariff * annual_demand
+    r0 = gridtariff1 * annual_demand
     
     for i in range(depreciation_period):
         rev0.append(r0)
@@ -69,11 +76,11 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     solar_energy1 = annual_demand
     installation_solar1 = solar_energy1 / sunshine
     investment_solar1 = installation_solar1 * solar_implement_Costs
-    OM_solar1 = solar_OM * (investment_solar1/(solar_energy1 * depreciation_period)) * solar_energy1
+    OM_solar1 = solar_OM1 * (investment_solar1/(solar_energy1 * depreciation_period)) * solar_energy1
     LCOE_solar1 = (investment_solar1 + OM_solar1 * depreciation_period)/(solar_energy1 * depreciation_period) 
     
-    r10 = (gridtariff - LCOE_solar1) * solar_energy1 * fit #Sell energy
-    r11 = gridtariff * solar_energy1                       #Produce energy
+    r10 = (gridtariff1 - LCOE_solar1) * solar_energy1 * fit #Sell energy
+    r11 = gridtariff1 * solar_energy1                       #Produce energy
     c1=  OM_solar1
     
     for i in range(depreciation_period):
@@ -95,11 +102,11 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     wind_energy2 = annual_demand
     installation_wind2 = wind_energy2 / wind_dist
     investment_wind2 = installation_wind2 * wind_implement_Costs
-    OM_wind2 = wind_OM * wind_energy2
+    OM_wind2 = wind_OM1 * wind_energy2
     LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
     
-    r20 = (gridtariff - LCOE_wind2) * wind_energy2 * fit #Sell energy --> Review value
-    r21 = gridtariff * wind_energy2                      #Produce energy
+    r20 = (gridtariff1 - LCOE_wind2) * wind_energy2 * fit #Sell energy --> Review value
+    r21 = gridtariff1 * wind_energy2                      #Produce energy
     c2 =  OM_wind2
     
     for i in range(depreciation_period):
@@ -120,7 +127,7 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     energy3_wind = (int(annual_demand/wind_threshold)*wind_threshold)
     installation_wind3 = energy3_wind / wind_dist
     investment_wind3 = installation_wind3 * wind_implement_Costs
-    OM_wind3 = wind_OM * energy3_wind
+    OM_wind3 = wind_OM1 * energy3_wind
     try:
         LCOE_wind3 = (investment_wind3 + OM_wind3 * depreciation_period)/(energy3_wind * depreciation_period)
     except: 
@@ -130,14 +137,14 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     energy3_solar = annual_demand % wind_threshold
     installation_solar3 = energy3_solar / sunshine
     investment_solar3 = installation_solar3 * solar_implement_Costs
-    OM_solar3 = solar_OM * (investment_solar3/(energy3_solar * depreciation_period)) * energy3_solar
+    OM_solar3 = solar_OM1 * (investment_solar3/(energy3_solar * depreciation_period)) * energy3_solar
     try:
         LCOE_solar3 = (investment_solar3 + OM_solar3 * depreciation_period)/(energy3_solar * depreciation_period) 
     except:
         LCOE_solar3 = 0
         
-    r30 = ((gridtariff - LCOE_solar3) * energy3_solar + (gridtariff - LCOE_wind3) * energy3_wind) * fit   #Sell energy --> Review value
-    r31 = gridtariff * annual_demand                                                                      #Produce energy 
+    r30 = ((gridtariff1 - LCOE_solar3) * energy3_solar + (gridtariff1 - LCOE_wind3) * energy3_wind) * fit   #Sell energy --> Review value
+    r31 = gridtariff1 * annual_demand                                                                      #Produce energy 
     c3 =  OM_wind3 + OM_solar3 
     
     for i in range(depreciation_period):
@@ -208,11 +215,11 @@ def cbaCalcPeer(me, peer):
 ##Variables    
   #Global variables
     rev10, rev11, rev20, rev21, rev30, rev31, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], []
-    gridtariff = Hofstede.BRA_gridtariff
-    solar_implement_Costs = Hofstede.BRA_solarCosts * tax_incentive
-    wind_implement_Costs = Hofstede.BRA_windCosts * tax_incentive
-    solar_OM = Hofstede.BRA_solar_OM
-    wind_OM = Hofstede.BRA_wind_OM
+    gridtariff2 = random.choice(gridtariff)
+    solar_implement_Costs =random.choice(solar_costs)  * tax_incentive
+    wind_implement_Costs =random.choice(wind_costs)  * tax_incentive
+    solar_OM2 = random.choice(solar_OM)
+    wind_OM2 = random.choice(wind_OM)
     test = 0
   #Peered variables
     annual_demand = (me.energy + peer.energy)
@@ -221,11 +228,11 @@ def cbaCalcPeer(me, peer):
     solar_energy1 = annual_demand
     installation_solar1 = solar_energy1 / sunshine
     investment_solar1 = installation_solar1 * solar_implement_Costs
-    OM_solar1 = solar_OM * (investment_solar1/(solar_energy1 * depreciation_period)) * solar_energy1
+    OM_solar1 = solar_OM2 * (investment_solar1/(solar_energy1 * depreciation_period)) * solar_energy1
     LCOE_solar1 = (investment_solar1 + OM_solar1 * depreciation_period)/(solar_energy1 * depreciation_period) 
     
-    r10 = (gridtariff - LCOE_solar1) * solar_energy1 * fit #Sell energy
-    r11 = gridtariff * solar_energy1                       #Produce energy
+    r10 = (gridtariff2 - LCOE_solar1) * solar_energy1 * fit #Sell energy
+    r11 = gridtariff2 * solar_energy1                       #Produce energy
     c1=  OM_solar1
     
     for i in range(depreciation_period):
@@ -246,11 +253,11 @@ def cbaCalcPeer(me, peer):
     wind_energy2 = annual_demand
     installation_wind2 = wind_energy2 / wind_dist
     investment_wind2 = installation_wind2 * wind_implement_Costs
-    OM_wind2 = wind_OM * wind_energy2
+    OM_wind2 = wind_OM2 * wind_energy2
     LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
     
-    r20 = (gridtariff - LCOE_wind2) * wind_energy2 * fit #Sell energy --> Review value
-    r21 = gridtariff * wind_energy2                      #Produce energy
+    r20 = (gridtariff2 - LCOE_wind2) * wind_energy2 * fit #Sell energy --> Review value
+    r21 = gridtariff2 * wind_energy2                      #Produce energy
     c2 =  OM_wind2
     
     for i in range(depreciation_period):
@@ -272,7 +279,7 @@ def cbaCalcPeer(me, peer):
     wind_energy3 = (int(annual_demand/wind_threshold)*wind_threshold)
     installation_wind3 = wind_energy3 / wind_dist
     investment_wind3 = installation_wind3 * wind_implement_Costs
-    OM_wind3 = wind_OM * wind_energy3
+    OM_wind3 = wind_OM2 * wind_energy3
     try:
         LCOE_wind3 = (investment_wind3 + OM_wind3 * depreciation_period)/(wind_energy3 * depreciation_period)
     except: 
@@ -282,14 +289,14 @@ def cbaCalcPeer(me, peer):
     solar_energy3 = annual_demand % wind_threshold
     installation_solar3 = solar_energy3 / sunshine
     investment_solar3 = installation_solar3 * solar_implement_Costs
-    OM_solar3 = solar_OM * (investment_solar3/(solar_energy3 * depreciation_period)) * solar_energy3
+    OM_solar3 = solar_OM2 * (investment_solar3/(solar_energy3 * depreciation_period)) * solar_energy3
     try:
         LCOE_solar3 = (investment_solar3 + OM_solar3 * depreciation_period)/(solar_energy3 * depreciation_period) 
     except:
         LCOE_solar3 = 0
         
-    r30 = ((gridtariff - LCOE_solar3) * solar_energy3 + (gridtariff - LCOE_wind3) * wind_energy3) * fit   #Sell energy --> Review value
-    r31 = gridtariff * annual_demand                                                                      #Produce energy 
+    r30 = ((gridtariff2 - LCOE_solar3) * solar_energy3 + (gridtariff2 - LCOE_wind3) * wind_energy3) * fit   #Sell energy --> Review value
+    r31 = gridtariff2 * annual_demand                                                                      #Produce energy 
     c3 =  OM_wind3 + OM_solar3 
     
     for i in range(depreciation_period):
@@ -345,14 +352,15 @@ def projectSelector(me):
 ##Variables    
   #Global variables  
     rev10, rev11, rev20, rev21, rev30, rev31, rg1, rg2, rg3, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], [], [], [], []
-    gridtariff = Hofstede.BRA_gridtariff
-    solar_implement_Costs = Hofstede.BRA_solarCosts * tax_incentive
-    wind_implement_Costs = Hofstede.BRA_windCosts * tax_incentive
+    gridtariff3 = random.choice(gridtariff)
+    solar_implement_Costs =random.choice(solar_costs)  * tax_incentive
+    wind_implement_Costs =random.choice(wind_costs)  * tax_incentive
+    solar_OM3 = random.choice(solar_OM)
+    wind_OM3 = random.choice(wind_OM)
     solar_gov_imp = solar_implement_Costs/tax_incentive
     wind_gov_imp = wind_implement_Costs/tax_incentive
-    solar_OM = Hofstede.BRA_solar_OM
-    wind_OM = Hofstede.BRA_wind_OM
     test = 0
+    
   #Community variables  
     me.project_cost = 0
     project_cba = 0
@@ -363,11 +371,11 @@ def projectSelector(me):
     installation_solar1 = energy1 / sunshine
     investment_solar1 = installation_solar1 * solar_implement_Costs
     investment_solarg1 = installation_solar1 * solar_gov_imp
-    OM_solar1 = solar_OM * (investment_solar1/(energy1 * depreciation_period)) * energy1
+    OM_solar1 = solar_OM3 * (investment_solar1/(energy1 * depreciation_period)) * energy1
     LCOE_solar1 = (investment_solar1 + OM_solar1 * depreciation_period)/(energy1 * depreciation_period) 
     
-    r10 = (gridtariff - LCOE_solar1) * energy1 * fit #Sell energy --> Review value
-    r11 = gridtariff * energy1                       #Produce energy
+    r10 = (gridtariff3 - LCOE_solar1) * energy1 * fit #Sell energy --> Review value
+    r11 = gridtariff3 * energy1                       #Produce energy
     c1=  OM_solar1
     g1 = r10/fit
     
@@ -402,11 +410,11 @@ def projectSelector(me):
     installation_wind2 = energy2 / wind_dist
     investment_wind2 = installation_wind2 * wind_implement_Costs
     investment_windg2 = installation_wind2 * wind_gov_imp
-    OM_wind2 = wind_OM * energy2
+    OM_wind2 = wind_OM3 * energy2
     LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(energy2 * depreciation_period) 
     
-    r20 = (gridtariff - LCOE_wind2) * energy2 * fit #Sell energy --> Review value
-    r21 = gridtariff * energy2                      #Produce energy
+    r20 = (gridtariff3 - LCOE_wind2) * energy2 * fit #Sell energy --> Review value
+    r21 = gridtariff3 * energy2                      #Produce energy
     c2 =  OM_wind2
     g2= r20/fit
     
@@ -441,7 +449,7 @@ def projectSelector(me):
     installation_wind3 = energy3_wind / wind_dist
     investment_wind3 = installation_wind3 * wind_implement_Costs
     investment_windg3 = installation_wind3 * wind_gov_imp
-    OM_wind3 = wind_OM * energy3_wind
+    OM_wind3 = wind_OM3 * energy3_wind
     try:
         LCOE_wind3 = (investment_wind3 + OM_wind3 * depreciation_period)/(energy3_wind * depreciation_period)
     except: 
@@ -452,14 +460,14 @@ def projectSelector(me):
     installation_solar3 = energy3_solar / sunshine
     investment_solar3 = installation_solar3 * solar_implement_Costs
     investment_solarg3 = installation_solar3 * wind_gov_imp
-    OM_solar3 = solar_OM * (investment_solar3/(energy3_solar * depreciation_period)) * energy3_solar
+    OM_solar3 = solar_OM3 * (investment_solar3/(energy3_solar * depreciation_period)) * energy3_solar
     try:
         LCOE_solar3 = (investment_solar3 + OM_solar3 * depreciation_period)/(energy3_solar * depreciation_period) 
     except:
         LCOE_solar3 = 0
         
-    r30 = ((gridtariff - LCOE_solar3) * energy3_solar + (gridtariff - LCOE_wind3) * energy3_wind) * fit   #Sell energy --> Review value
-    r31 = gridtariff * annual_demand                                                                      #Produce energy 
+    r30 = ((gridtariff3 - LCOE_solar3) * energy3_solar + (gridtariff3 - LCOE_wind3) * energy3_wind) * fit   #Sell energy --> Review value
+    r31 = gridtariff3 * annual_demand                                                                      #Produce energy 
     c3 =  OM_wind3 + OM_solar3 
     g3 = r30/fit
 
