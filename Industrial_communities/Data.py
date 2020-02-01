@@ -7,27 +7,27 @@ Created on Sun Jan 19 17:03:06 2020
 """
 ###Imports
 import sys
+
 sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
 import Hofstede
 import random
-
 import numpy as np
 
 
 ###Calculation varialbes
 pool_countries = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]
-country =pool_countries[1]
-discount_rate = Hofstede.BRA_discount_rate
-sunshine = Hofstede.BRA_sunshine
-wind_dist = Hofstede.BRA_wind_dist
-solar_costs = Hofstede.BRA_solarCosts
-wind_costs = Hofstede.BRA_windCosts
-decision_style = Hofstede.BRA_Decision_style
-decision_rule = Hofstede.BRA_Decision_rule
-solar_OM = Hofstede.BRA_solar_OM
-wind_OM = Hofstede.BRA_wind_OM
+country = pool_countries[1]
+discount_rate = getattr(Hofstede, country + "_discount_rate")
+sunshine = getattr(Hofstede, country + "_sunshine")
+wind_dist =getattr(Hofstede, country + "_wind_dist")  
+solar_costs = getattr(Hofstede, country + "_solarCosts")
+wind_costs = getattr(Hofstede, country + "_windCosts")
+decision_style = getattr(Hofstede, country + "_Decision_style")
+decision_rule = getattr(Hofstede, country + "_Decision_rule")
+solar_OM = getattr(Hofstede, country + "_solar_OM")
+wind_OM = getattr(Hofstede, country + "_wind_OM")
  
-gridtariff = Hofstede.BRA_gridtariff 
+gridtariff = getattr(Hofstede, country + "_gridtariff")
 wind_threshold = 5000 #in KW, minimum value to make it a possibility for wind energy production - https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 depreciation_period = 20
 
@@ -340,7 +340,7 @@ def cbaCalcPeer(me, peer):
         else:
            me.cba_lvlp = 3 #Selling has a higher NPV than selling
 
-        
+   
 def projectSelector(me):
     me.energy_solar = 0
     me.energy_wind = 0
@@ -485,10 +485,10 @@ def projectSelector(me):
     NPVc31 = revenue31-costs3
     marginc30 = (revenue30 - costs3)/(revenue30 *100)
     marginc31 = (revenue31 - costs3)/(revenue31 *100)
-    try:
-        ratio_solar = energy3_solar/(energy3_wind+energy3_solar)
-        ratio_wind = energy3_wind / (energy3_wind+energy3_solar)
-    except: None
+    
+    ratio_solar = energy3_solar/(energy3_wind+energy3_solar)
+    ratio_wind = energy3_wind / (energy3_wind+energy3_solar)
+
     
     if g3 != r30:
         fit3 = np.npv(discount_rate, rg3)
@@ -514,7 +514,7 @@ def projectSelector(me):
     
     if count2 > 0:
         project_cba == 1 #producing individually is cheper than in group
-    
+        me.project_margin = - 1
   #2nd evaluation => if we are doing business, produce or sell?
     if project_cba != 1:
         if max(produce_c) > max(sell_c): 
@@ -530,7 +530,7 @@ def projectSelector(me):
         me.project_tariff1 = r10
         me.project_margin = max(marginc10, marginc11)
         me.project_cost = costs1
-        me.energy_solar = energy1
+        me.energy_solar = energy1 * 20
         me.energy_wind = 0
         me.incentive_fit = fit1
         me.incentive_tax = tax_inc1
@@ -540,7 +540,7 @@ def projectSelector(me):
         me.project_margin = max(marginc20, marginc21)
         me.project_cost = costs2
         me.energy_solar = 0
-        me.energy_wind = energy2
+        me.energy_wind = energy2 * 20
         me.incentive_fit = fit2
         me.incentive_tax = tax_inc2
     if option == 2: #Mixed
@@ -548,12 +548,12 @@ def projectSelector(me):
         me.project_tariff1 = r30
         me.project_margin = max(marginc30, marginc31)
         me.project_cost = costs3
-        me.energy_solar = energy3_solar
-        me.energy_wind = energy3_wind
+        me.energy_solar = energy3_solar * 20
+        me.energy_wind = energy3_wind * 20
         me.incentive_fit = fit3
         me.incentive_tax = tax_inc3
         
-        
+
 
     
 

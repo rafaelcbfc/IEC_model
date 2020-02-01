@@ -19,22 +19,21 @@ from scipy.stats import uniform
 
 ##Variables
 #General variables
-gridtariff = random.choice(Data.gridtariff)
+gridtariff = float(random.choice(Data.gridtariff))
 decision_style = Data.decision_style 
 decision_rule = Data.decision_rule
 
 
 ## Interaction functions
 def askforInvestment(com, member): #for project execution ask for investment to shareholders
-    com.wealth = com.wealth + com.request
+    com.moeny = com.money + com.request
     member.invested = member.invested + com.request
     member.loyalty = member.loyalty - 1
  
        
 def voting(com, member): #Voting process during meetings
-    com.voting_result = 0
     if com.strategy == 0:
-        if com.project_tariff < gridtariff and com.business_plan == "Feasible":
+        if com.project_tariff0 < gridtariff and com.business_plan == "Feasible":
             member.vote = 1
         else: member.vote = 0
     
@@ -45,7 +44,6 @@ def voting(com, member): #Voting process during meetings
     
     com.voting_result  = com.voting_result + member.vote
     member.community_vote = com.voting_result / len(com.members)   
-
     
 ##Industry
 class Industry(Agent): #Industry agent propoerties
@@ -60,9 +58,9 @@ class Industry(Agent): #Industry agent propoerties
         self.decision_style = random.choice(decision_style)
         self.decision_rule = random.choice(decision_rule)
         self.energy = 0
-        self.energy_time_check = list(range(0,240,12))
         self.eng_lvl = 0
-        self.expected_return = random.uniform(0,5) # -------> Check value
+        self.exit = 0
+        self.expected_return = random.uniform(0, 0.05) # -------> Check value
         self.friends = []
         self.id = name 
         self.invested = 0
@@ -85,8 +83,6 @@ class Industry(Agent): #Industry agent propoerties
 #Industry functions
 #tick actions 
     def step(self): #Action per tick
-        self.energy = 0
-        self.LCOE = 0
         self.updateNeighbors()
         self.energyLevel()
         self.engagementLevel()
@@ -94,8 +90,6 @@ class Industry(Agent): #Industry agent propoerties
         self.returnofInvestment()
         self.leaveCommunity()
         self.period = self.period + 1
-        #print("ID " + str(self.id) + ' cba_lvl ' + str(self.cba_lvl) + ' cba_lvlp ' + str(self.cba_lvlp) + ' cba_lvlc ' + str(self.cba_lvlc) + ' eng_lvl ' + str(self.eng_lvl))
-        #print("ID " + str(self.id) +  ' LCOE ' + str(self.LCOE) + ' com ' + str(self.which_community))
         
  
     def updateNeighbors(self): #create a list of nglobal c_neighbors, i_neighbors
@@ -106,12 +100,11 @@ class Industry(Agent): #Industry agent propoerties
         
     
     def energyLevel(self):  #value in KWh from a distribution between 200KWh and 30MWh
-        if self.period in self.energy_time_check:
-            self.energy = np.random.choice(uniform.rvs(size=10000, loc = 200, scale=30000))     
+            self.energy = float(np.random.choice(uniform.rvs(size=10000, loc = 200, scale=30000)))     
 
     
     def engagementLevel(self): #Define engagement level of each industry
-        if self.period in self.energy_time_check and self.eng_lvl not in [5, 10, 98, 99]:
+        if self.eng_lvl not in [5, 10, 98, 99]:
                 Data.cbaCalc(self)
                 if self.cba_lvl in [1, 2, 3]:
                     if self.cba_lvl == 1:
@@ -149,7 +142,7 @@ class Industry(Agent): #Industry agent propoerties
         
             
     def createCommunity(self): #create a community
-        if self.period in self.energy_time_check and self.eng_lvl == 5:
+        if self.eng_lvl == 5:
             self.industryNetwork()
             if self.eng_lvl == 99 and self.which_community == 0: 
                 for community in [x for x in self.c_neighbors if x.active == 0]: break
@@ -181,19 +174,16 @@ class Industry(Agent): #Industry agent propoerties
     
         
     def joinCommunity(self):
-        if self.invested == 0 or self.com_premium == 0:
+        if self.com_premium == 0:
             self.invested = self.invested + self.energy * gridtariff
         else:
             self.invested =  self.invested + self.energy + self.com_premium
-        print('ID ' + str(self.id) +  ' invested ' + str(self.invested))
         
               
     def returnofInvestment(self): #Return of Investment function used on voting
         if self.which_community != 0:
             if self.com_premium == 0: pass
             else: self.ROI = self.retrn / self.invested 
-            print('ID ' + str(self.id) + ' com ' + str(self.which_community) + ' premium ' + str(self.com_premium))
-           
         else: pass
  
     
@@ -241,6 +231,8 @@ class Industry(Agent): #Industry agent propoerties
         if self.loyalty >= self.threshold:
                 if self.ROI < 0.1:# -----> To be defined
                     self.which_community = 0
+                    self.eng_lvl = 0
+                    self.exit = 1
 
 ##Community
 class Community(Agent):
@@ -252,7 +244,7 @@ class Community(Agent):
         self.energy = 0
         self.energy_solar = 0
         self.energy_wind = 0
-        self.energy_total = 0
+        self.energy_total_total = 0
         self.energy_total_solar = 0
         self.energy_total_wind = 0
         self.gov_fit = 0
@@ -260,18 +252,17 @@ class Community(Agent):
         self.incentive_fit = 0
         self.incentive_tax = 0
         self.investment = 0
-        self.meeting_time = list(range(0,240,12))
         self.members = []
         self.name = name
         self.period = 0
         self.pos = pos
         self.policy_entrepreneur = 0
         self.premium = 0
+        self.project_cba = 0
         self.project_cost = 0 
         self.project_margin = 0
         self.project_tariff0 = 0
         self.project_tariff1 = 0
-        self.project_time = list(range(1,240,12))
         self.plan_execution = "" 
         self.request = 0
         self.revenue = 0
@@ -279,10 +270,10 @@ class Community(Agent):
         self.sale1 = 0
         self.strategy = 0
         self.voting_result = 0
-        self.wealth = 0    
+        self.money = 0    
         
       
-        
+       
 #Community functions   
     def step(self):
         self.energy = 0
@@ -298,12 +289,12 @@ class Community(Agent):
            self.policyEntrepeneur()
            self.newMemberFee()
            self.rtnFunc()
+           self.memberExit()
            self.period = self.period + 1 
         
         if self.active == 0:
            pass
-        print('Com ID ' + str(self.name) + ' active ' + str(self.active) + ' energy ' + str(self.energy))
-        
+        print(self.premium)
         
     def energyDemand(self): #update the member list
         if len(self.members) == 0:
@@ -311,89 +302,88 @@ class Community(Agent):
         else:
             for member in self.members:
                 self.energy = self.energy + member.energy    
-                
+     
         
     def initialInvestment(self):#Initial investment by founders
         if self.active == 1 and self.period == 0:
             Data.projectSelector(self)
-            invested_capital = (self.project_cost * 1.2)/len(self.members) 
-            self.wealth = self.wealth + (invested_capital * len(self.members))
+            invested_capital = float(((self.project_cost) * 1.2) /len(self.members)) 
+            self.money = self.money + float(invested_capital * len(self.members))
             for member in self.members:
                 member.invested = member.invested + invested_capital
     
     
     def projectDefinition(self): #Choose what type of project to be done: All solar, All wind or mixed
-        Data.projectSelector(self)
-        if self.project_margin <= 0:
-            self.business_plan = "Unfeasible" 
-            pass
-        elif self.project_margin > 0:
-            self.business_plan = "Feasible"   
-            if self.project_cost >= self.wealth:
-                self.policy_entrepreneur = self.policy_entrepreneur - 1    
-                self.investment = self.project_cost - self.wealth
-                self.request = self.investment / len(self.members)
-                for member in self.members:
-                   askforInvestment(self, member)
-            else:
-                None
-    
+        if self.energy != 0: 
+            Data.projectSelector(self)
+            if self.project_margin <= 0:
+                self.business_plan = "Unfeasible" 
+                pass
+            elif self.project_margin > 0:
+                self.business_plan = "Feasible"    
+                if self.project_cost >= self.money:
+                    self.policy_entrepreneur = self.policy_entrepreneur - 1    
+                    self.investment = self.project_cost - self.money
+                    self.request = self.investment / len(self.members)
+                    for member in self.members:
+                       askforInvestment(self, member)
+        else:
+            None
     
     def meetings(self): #Schedule a meeting with members
+        self.voting_result = 0
         for member in self.members:
              voting(self, member)
         if self.voting_result > len(self.members)/2:
             self.plan_execution = "Approved"
         else:
             self.plan_execution = "Rejected"
-                
         
     def planExecution(self): #For approved plans, execute and revenue
-        if self.period in self.project_time:
-            if self.plan_execution == "Approved":
-                self.wealth = self.wealth - self.project_cost #Pay for project
-                self.energy_total  = self.energy_total + (self.energy_solar + self.energy_wind) #Increase generation park
-                self.sale0 = ((self.energy_solar + self.energy_wind)) * self.project_tariff0 #Produce energy
-                self.sale1 = self.project_tariff1 * (self.energy_solar + self.energy_wind)
-                
-                #Cummulative measures
-                if self.strategy == 0:
-                    self.wealth = self.wealth + self.sale0
-                    self.revenue = self.revenue + self.sale0
-                if self.strategy == 1:
-                    self.wealth =  self.wealth + self.sale1
-                    self.revenue = self.revenue + self.sale1
-                    
-                self.costs = self.costs + self.project_cost 
-                self.energy_total_solar = self.energy_total_solar + self.energy_solar
-                self.energy_total_total = self.energy_total_total +  self.energy_wind
-                self.gov_fit = self.gov_fit + self.incentive_fit
-                self.gov_tax = self.gov_tax + self.incentive_tax
+        if self.plan_execution == "Approved":
+            self.money = self.money - float(self.project_cost) #Pay for project
+            self.energy_total_total  = self.energy_total_total + (self.energy_solar + self.energy_wind) #Increase generation park
+            self.sale0 = ((self.energy_solar + self.energy_wind)) * self.project_tariff0 #Produce energy
+            self.sale1 = self.project_tariff1 * (self.energy_solar + self.energy_wind)
             
-            if self.plan_execution == "Rejected":
-                self.wealth = self.wealth - (self.energy * Data.gridtariff)
-                self.costs = self.costs + (self.energy * Data.gridtariff)
-                for member in self.members:
-                    member.loyalty =  member.loyalty - 1
+            #Cummulative measures
+            if self.strategy == 0:
+                self.money = self.money + float(self.sale0)
+                self.revenue = self.revenue + self.sale0
+            if self.strategy == 1:
+                self.money =  self.money + float(self.sale1)
+                self.revenue = self.revenue + self.sale1
+                
+            self.costs = self.costs + self.project_cost 
+            self.energy_total_solar = self.energy_total_solar + self.energy_solar
+            self.energy_total_wind = self.energy_total_wind +  self.energy_wind
+            self.gov_fit = self.gov_fit + self.incentive_fit
+            self.gov_tax = self.gov_tax + self.incentive_tax
+        
+        if self.plan_execution == "Rejected":
+            self.money = self.money - float(self.energy * gridtariff)
+            self.costs = self.costs + float(self.energy * gridtariff)
+            for member in self.members:
+                member.loyalty =  member.loyalty - 1
         else:
             pass
-
         
     def newMemberFee(self): #Calculate how much does it cost to a new member to join
-        try:
-            ratios = self.energy_solar_total/self.energy_total
-            ratiow = self.energy_wind_total/self.energy_total
-        except:
-            ratios = 0.5
-            ratiow = 0.5
-        try:
-            LCOE_wind = (self.costs * ratiow)/(self.energy_wind_total)
-        except:
+        if self.energy_total_total != 0:
+            ratios = self.energy_total_solar/self.energy_total_total
+            ratiow = self.energy_total_wind/self.energy_total_total
+        else:
+            ratios = 0
+            ratiow = 0
+        
+        if self.energy_total_wind == 0:
             LCOE_wind = 0
-        try:
-            LCOE_solar = (self.costs * ratios)/(self.energy_solar_total)
-        except: 
+        else:
+            LCOE_wind = (self.costs * ratiow)/(self.energy_total_wind)
+        if self.energy_total_solar == 0:
             LCOE_solar = 0
+        else:
+            LCOE_solar = (self.costs * ratios)/(self.energy_total_solar)
         
         self.premium = (LCOE_solar * ratios) + (LCOE_wind * ratiow) 
         for member in self.members:
@@ -401,11 +391,13 @@ class Community(Agent):
         
     
     def rtnFunc(self): #Financial return if strategy = 1
-        if self.period in self.meeting_time: 
-            delta =  Data.gridtariff - self.premium
-            for member in self.members:
+        delta =  gridtariff - self.premium
+        for member in self.members:
+            if self.premium == 0:
+                member.retrn = member.retrn + 0
+            else:
                 if self.strategy == 0:
-                    member.retrn = member.retrn + delta * member.energy
+                    member.retrn = member.retrn + float(delta * member.energy)
                     pass
                 elif self.strategy == 1:
                     member.retrn = member.retrn + ((self.sale1 - self.project_cost) * 0.7)/len(self.members)
@@ -430,7 +422,11 @@ class Community(Agent):
             
 
         
-        
+    def memberExit(self):
+        for member in self.members:
+            if member.which_community == 0:
+                self.members.remove(member)
+               
         
         
 
