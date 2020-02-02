@@ -23,7 +23,6 @@ gridtariff = float(random.choice(Data.gridtariff))
 decision_style = Data.decision_style 
 decision_rule = Data.decision_rule
 
-
 ## Interaction functions
 def askforInvestment(com, member): #for project execution ask for investment to shareholders
     com.moeny = com.money + com.request
@@ -151,7 +150,7 @@ class Industry(Agent): #Industry agent propoerties
                 community.strategy = self.strategy
                 community.active = 1
                 for f in self.smallworld:
-                    if f.eng_lvl == 98:
+                    if f.eng_lvl == 98: 
                        f.which_community = community.name
                        community.members.append(f)
     
@@ -168,7 +167,7 @@ class Industry(Agent): #Industry agent propoerties
                 self.aff.append(f.id)
         if len(self.friends) > 0 and len(self.friends + self.aff)/len(self.smallworld) >= 0.5: 
             self.eng_lvl = 99
-            for f in self.smallworld:
+            for f in self.smallworld: # and f.which_community == 0:
                 if f.id in self.friends:
                     f.eng_lvl = 98
     
@@ -182,7 +181,8 @@ class Industry(Agent): #Industry agent propoerties
               
     def returnofInvestment(self): #Return of Investment function used on voting
         if self.which_community != 0:
-            if self.com_premium == 0: pass
+            if self.com_premium == 0 or self.invested == 0: 
+                pass
             else: self.ROI = self.retrn / self.invested 
         else: pass
  
@@ -199,7 +199,7 @@ class Industry(Agent): #Industry agent propoerties
                 self.loyalty = self.loyalty + 1
             if ratio < 0.5:
                 self.loyalty = self.loyalty - 1
-        elif self.decision_style > 66:#Hierarchy
+        elif self.decision_style > 66: #Hierarchy
             if ratio < 0.5:
                 self.loyalty = self.loyalty + 1
             if ratio > 0.5:
@@ -249,8 +249,10 @@ class Community(Agent):
         self.energy_total_wind = 0
         self.gov_fit = 0
         self.gov_tax = 0
+        self.gov_tgc = 0
         self.incentive_fit = 0
         self.incentive_tax = 0
+        self.incentive_tgc = 0
         self.investment = 0
         self.members = []
         self.name = name
@@ -294,7 +296,7 @@ class Community(Agent):
         
         if self.active == 0:
            pass
-        print(self.premium)
+        
         
     def energyDemand(self): #update the member list
         if len(self.members) == 0:
@@ -359,6 +361,7 @@ class Community(Agent):
             self.energy_total_wind = self.energy_total_wind +  self.energy_wind
             self.gov_fit = self.gov_fit + self.incentive_fit
             self.gov_tax = self.gov_tax + self.incentive_tax
+            self.gov_tgc = self.gov_tgc + self.incentive_tgc
         
         if self.plan_execution == "Rejected":
             self.money = self.money - float(self.energy * gridtariff)
@@ -428,7 +431,7 @@ class Community(Agent):
                 self.members.remove(member)
                
         
-        
+  
 
    
         

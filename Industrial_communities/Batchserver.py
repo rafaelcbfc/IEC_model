@@ -9,12 +9,9 @@ import sys
 sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
 from mesa.datacollection import DataCollector
 from Model import Modelrun
-import Data
-
-
 ##Batchrun
 from mesa.batchrunner import BatchRunner
-import pandas as pd
+import pandas as pd 
 
 #Run parameters 
 m_step_data = pd.DataFrame()
@@ -24,7 +21,7 @@ n_industries = [75]
 model_param = {"n_industries": n_industries, "n_communities": n_communities} #All variables in place - Everything that can be changed enters here
 
 #Batchrun settings      
-br = BatchRunner(Modelrun, model_param, iterations = 100, max_steps = 20, model_reporters = {"Data Collector": lambda m: m.datacollector})
+br = BatchRunner(Modelrun, model_param, iterations = 500, max_steps = 20, model_reporters = {"Data Collector": lambda m: m.datacollector})
 br.run_all()
 
 
@@ -37,7 +34,7 @@ for i in range(len(m_df["Data Collector"])):
         i_run_data = m_df["Data Collector"][i].get_model_vars_dataframe()
        #a_run_data = a_df["data Collector"][i].get_agent_vars_dataframe()
         m_step_data = m_step_data.append(i_run_data, ignore_index=True)
-#m_step_data.to_csv("Model_run.csv")
+m_step_data.to_csv("Model_run_AUS_S2-03.csv")
         
         
         

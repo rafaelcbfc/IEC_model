@@ -104,6 +104,26 @@ def investedCapitalInd(model):
          n_invested = n_invested + int(i.invested)
      return n_invested   
 
+def incentiveFit(model):
+     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
+     n_fit = 0
+     for c in n_act:
+         n_fit = n_fit + int(c.incentive_fit)
+     return n_fit 
+ 
+def incentiveTax(model):
+     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
+     n_tax = 0
+     for c in n_act:
+         n_tax = n_tax + int(c.incentive_tax)
+     return n_tax
+
+def incentiveTGC(model):
+     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
+     n_tgc = 0
+     for c in n_act:
+         n_tgc = n_tgc + int(c.incentive_tgc)
+     return n_tgc
     
 ##Model Definitions
 class Modelrun(Model):
@@ -125,6 +145,9 @@ class Modelrun(Model):
                                            "Member exit": exitMembers,
                                            "Community Costs":investedCapital,
                                            "Industry Investments": investedCapitalInd,
+                                           "Govermental FIT incentive": incentiveFit,
+                                           "Governmental TAX incentive": incentiveTax,
+                                           "Governmental TGC incentive": incentiveTGC,
                                            "Policy Entrepreneur": countEntrepeneurrole})
         
         self.n_industries = n_industries
