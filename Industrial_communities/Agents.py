@@ -105,7 +105,7 @@ class Industry(Agent): #Industry agent propoerties
 
     
     def engagementLevel(self): #Define engagement level of each industry
-        if self.eng_lvl not in [5, 10, 98, 99]:
+        if self.eng_lvl not in [3, 4, 5]:
                 Data.cbaCalc(self)
                 if self.cba_lvl in [1, 2, 3]:
                     if self.cba_lvl == 1:
@@ -115,26 +115,26 @@ class Industry(Agent): #Industry agent propoerties
                                 if community.active == 1:
                                     Data.cbaCalcCom(self, community)
                                     if self.cba_lvlc == 1:
-                                        self.eng_lvl = 10
+                                        self.eng_lvl = 4
                                         self.which_community = community.name
                                         community.members.append(self)
                                         self.joinCommunity()
                                         break
                                     
-                    if self.eng_lvl not in [1, 10, 98, 99]:
+                    if self.eng_lvl not in [1, 4, 5]:
                             for neighbor in self.i_neighbors: #If no communities exists, look for industries
                                 Data.cbaCalcPeer(self, neighbor)
                                 if self.cba_lvlp == 1:
                                         self.eng_lvl = 2
                                 if self.cba_lvlp == 2:
-                                        self.eng_lvl = 5
-                                        neighbor.eng_lvl = 5
+                                        self.eng_lvl = 3
+                                        neighbor.eng_lvl = 3
                                         self.strategy = 0
                                         neighbor.strategy = 0
                                         break
                                 if self.cba_lvlp == 3:
-                                        self.eng_lvl = 5
-                                        neighbor.eng_lvl = 5
+                                        self.eng_lvl = 3
+                                        neighbor.eng_lvl = 3
                                         self.strategy = 1
                                         neighbor.strategy = 1
                                         break
@@ -143,16 +143,16 @@ class Industry(Agent): #Industry agent propoerties
         
             
     def createCommunity(self): #create a community
-        if self.eng_lvl == 5:
+        if self.eng_lvl == 3:
             self.industryNetwork()
-            if self.eng_lvl == 99 and self.which_community == 0: 
+            if self.eng_lvl == 5 and self.which_community == 0: 
                 for community in [x for x in self.c_neighbors if x.active == 0]: break
                 self.which_community = community.name
                 community.members.append(self)
                 community.strategy = self.strategy
                 community.active = 1
                 for f in self.smallworld:
-                    if f.eng_lvl == 98: 
+                    if f.eng_lvl == 5: 
                        f.which_community = community.name
                        community.members.append(f)
     
@@ -163,15 +163,15 @@ class Industry(Agent): #Industry agent propoerties
         vicinity = list(self.model.G.neighbors(self.id))
         self.smallworld = [agent for agent in neighbors if agent.id in vicinity]
         for f in self.smallworld:
-            if f.eng_lvl == 5:
+            if f.eng_lvl == 3:
                 self.friends.append(f.id)
-            if f.eng_lvl == 10:
+            if f.eng_lvl == 4:
                 self.aff.append(f.id)
         if len(self.friends) > 0 and len(self.friends + self.aff)/len(self.smallworld) >= 0.5: 
-            self.eng_lvl = 99
+            self.eng_lvl = 5
             for f in self.smallworld: # and f.which_community == 0:
                 if f.id in self.friends:
-                    f.eng_lvl = 98
+                    f.eng_lvl = 5
     
         
     def joinCommunity(self): #Pay to join a community
