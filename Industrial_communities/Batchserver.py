@@ -34,7 +34,7 @@ for i in range(len(m_df["Data Collector"])):
         i_run_data = m_df["Data Collector"][i].get_model_vars_dataframe()
        #a_run_data = a_df["data Collector"][i].get_agent_vars_dataframe()
         m_step_data = m_step_data.append(i_run_data, ignore_index=True)
-m_step_data.to_csv("Model_run_AUS_S2-03.csv")
+m_step_data.to_csv("Model_run_USA_S3-03.csv")
         
         
         

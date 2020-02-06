@@ -23,6 +23,7 @@ gridtariff = float(random.choice(Data.gridtariff))
 decision_style = Data.decision_style 
 decision_rule = Data.decision_rule
 
+
 ## Interaction functions
 def askforInvestment(com, member): #for project execution ask for investment to shareholders
     com.moeny = com.money + com.request
@@ -43,6 +44,7 @@ def voting(com, member): #Voting process during meetings
     
     com.voting_result  = com.voting_result + member.vote
     member.community_vote = com.voting_result / len(com.members)   
+    
     
 ##Industry
 class Industry(Agent): #Industry agent propoerties
@@ -155,7 +157,7 @@ class Industry(Agent): #Industry agent propoerties
                        community.members.append(f)
     
                
-    def industryNetwork(self): #Creates the strong network
+    def industryNetwork(self): #Define the strong network
         self.smallworld = []    
         neighbors = [agent for agent in self.i_neighbors if type(agent) == Industry]
         vicinity = list(self.model.G.neighbors(self.id))
@@ -172,7 +174,7 @@ class Industry(Agent): #Industry agent propoerties
                     f.eng_lvl = 98
     
         
-    def joinCommunity(self):
+    def joinCommunity(self): #Pay to join a community
         if self.com_premium == 0:
             self.invested = self.invested + self.energy * gridtariff
         else:
@@ -187,7 +189,7 @@ class Industry(Agent): #Industry agent propoerties
         else: pass
  
     
-    def decisionStyle(self): #community voted how I believe?
+    def decisionStyle(self): #Comparisson between what I voted with what the community members voted
         ratio = self.community_vote
         if self.decision_style <= 33: #Unanimity
             if ratio >=0.8:
@@ -206,7 +208,7 @@ class Industry(Agent): #Industry agent propoerties
                 self.loyalty = self.loyalty - 1
      
         
-    def decisionRule(self): #Was my option chosen?
+    def decisionRule(self): #Comparisson of my vote with what was decided in the community voting
         if self.decision_rule <= 33: #confrontation
             if self.vote == 1 and self.community_vote > 0: 
                 self.loyalty = self.loyalty + 1
@@ -225,7 +227,7 @@ class Industry(Agent): #Industry agent propoerties
                 self.loyalty = self.loyalty + 0
 
 
-    def leaveCommunity(self): #leaving the community ---> Add decision style here
+    def leaveCommunity(self): #leaving the community routine
         self.decisionStyle()
         self.decisionRule()
         if self.loyalty >= self.threshold:
@@ -234,8 +236,9 @@ class Industry(Agent): #Industry agent propoerties
                     self.eng_lvl = 0
                     self.exit = 1
 
+
 ##Community
-class Community(Agent):
+class Community(Agent): #Community agent propoerties
     def __init__(self, name, pos, activity, model):
         super().__init__(name, model)
         self.active = activity #0 - No / 1 - Yes
@@ -275,7 +278,6 @@ class Community(Agent):
         self.money = 0    
         
       
-       
 #Community functions   
     def step(self):
         self.energy = 0
@@ -306,7 +308,7 @@ class Community(Agent):
                 self.energy = self.energy + member.energy    
      
         
-    def initialInvestment(self):#Initial investment by founders
+    def initialInvestment(self): #Initial investment by founders
         if self.active == 1 and self.period == 0:
             Data.projectSelector(self)
             invested_capital = float(((self.project_cost) * 1.2) /len(self.members)) 
@@ -315,7 +317,7 @@ class Community(Agent):
                 member.invested = member.invested + invested_capital
     
     
-    def projectDefinition(self): #Choose what type of project to be done: All solar, All wind or mixed
+    def projectDefinition(self): #Choose what type of project to be done: All solar, All wind or mixed sources
         if self.energy != 0: 
             Data.projectSelector(self)
             if self.project_margin <= 0:
@@ -332,6 +334,7 @@ class Community(Agent):
         else:
             None
     
+    
     def meetings(self): #Schedule a meeting with members
         self.voting_result = 0
         for member in self.members:
@@ -341,7 +344,8 @@ class Community(Agent):
         else:
             self.plan_execution = "Rejected"
         
-    def planExecution(self): #For approved plans, execute and revenue
+        
+    def planExecution(self): #For approved plans, execute and generate revenue
         if self.plan_execution == "Approved":
             self.money = self.money - float(self.project_cost) #Pay for project
             self.energy_total_total  = self.energy_total_total + (self.energy_solar + self.energy_wind) #Increase generation park
@@ -371,6 +375,7 @@ class Community(Agent):
         else:
             pass
         
+        
     def newMemberFee(self): #Calculate how much does it cost to a new member to join
         if self.energy_total_total != 0:
             ratios = self.energy_total_solar/self.energy_total_total
@@ -393,7 +398,7 @@ class Community(Agent):
             member.com_premium = self.premium
         
     
-    def rtnFunc(self): #Financial return if strategy = 1
+    def rtnFunc(self): #return to members
         delta =  gridtariff - self.premium
         for member in self.members:
             if self.premium == 0:
@@ -424,8 +429,7 @@ class Community(Agent):
             except: None
             
 
-        
-    def memberExit(self):
+    def memberExit(self): #Member exit policy
         for member in self.members:
             if member.which_community == 0:
                 self.members.remove(member)

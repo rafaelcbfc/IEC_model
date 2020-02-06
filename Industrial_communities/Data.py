@@ -16,7 +16,7 @@ import numpy as np
 
 ###Calculation varialbes
 pool_countries = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]
-country = pool_countries[0]
+country = pool_countries[5]
 discount_rate = getattr(Hofstede, country + "_discount_rate")
 sunshine = getattr(Hofstede, country + "_sunshine")
 wind_dist =getattr(Hofstede, country + "_wind_dist")  
@@ -32,7 +32,9 @@ wind_threshold = 5000 #in KW, minimum value to make it a possibility for wind en
 depreciation_period = 20
 
 pool_financial_investments = ["feed-in-tariff", "tax-incentive", "tradable-certificates"]
-financial_investment = "tax-incentive" 
+
+financial_investment = "tradable-certificates" 
+
 if financial_investment == 'feed-in-tariff':
     fit = 3 #2.1 , 2.5, 3
     tx = 0
@@ -49,7 +51,7 @@ elif financial_investment == "tradable-certificates":
     fit = 1
     tx = 0
     tax_incentive = 1-tx
-    tgc = 0.015
+    tgc = 0.025 #0.015, 0.02, 0.025
 
 else:
     fit = 1
@@ -68,6 +70,7 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     wind_implement_Costs =random.choice(wind_costs) * tax_incentive
     solar_OM1 = random.choice(solar_OM)
     wind_OM1 = random.choice(wind_OM)
+    option_i = 0
     test = 0
 
   #Individuals variable  
@@ -197,17 +200,17 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     if me.cba_lvl != 1:
         if max(produce) > max(sell): 
            me.cba_lvl = 2 #Producing has a higher NPV than selling
-           option = produce.index(max(produce))
+           option_i = produce.index(max(produce))
         else:
            me.cba_lvl = 3 #Selling has a higher NPV than producing
-           option = sell.index(max(sell))
+           option_i = sell.index(max(sell))
         
         #What is the levelized cost of my option  
-        if option == 0:
+        if option_i == 0:
             me.LCOE = LCOE_solar1
-        if option == 1:
+        if option_i == 1:
             me.LCOE = LCOE_wind2
-        if option == 2:
+        if option_i == 2:
             me.LCOE = (LCOE_solar3 * ratio_solar + LCOE_wind3 * ratio_wind)
     
     return me.LCOE
@@ -358,6 +361,7 @@ def projectSelector(me):
     me.project_cost = 0 
     me.project_tariff = 0
     me.project_margin = 0
+    option_c = 0
 ##Variables    
   #Global variables  
     rev10, rev11, rev20, rev21, rev30, rev31, rg1_fit, rg1_tgc, rg2_fit, rg2_tgc, rg3_fit, rg3_tgc, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
@@ -416,7 +420,7 @@ def projectSelector(me):
     else:
         tax_inc1 = 0
     
-   
+
 ##Case 2 - All wind
     if annual_demand > wind_threshold:
         test = 1
@@ -538,13 +542,13 @@ def projectSelector(me):
     if project_cba != 1:
         if max(produce_c) > max(sell_c): 
            project_cba = 2 #Producing has a higher NPV than selling
-           option = produce_c.index(max(produce_c))
+           option_c = produce_c.index(max(produce_c))
         else:
            project_cba = 3 #Selling has a higher NPV than selling       
-           option = sell_c.index(max(sell_c))
+           option_c = sell_c.index(max(sell_c))
     
 #What is the levelized cost of my option  
-    if option == 0: #Solar
+    if option_c == 0: #Solar
         me.project_tariff0 = LCOE_solar1
         me.project_tariff1 = r10
         me.project_margin = max(marginc10, marginc11)
@@ -554,7 +558,7 @@ def projectSelector(me):
         me.incentive_fit = fit1
         me.incentive_tax = tax_inc1
         me.incentive_tgc = tgc_inc1
-    if option == 1: #Wind
+    if option_c == 1: #Wind
         me.project_tariff0 = LCOE_wind2
         me.project_tariff1 = r20
         me.project_margin = max(marginc20, marginc21)
@@ -564,7 +568,7 @@ def projectSelector(me):
         me.incentive_fit = fit2
         me.incentive_tax = tax_inc2
         me.incentive_tgc = tgc_inc2
-    if option == 2: #Mixed
+    if option_c == 2: #Mixed
         me.project_tariff0 = (LCOE_solar3 * ratio_solar + LCOE_wind3 * ratio_wind)
         me.project_tariff1 = r30
         me.project_margin = max(marginc30, marginc31)

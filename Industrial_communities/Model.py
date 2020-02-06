@@ -36,89 +36,89 @@ geo_i = geo[:max_ind_size]
 geo_c = geo[max_ind_size:]
 
 ##Evaluations metrics
-def countIndustry(model):
+def countIndustry(model): #Total number of industries
     n_ind =  [a for a in model.schedule.agents if type(a) == Industry]
     return len(n_ind)
 
-def countCommunity(model):
+def countCommunity(model): #Total communities placed on grid
     n_com =  [b for b in model.schedule.agents if type(b) == Community]
     return len(n_com)
     
-def countActive(model):
+def countActive(model): #Acitve communities per simulation run
     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
     return len(n_act)
 
-def countEntrepeneurrole(model):
+def countEntrepeneurrole(model): #Entrepreneur feedback to government
     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
     n_policy = 0
     for c in n_act:
         n_policy = n_policy + int(c.policy_entrepreneur)
     return n_policy
 
-def communityMembers(model):
+def communityMembers(model): #Number of industries linked to the communities
     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
     n_members = 0
     for c in n_act:
         n_members = n_members + int(len(c.members))
     return n_members
 
-def totalEnergyProduced(model):
+def totalEnergyProduced(model): #Total renewable energy produced by all communities
     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
     n_energy = 0
     for c in n_act:
         n_energy = n_energy + int(c.energy_total_total)
     return n_energy
 
-def solarEnergyProduced(model):
+def solarEnergyProduced(model): #Total solar energy produced by all communities
     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
     n_solar = 0
     for c in n_act:
         n_solar = n_solar + int(c.energy_total_solar)
     return n_solar
 
-def windEnergyProduced(model):
+def windEnergyProduced(model): #Total wind energy produced by all communities
     n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
     n_wind = 0
     for c in n_act:
         n_wind = n_wind + int(c.energy_total_wind)
     return n_wind
 
-def exitMembers(model):
+def exitMembers(model): #Number of industries which exited a community
      n_ind =  [a for a in model.schedule.agents if type(a) == Industry]
      n_exit = 0
      for i in n_ind:
          n_exit = n_exit + int(i.exit)
      return n_exit
 
-def investedCapital(model):
+def investedCapital(model): #Total amount invested in renewable projects
      n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
      n_costs = 0
      for c in n_act:
          n_costs = n_costs + int(c.costs)
      return n_costs 
 
-def investedCapitalInd(model):
+def investedCapitalInd(model): #Total amount invested by industries
      n_ind =  [a for a in model.schedule.agents if type(a) == Industry]
      n_invested = 0
      for i in n_ind:
          n_invested = n_invested + int(i.invested)
      return n_invested   
 
-def incentiveFit(model):
+def incentiveFit(model): #Amount spent by government on FIT 
      n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
      n_fit = 0
      for c in n_act:
          n_fit = n_fit + int(c.incentive_fit)
      return n_fit 
  
-def incentiveTax(model):
+def incentiveTax(model): #Amount spent by government on Tax incentives
      n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
      n_tax = 0
      for c in n_act:
          n_tax = n_tax + int(c.incentive_tax)
      return n_tax
 
-def incentiveTGC(model):
+def incentiveTGC(model):#Amount spent by government on TGC
      n_act =  [c for c in model.schedule.agents if type(c) == Community and c.active == 1]
      n_tgc = 0
      for c in n_act:
