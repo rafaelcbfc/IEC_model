@@ -143,9 +143,9 @@ class Modelrun(Model):
                                            "Solar Energy": solarEnergyProduced,
                                            "Wind Energy": windEnergyProduced,
                                            "Member exit": exitMembers,
-                                           "Community Costs":investedCapital,
+                                           "Community Invested":investedCapital,
                                            "Industry Investments": investedCapitalInd,
-                                           "Govermental FIT incentive": incentiveFit,
+                                           "Governmental FIT incentive": incentiveFit,
                                            "Governmental TAX incentive": incentiveTax,
                                            "Governmental TGC incentive": incentiveTGC,
                                            "Policy Entrepreneur": countEntrepeneurrole})

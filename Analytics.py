@@ -17,93 +17,89 @@ from itertools import cycle, islice
 import Australia, Brazil, Iran, Japan, NLD, USA
 
 
-###Number of Communities
+###Communities
 ##Scenario 0
-Aac_S0 = Australia.Ac_S0
-Bac_S0 = Brazil.Ac_S0
-Iac_S0 = Iran.Ac_S0
-Jac_S0 = Japan.Ac_S0
-Nac_S0 = NLD.Ac_S0
-Uac_S0 = USA.Ac_s0
-
+Ac_S0 = Australia.C_S0
+Bc_S0 = Brazil.C_S0
+Ic_S0 = Iran.C_S0
+Jc_S0 = Japan.C_S0
+Nc_S0 = NLD.C_S0
+Uc_S0 = USA.C_s0
 ##Scenario 1
-Aac_S1 = Australia.Ac_S1
-Bac_S1 = Brazil.Ac_S1
-Iac_S1 = Iran.Ac_S1
-Jac_S1 = Japan.Ac_S1
-Nac_S1 = NLD.Ac_S1
-Uac_S1 = USA.Ac_s1
-Aac_S11 = Australia.Ac_S11
-Bac_S11 = Brazil.Ac_S11
-Iac_S11 = Iran.Ac_S11
-Jac_S11 = Japan.Ac_S11
-Nac_S11 = NLD.Ac_S11
-Uac_S11 = USA.Ac_s11
-Aac_S12 = Australia.Ac_S12
-Bac_S12 = Brazil.Ac_S12
-Iac_S12 = Iran.Ac_S12
-Jac_S12 = Japan.Ac_S12
-Nac_S12 = NLD.Ac_S12
-Uac_S12 = USA.Ac_s12
-Aac_S13 = Australia.Ac_S13
-Bac_S13 = Brazil.Ac_S13
-Iac_S13 = Iran.Ac_S13
-Jac_S13 = Japan.Ac_S13
-Nac_S13 = NLD.Ac_S13
-Uac_S13 = USA.Ac_s13
-
+Ac_S1 = Australia.C_S1
+Bc_S1 = Brazil.C_S1
+Ic_S1 = Iran.C_S1
+Jc_S1 = Japan.C_S1
+Nc_S1 = NLD.C_S1
+Uc_S1 = USA.C_s1
+Ac_S11 = Australia.C_S11
+Bc_S11 = Brazil.C_S11
+Ic_S11 = Iran.C_S11
+Jc_S11 = Japan.C_S11
+Nc_S11 = NLD.C_S11
+Uc_S11 = USA.C_s11
+Ac_S12 = Australia.C_S12
+Bc_S12 = Brazil.C_S12
+Ic_S12 = Iran.C_S12
+Jc_S12 = Japan.C_S12
+Nc_S12 = NLD.C_S12
+Uc_S12 = USA.C_s12
+Ac_S13 = Australia.C_S13
+Bc_S13 = Brazil.C_S13
+Ic_S13 = Iran.C_S13
+Jc_S13 = Japan.C_S13
+Nc_S13 = NLD.C_S13
+Uc_S13 = USA.C_s13
 ##Scenario 2
-Aac_S2 = Australia.Ac_S2
-Bac_S2 = Brazil.Ac_S2
-Iac_S2 = Iran.Ac_S2
-Jac_S2 = Japan.Ac_S2
-Nac_S2 = NLD.Ac_S2
-Uac_S2 = USA.Ac_s2
-Aac_S21 = Australia.Ac_S21
-Bac_S21 = Brazil.Ac_S21
-Iac_S21 = Iran.Ac_S21
-Jac_S21 = Japan.Ac_S21
-Nac_S21 = NLD.Ac_S21
-Uac_S21 = USA.Ac_s21
-Aac_S22 = Australia.Ac_S22
-Bac_S22 = Brazil.Ac_S22
-Iac_S22 = Iran.Ac_S22
-Jac_S22 = Japan.Ac_S22
-Nac_S22 = NLD.Ac_S22
-Uac_S22 = USA.Ac_s22
-Aac_S23 = Australia.Ac_S23
-Bac_S23 = Brazil.Ac_S23
-Iac_S23 = Iran.Ac_S23
-Jac_S23 = Japan.Ac_S23
-Nac_S23 = NLD.Ac_S23
-Uac_S23 = USA.Ac_s23
-
+Ac_S2 = Australia.C_S2
+Bc_S2 = Brazil.C_S2
+Ic_S2 = Iran.C_S2
+Jc_S2 = Japan.C_S2
+Nc_S2 = NLD.C_S2
+Uc_S2 = USA.C_s2
+Ac_S21 = Australia.C_S21
+Bc_S21 = Brazil.C_S21
+Ic_S21 = Iran.C_S21
+Jc_S21 = Japan.C_S21
+Nc_S21 = NLD.C_S21
+Uc_S21 = USA.C_s21
+Ac_S22 = Australia.C_S22
+Bc_S22 = Brazil.C_S22
+Ic_S22 = Iran.C_S22
+Jc_S22 = Japan.C_S22
+Nc_S22 = NLD.C_S22
+Uc_S22 = USA.C_s22
+Ac_S23 = Australia.C_S23
+Bc_S23 = Brazil.C_S23
+Ic_S23 = Iran.C_S23
+Jc_S23 = Japan.C_S23
+Nc_S23 = NLD.C_S23
+Uc_S23 = USA.C_s23
 ##Scenario 3
-Aac_S3 = Australia.Ac_S3
-Bac_S3 = Brazil.Ac_S3
-Iac_S3 = Iran.Ac_S3
-Jac_S3 = Japan.Ac_S3
-Nac_S3 = NLD.Ac_S3
-Uac_S3 = USA.Ac_s3
-Aac_S31 = Australia.Ac_S31
-Bac_S31 = Brazil.Ac_S31
-Iac_S31 = Iran.Ac_S31
-Jac_S31 = Japan.Ac_S31
-Nac_S31 = NLD.Ac_S31
-Uac_S31 = USA.Ac_s31
-Aac_S32 = Australia.Ac_S32
-Bac_S32 = Brazil.Ac_S32
-Iac_S32 = Iran.Ac_S32
-Jac_S32 = Japan.Ac_S32
-Nac_S32 = NLD.Ac_S32
-Uac_S32 = USA.Ac_s32
-Aac_S33 = Australia.Ac_S33
-Bac_S33 = Brazil.Ac_S33
-Iac_S33 = Iran.Ac_S33
-Jac_S33 = Japan.Ac_S33
-Nac_S33 = NLD.Ac_S33
-Uac_S33 = USA.Ac_s33
-
+Ac_S3 = Australia.C_S3
+Bc_S3 = Brazil.C_S3
+Ic_S3 = Iran.C_S3
+Jc_S3 = Japan.C_S3
+Nc_S3 = NLD.C_S3
+Uac_S3 = USA.C_s3
+Ac_S31 = Australia.C_S31
+Bc_S31 = Brazil.C_S31
+Ic_S31 = Iran.C_S31
+Jc_S31 = Japan.C_S31
+Nc_S31 = NLD.C_S31
+Uc_S31 = USA.C_s31
+Ac_S32 = Australia.C_S32
+Bc_S32 = Brazil.C_S32
+Ic_S32 = Iran.C_S32
+Jc_S32 = Japan.C_S32
+Nc_S32 = NLD.C_S32
+Uc_S32 = USA.C_s32
+Ac_S33 = Australia.C_S33
+Bc_S33 = Brazil.C_S33
+Ic_S33 = Iran.C_S33
+Jc_S33 = Japan.C_S33
+Nc_S33 = NLD.C_S33
+Uc_S33 = USA.C_s33
 
 ###Members of Communities
 ##Scenario 0
@@ -113,7 +109,6 @@ Im_S0 = Iran.M_S0
 Jm_S0 = Japan.M_S0
 Nm_S0 = NLD.M_S0
 Um_S0 = USA.M_s0
-
 ##Scenario 1
 Am_S1 = Australia.M_S1
 Bm_S1 = Brazil.M_S1
@@ -121,30 +116,74 @@ Im_S1 = Iran.M_S1
 Jm_S1 = Japan.M_S1
 Nm_S1 = NLD.M_S1
 Um_S1 = USA.M_s1
-
 Am_S11 = Australia.M_S11
 Bm_S11 = Brazil.M_S11
 Im_S11 = Iran.M_S11
 Jm_S11 = Japan.M_S11
 Nm_S11 = NLD.M_S11
 Um_S11 = USA.M_s11
-
 Am_S12 = Australia.M_S12
 Bm_S12 = Brazil.M_S12
 Im_S12 = Iran.M_S12
 Jm_S12 = Japan.M_S12
 Nm_S12 = NLD.M_S12
 Um_S12 = USA.M_s12
-
 Am_S13 = Australia.M_S13
 Bm_S13 = Brazil.M_S13
 Im_S13 = Iran.M_S13
 Jm_S13 = Japan.M_S13
 Nm_S13 = NLD.M_S13
 Um_S13 = USA.M_s13
-
-
-
+##Scenario 2
+Am_S2 = Australia.M_S2
+Bm_S2 = Brazil.M_S2
+Im_S2 = Iran.M_S2
+Jm_S2 = Japan.M_S2
+Nm_S2 = NLD.M_S2
+Um_S2 = USA.M_s2
+Am_S21 = Australia.M_S21
+Bm_S21 = Brazil.M_S21
+Im_S21 = Iran.M_S21
+Jm_S21 = Japan.M_S21
+Nm_S21 = NLD.M_S21
+Um_S21 = USA.M_s21
+Am_S22 = Australia.M_S22
+Bm_S22 = Brazil.M_S22
+Im_S22 = Iran.M_S22
+Jm_S22 = Japan.M_S22
+Nm_S22 = NLD.M_S22
+Um_S22 = USA.M_s22
+Am_S23 = Australia.M_S23
+Bm_S23 = Brazil.M_S23
+Im_S23 = Iran.M_S23
+Jm_S23 = Japan.M_S23
+Nm_S23 = NLD.M_S23
+Um_S23 = USA.M_s23
+##Scenario 3
+Am_S3 = Australia.M_S3
+Bm_S3 = Brazil.M_S3
+Im_S3 = Iran.M_S3
+Jm_S3 = Japan.M_S3
+Nm_S3 = NLD.M_S3
+Um_S3 = USA.M_s3
+Am_S31 = Australia.M_S31
+Bm_S31 = Brazil.M_S31
+Im_S31 = Iran.M_S31
+Jm_S31 = Japan.M_S31
+Nm_S31 = NLD.M_S31
+Um_S31 = USA.M_s31
+Am_S32 = Australia.M_S32
+Bm_S32 = Brazil.M_S32
+Im_S32 = Iran.M_S32
+Jm_S32 = Japan.M_S32
+Nm_S32 = NLD.M_S32
+Um_S32 = USA.M_s32
+Am_S33 = Australia.M_S33
+Bm_S33 = Brazil.M_S33
+Im_S33 = Iran.M_S13
+Jm_S33 = Japan.M_S33
+Nm_S33 = NLD.M_S33
+Um_S33 = USA.M_s33
 
 
 
