@@ -104,7 +104,6 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid, produce or sell energy
     revenue11 = np.npv(discount_rate, rev11)
     costs1 = investment_solar1 + np.npv(discount_rate, cos1)
     
-    
     NPV10 = revenue10-costs1
     NPV11 = revenue11-costs1
     
