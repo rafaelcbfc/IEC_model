@@ -250,7 +250,7 @@ for i in range(20):
     p33["tick_{0}".format(i)] = P
     s33["tick_{0}".format(i)] = S
     w33["tick_{0}".format(i)] = W
-    
+   
 ###Data sorting
 ##Active Communities    
 C_S0 = [sum(v)/1000 for v in c00.values()]
@@ -268,7 +268,7 @@ C_S33 = [sum(v)/500 for v in c33.values()]
 C_S3 = np.average((C_S31, C_S32, C_S33), axis=0)
 
 ##Members Exit
-E_S00 = [sum(v)/1000 for v in e00.values()]
+E_S0 = [sum(v)/1000 for v in e00.values()]
 E_S11 = [sum(v)/500 for v in e11.values()]
 E_S12 = [sum(v)/500 for v in e12.values()]
 E_S13 = [sum(v)/500 for v in e13.values()]
@@ -297,7 +297,7 @@ G_S33 = [sum(v)/500 for v in g33.values()]
 G_S3 = np.average((G_S31, G_S32, G_S33), axis=0)
 
 ##Invested amount
-I_S00 = [sum(v)/1000 for v in i00.values()]
+I_S0 = [sum(v)/1000 for v in i00.values()]
 I_S11 = [sum(v)/500 for v in i11.values()]
 I_S12 = [sum(v)/500 for v in i12.values()]
 I_S13 = [sum(v)/500 for v in i13.values()]
@@ -312,7 +312,7 @@ I_S33 = [sum(v)/500 for v in i33.values()]
 I_S3 = np.average((I_S31, I_S32, I_S33), axis=0)
 
 ##Members population    
-M_S00 = [sum(v)/1000 for v in m00.values()]
+M_S0 = [sum(v)/1000 for v in m00.values()]
 M_S11 = [sum(v)/500 for v in m11.values()]
 M_S12 = [sum(v)/500 for v in m12.values()]
 M_S13 = [sum(v)/500 for v in m13.values()]
@@ -327,7 +327,7 @@ M_S33 = [sum(v)/500 for v in m33.values()]
 M_S3 = np.average((M_S31, M_S32, M_S33), axis=0)
 
 ##Policy entrepreneur
-P_S00 = [sum(v)/1000 for v in p00.values()]
+P_S0 = [sum(v)/1000 for v in p00.values()]
 P_S11 = [sum(v)/500 for v in p11.values()]
 P_S12 = [sum(v)/500 for v in p12.values()]
 P_S13 = [sum(v)/500 for v in p13.values()]
@@ -342,7 +342,7 @@ P_S33 = [sum(v)/500 for v in p33.values()]
 P_S3 = np.average((P_S31, P_S32, P_S33), axis=0)
 
 ###Solar Energy
-S_S00 = [sum(v)/1000 for v in s00.values()]
+S_S0 = [sum(v)/1000 for v in s00.values()]
 S_S11 = [sum(v)/500 for v in s11.values()]
 S_S12 = [sum(v)/500 for v in s12.values()]
 S_S13 = [sum(v)/500 for v in s13.values()]
@@ -357,7 +357,7 @@ S_S33 = [sum(v)/500 for v in s33.values()]
 S_S3 = np.average((S_S31, S_S32, S_S33), axis=0)
 
 ###Wind Energy
-W_S00 = [sum(v)/1000 for v in w00.values()]
+W_S0 = [sum(v)/1000 for v in w00.values()]
 W_S11 = [sum(v)/500 for v in w11.values()]
 W_S12 = [sum(v)/500 for v in w12.values()]
 W_S13 = [sum(v)/500 for v in w13.values()]
@@ -370,3 +370,8 @@ W_S31 = [sum(v)/500 for v in w31.values()]
 W_S32 = [sum(v)/500 for v in w32.values()]
 W_S33 = [sum(v)/500 for v in w33.values()]
 W_S3 = np.average((W_S31, W_S32, W_S33), axis=0)
+
+###Ratios
+RFIT = sum([sum(x) for x in zip(*[G_S11, G_S12, G_S13, I_S11, I_S12, I_S13])])/sum([sum(x) for x in zip(*[S_S11, S_S12, S_S13, W_S11, W_S12, W_S13])])
+RTAX = sum([sum(x) for x in zip(*[G_S21, G_S22, G_S23, I_S21, I_S22, I_S23])])/sum([sum(x) for x in zip(*[S_S21, S_S22, S_S23, W_S21, W_S12, W_S23])])
+RTGC = sum([sum(x) for x in zip(*[G_S31, G_S32, G_S33, I_S31, I_S32, I_S33])])/sum([sum(x) for x in zip(*[S_S31, S_S32, S_S33, W_S31, W_S32, W_S33])])

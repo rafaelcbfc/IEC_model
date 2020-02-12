@@ -164,6 +164,7 @@ USA_wind_dist = 2562.38
 my_colors = list(islice(cycle(['#66b3ff', '#2F9599', '#355C7d', '#E84A5F', '#474747', '#9DE0AD']), None, len(dt)))
 fig = plt.figure()
 ax2 = dt.plot(kind="bar", figsize = (12,8), color = my_colors, fontsize =12, grid=True, title = "Hofstede's 6 dimensions for selected countries")
+plt.savefig('H - 6D.png')
 ax2.grid(axis="x")
 
 #Power Distance
@@ -173,6 +174,7 @@ g_pdi.plot.kde(ax=ax, legend=False, title='Power Distance Distribution', color =
 plt.axvline(m_pdi, color='k', linestyle='dashed', linewidth=1)
 plt.xlabel('Power Distance Index')
 plt.legend(["Distribution function", "mean", "Power Distance freq"])
+plt.savefig('H - PDI.png')
 plt.show()
 
 #Individualism
@@ -182,15 +184,17 @@ g_idv.plot.hist(density=True, ax=ax, color="#2F9599")
 plt.axvline(m_idv, color='k', linestyle='dashed', label="mean", linewidth=1)
 plt.xlabel('Individualism')
 plt.legend(["Distribution function", "mean", "Individualism freq"])
+plt.savefig('H - IDV.png')
 plt.show()
 
 #Masculinity  
 fig, ax = plt.subplots()
-g_mas.plot.kde(ax=ax, legend=False, title='Masculinity Distribution', color = '#F8B195')
+g_mas.plot.kde(ax=ax, legend=False, title='Assertiveness Distribution', color = '#F8B195')
 g_mas.plot.hist(density=True, ax=ax, color="#355C7d")
 plt.axvline(m_mas, color='k', linestyle='dashed', label="mean", linewidth=1)
-plt.xlabel('Masculinity')
-plt.legend(["Distribution function", "mean", "Masculinity freq"])
+plt.xlabel('Assertiveness')
+plt.legend(["Distribution function", "mean", "Assertiveness freq"])
+plt.savefig('H - AST.png')
 plt.show()
 
 #Uncertainty Avoidance
@@ -200,6 +204,7 @@ g_uai.plot.hist(density=True, ax=ax, color="#E84A5F")
 plt.axvline(m_uai, color='k', linestyle='dashed', label="mean", linewidth=1)
 plt.xlabel('Uncertainty Avoidance')
 plt.legend(["Distribution function", "mean", "Uncertainty Avoid. freq"])
+plt.savefig('H - UAI.png')
 plt.show()
 
 #Long term orientation
@@ -209,6 +214,7 @@ g_lto.plot.hist(density=True, ax=ax, color="#474747")
 plt.axvline(m_lto, color='k', linestyle='dashed', label="mean", linewidth=1)
 plt.xlabel('Long Term Orientation')
 plt.legend(["Distribution function", "mean", "Long-term orient. freq"])
+plt.savefig('H - LTO.png')
 plt.show()
 
 #Indulgene
@@ -218,5 +224,6 @@ g_ivr.plot.hist(density=True, ax=ax, color="#9DE0AD")
 plt.axvline(m_ivr, color='k', linestyle='dashed', label="mean", linewidth=1)
 plt.xlabel('Indulgence')
 plt.legend(["Distribution function", "mean", "Indulgence freq"])
+plt.savefig('H - IND.png')
 plt.show()
 
