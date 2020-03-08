@@ -12,6 +12,18 @@ import numpy as np
 import AUS, BRA, IRA, JPN, NLD, USA
 
 
+AUScolor = '#3498db' 
+BRAcolor = '#27ae60' 
+IRAcolor = '#7f8c8d'
+JPNcolor = '#e74c3c'
+NLDcolor = '#e67e22'
+USAcolor = '#40739e'
+FITcolor = '#16a085'
+TAXcolor = '#f1c40f'
+TGCcolor = '#2980b9'
+NOIcolor = '#9b59b6' 
+TOTALcolor = '#273746'
+
 def autolabel(rects):
     """
     Attach a text label above each bar displaying its height
@@ -22,7 +34,7 @@ def autolabel(rects):
                 '%f' % float(height),
         ha='center', va='bottom')
 
-
+ 
 
 ###Plots
 ######################################
@@ -31,12 +43,12 @@ def autolabel(rects):
 #Scenario 0
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.C_S0)
-plt.plot(t, BRA.C_S0)
-plt.plot(t, IRA.C_S0)
-plt.plot(t, JPN.C_S0)
-plt.plot(t, NLD.C_S0)
-plt.plot(t, USA.C_S0)
+plt.plot(t, AUS.C_S0, color = AUScolor)
+plt.plot(t, BRA.C_S0, color = BRAcolor)
+plt.plot(t, IRA.C_S0, color = IRAcolor)
+plt.plot(t, JPN.C_S0, color = JPNcolor)
+plt.plot(t, NLD.C_S0, color = NLDcolor)
+plt.plot(t, USA.C_S0, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -54,12 +66,12 @@ plt.show()
 #Scenario 1
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.C_S1)
-plt.plot(t, BRA.C_S1)
-plt.plot(t, IRA.C_S1)
-plt.plot(t, JPN.C_S1)
-plt.plot(t, NLD.C_S1)
-plt.plot(t, USA.C_S1)
+plt.plot(t, AUS.C_S1, color = AUScolor)
+plt.plot(t, BRA.C_S1, color = BRAcolor)
+plt.plot(t, IRA.C_S1, color = IRAcolor)
+plt.plot(t, JPN.C_S1, color = JPNcolor)
+plt.plot(t, NLD.C_S1, color = NLDcolor)
+plt.plot(t, USA.C_S1, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -74,12 +86,12 @@ plt.show()
 #Scenario 2
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.C_S2)
-plt.plot(t, BRA.C_S2)
-plt.plot(t, IRA.C_S2)
-plt.plot(t, JPN.C_S2)
-plt.plot(t, NLD.C_S2)
-plt.plot(t, USA.C_S2)
+plt.plot(t, AUS.C_S2, color = AUScolor)
+plt.plot(t, BRA.C_S2, color = BRAcolor)
+plt.plot(t, IRA.C_S2, color = IRAcolor)
+plt.plot(t, JPN.C_S2, color = JPNcolor)
+plt.plot(t, NLD.C_S2, color = NLDcolor)
+plt.plot(t, USA.C_S2, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -94,12 +106,12 @@ plt.show()
 #Scenario 3
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.C_S3)
-plt.plot(t, BRA.C_S3)
-plt.plot(t, IRA.C_S3)
-plt.plot(t, JPN.C_S3)
-plt.plot(t, NLD.C_S3)
-plt.plot(t, USA.C_S3)
+plt.plot(t, AUS.C_S3, color = AUScolor)
+plt.plot(t, BRA.C_S3, color = BRAcolor)
+plt.plot(t, IRA.C_S3, color = IRAcolor)
+plt.plot(t, JPN.C_S3, color = JPNcolor)
+plt.plot(t, NLD.C_S3, color = NLDcolor)
+plt.plot(t, USA.C_S3, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -117,12 +129,12 @@ plt.show()
 #Scenario 0
 fig, ax = plt.subplots()
 t = np.arange(20)
-bar1 = ax.bar(t, AUS.E_S0, align='center')
-bar2 = ax.bar(t, BRA.E_S0, align='center', bottom = np.array(AUS.E_S0))
-bar3 = ax.bar(t, IRA.E_S0, align='center', bottom = np.array(AUS.E_S0) + np.array(BRA.E_S0))
-bar4 = ax.bar(t, JPN.E_S0, align='center', bottom = np.array(AUS.E_S0) + np.array(BRA.E_S0) + np.array(IRA.E_S0))
-bar5 = ax.bar(t, NLD.E_S0, align='center', bottom = np.array(AUS.E_S0) + np.array(BRA.E_S0) + np.array(IRA.E_S0) + np.array(JPN.E_S0))
-bar6 = ax.bar(t, USA.E_S0, align='center', bottom = np.array(AUS.E_S0) + np.array(BRA.E_S0) + np.array(IRA.E_S0) + np.array(JPN.E_S0) + np.array(NLD.E_S0))
+bar1 = ax.bar(t, AUS.E_S0, color = AUScolor, align='center')
+bar2 = ax.bar(t, BRA.E_S0, color = BRAcolor, align='center', bottom = np.array(AUS.E_S0))
+bar3 = ax.bar(t, IRA.E_S0, color = IRAcolor, align='center', bottom = np.array(AUS.E_S0) + np.array(BRA.E_S0))
+bar4 = ax.bar(t, JPN.E_S0, color = JPNcolor, align='center', bottom = np.array(AUS.E_S0) + np.array(BRA.E_S0) + np.array(IRA.E_S0))
+bar5 = ax.bar(t, NLD.E_S0, color = NLDcolor, align='center', bottom = np.array(AUS.E_S0) + np.array(BRA.E_S0) + np.array(IRA.E_S0) + np.array(JPN.E_S0))
+bar6 = ax.bar(t, USA.E_S0, color = USAcolor, align='center', bottom = np.array(AUS.E_S0) + np.array(BRA.E_S0) + np.array(IRA.E_S0) + np.array(JPN.E_S0) + np.array(NLD.E_S0))
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
 plt.ylabel('# of Members Exit')
@@ -134,12 +146,12 @@ plt.show()
 #Scenario 1
 fig, ax = plt.subplots()
 t = np.arange(20)
-ax.bar(t, AUS.E_S1, align='center')
-ax.bar(t, BRA.E_S1, align='center', bottom = np.array(AUS.E_S1))
-ax.bar(t, IRA.E_S1, align='center', bottom = np.array(AUS.E_S1) + np.array(BRA.E_S1))
-ax.bar(t, JPN.E_S1, align='center', bottom = np.array(AUS.E_S1) + np.array(BRA.E_S1) + np.array(IRA.E_S1))
-ax.bar(t, NLD.E_S1, align='center', bottom = np.array(AUS.E_S1) + np.array(BRA.E_S1) + np.array(IRA.E_S1) + np.array(JPN.E_S1))
-ax.bar(t, USA.E_S1, align='center', bottom = np.array(AUS.E_S1) + np.array(BRA.E_S1) + np.array(IRA.E_S1) + np.array(JPN.E_S1) + np.array(NLD.E_S1))
+ax.bar(t, AUS.E_S1, color = AUScolor, align='center')
+ax.bar(t, BRA.E_S1, color = BRAcolor, align='center', bottom = np.array(AUS.E_S1))
+ax.bar(t, IRA.E_S1, color = IRAcolor, align='center', bottom = np.array(AUS.E_S1) + np.array(BRA.E_S1))
+ax.bar(t, JPN.E_S1, color = JPNcolor, align='center', bottom = np.array(AUS.E_S1) + np.array(BRA.E_S1) + np.array(IRA.E_S1))
+ax.bar(t, NLD.E_S1, color = NLDcolor, align='center', bottom = np.array(AUS.E_S1) + np.array(BRA.E_S1) + np.array(IRA.E_S1) + np.array(JPN.E_S1))
+ax.bar(t, USA.E_S1, color = USAcolor, align='center', bottom = np.array(AUS.E_S1) + np.array(BRA.E_S1) + np.array(IRA.E_S1) + np.array(JPN.E_S1) + np.array(NLD.E_S1))
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -152,12 +164,12 @@ plt.show()
 #Scenario 2
 fig, ax = plt.subplots()
 t = np.arange(20)
-ax.bar(t, AUS.E_S2, align='center')
-ax.bar(t, BRA.E_S2, align='center', bottom = np.array(AUS.E_S2))
-ax.bar(t, IRA.E_S2, align='center', bottom = np.array(AUS.E_S2) + np.array(BRA.E_S2))
-ax.bar(t, JPN.E_S2, align='center', bottom = np.array(AUS.E_S2) + np.array(BRA.E_S2) + np.array(IRA.E_S2))
-ax.bar(t, NLD.E_S2, align='center', bottom = np.array(AUS.E_S2) + np.array(BRA.E_S2) + np.array(IRA.E_S2) + np.array(JPN.E_S2))
-ax.bar(t, USA.E_S2, align='center', bottom = np.array(AUS.E_S2) + np.array(BRA.E_S2) + np.array(IRA.E_S2) + np.array(JPN.E_S2) + np.array(NLD.E_S2))
+ax.bar(t, AUS.E_S2, color = AUScolor, align='center')
+ax.bar(t, BRA.E_S2, color = BRAcolor, align='center', bottom = np.array(AUS.E_S2))
+ax.bar(t, IRA.E_S2, color = IRAcolor, align='center', bottom = np.array(AUS.E_S2) + np.array(BRA.E_S2))
+ax.bar(t, JPN.E_S2, color = JPNcolor, align='center', bottom = np.array(AUS.E_S2) + np.array(BRA.E_S2) + np.array(IRA.E_S2))
+ax.bar(t, NLD.E_S2, color = NLDcolor, align='center', bottom = np.array(AUS.E_S2) + np.array(BRA.E_S2) + np.array(IRA.E_S2) + np.array(JPN.E_S2))
+ax.bar(t, USA.E_S2, color = USAcolor, align='center', bottom = np.array(AUS.E_S2) + np.array(BRA.E_S2) + np.array(IRA.E_S2) + np.array(JPN.E_S2) + np.array(NLD.E_S2))
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -170,12 +182,12 @@ plt.show()
 #Scenario 3
 fig, ax = plt.subplots()
 t = np.arange(20)
-ax.bar(t, AUS.E_S3, align='center')
-ax.bar(t, BRA.E_S3, align='center', bottom = np.array(AUS.E_S3))
-ax.bar(t, IRA.E_S3, align='center', bottom = np.array(AUS.E_S3) + np.array(BRA.E_S3))
-ax.bar(t, JPN.E_S3, align='center', bottom = np.array(AUS.E_S3) + np.array(BRA.E_S3) + np.array(IRA.E_S3))
-ax.bar(t, NLD.E_S3, align='center', bottom = np.array(AUS.E_S3) + np.array(BRA.E_S3) + np.array(IRA.E_S3) + np.array(JPN.E_S3))
-ax.bar(t, USA.E_S3, align='center', bottom = np.array(AUS.E_S3) + np.array(BRA.E_S3) + np.array(IRA.E_S3) + np.array(JPN.E_S3) + np.array(NLD.E_S3))
+ax.bar(t, AUS.E_S3, color = AUScolor, align='center')
+ax.bar(t, BRA.E_S3, color = BRAcolor, align='center', bottom = np.array(AUS.E_S3))
+ax.bar(t, IRA.E_S3, color = IRAcolor, align='center', bottom = np.array(AUS.E_S3) + np.array(BRA.E_S3))
+ax.bar(t, JPN.E_S3, color = JPNcolor, align='center', bottom = np.array(AUS.E_S3) + np.array(BRA.E_S3) + np.array(IRA.E_S3))
+ax.bar(t, NLD.E_S3, color = NLDcolor, align='center', bottom = np.array(AUS.E_S3) + np.array(BRA.E_S3) + np.array(IRA.E_S3) + np.array(JPN.E_S3))
+ax.bar(t, USA.E_S3, color = USAcolor, align='center', bottom = np.array(AUS.E_S3) + np.array(BRA.E_S3) + np.array(IRA.E_S3) + np.array(JPN.E_S3) + np.array(NLD.E_S3))
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -194,7 +206,8 @@ plt.show()
 fig, ax = plt.subplots()
 t = np.arange(20)
 y = np.vstack([AUS.G_S1, BRA.G_S1, IRA.G_S1, JPN.G_S1, NLD.G_S1, USA.G_S1]) 
-ax.stackplot(t, y)
+colors = [AUScolor, BRAcolor, IRAcolor, JPNcolor, NLDcolor, USAcolor]
+ax.stackplot(t, y, colors = colors, alpha=0.8)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -204,11 +217,13 @@ plt.grid(b=True, which='major', color='#666666', linestyle='-')
 plt.savefig('09 - GovInvestment_S1.png')
 plt.show()
 
+
 #Scenario 2 - TAX
 fig, ax = plt.subplots()
 t = np.arange(20)
 y = np.vstack([AUS.G_S2, BRA.G_S2, IRA.G_S2, JPN.G_S2, NLD.G_S2, USA.G_S2]) 
-ax.stackplot(t, y)
+ccolors = [AUScolor, BRAcolor, IRAcolor, JPNcolor, NLDcolor, USAcolor]
+ax.stackplot(t, y, colors = colors, alpha=0.8)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -222,7 +237,8 @@ plt.show()
 fig, ax = plt.subplots()
 t = np.arange(20)
 y = np.vstack([AUS.G_S3, BRA.G_S3, IRA.G_S3, JPN.G_S3, NLD.G_S3, USA.G_S3]) 
-ax.stackplot(t, y)
+colors = [AUScolor, BRAcolor, IRAcolor, JPNcolor, NLDcolor, USAcolor]
+ax.stackplot(t, y, colors = colors, alpha=0.8)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -244,7 +260,8 @@ TGC = [sum(x) for x in zip(*list_tgc)]
 fig, ax = plt.subplots()
 t = list(range(0,20))
 y = np.vstack([FIT, TAX, TGC]) 
-ax.stackplot(t, y)
+colors = [FITcolor, TAXcolor, TGCcolor]
+ax.stackplot(t, y, colors = colors, alpha=0.7)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -262,12 +279,12 @@ plt.show()
 #Scenario 0
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.I_S0)
-plt.plot(t, BRA.I_S0)
-plt.plot(t, IRA.I_S0)
-plt.plot(t, JPN.I_S0)
-plt.plot(t, NLD.I_S0)
-plt.plot(t, USA.I_S0)
+plt.plot(t, AUS.I_S0, color = AUScolor)
+plt.plot(t, BRA.I_S0, color = BRAcolor)
+plt.plot(t, IRA.I_S0, color = IRAcolor)
+plt.plot(t, JPN.I_S0, color = JPNcolor)
+plt.plot(t, NLD.I_S0, color = NLDcolor)
+plt.plot(t, USA.I_S0, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -281,12 +298,12 @@ plt.show()
 #Scenario 1 - FIT
 fig, ax = plt.subplots()
 t = np.arange(20)
-plt.plot(t, AUS.I_S1)
-plt.plot(t, BRA.I_S1)
-plt.plot(t, IRA.I_S1)
-plt.plot(t, JPN.I_S1)
-plt.plot(t, NLD.I_S1)
-plt.plot(t, USA.I_S1)
+plt.plot(t, AUS.I_S1, color = AUScolor)
+plt.plot(t, BRA.I_S1, color = BRAcolor)
+plt.plot(t, IRA.I_S1, color = IRAcolor)
+plt.plot(t, JPN.I_S1, color = JPNcolor)
+plt.plot(t, NLD.I_S1, color = NLDcolor)
+plt.plot(t, USA.I_S1, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -299,12 +316,12 @@ plt.show()
 #Scenario 2 - TAX
 fig, ax = plt.subplots()
 t = np.arange(20)
-plt.plot(t, AUS.I_S2)
-plt.plot(t, BRA.I_S2)
-plt.plot(t, IRA.I_S2)
-plt.plot(t, JPN.I_S2)
-plt.plot(t, NLD.I_S2)
-plt.plot(t, USA.I_S2)
+plt.plot(t, AUS.I_S2, color = AUScolor)
+plt.plot(t, BRA.I_S2, color = BRAcolor)
+plt.plot(t, IRA.I_S2, color = IRAcolor)
+plt.plot(t, JPN.I_S2, color = JPNcolor)
+plt.plot(t, NLD.I_S2, color = NLDcolor)
+plt.plot(t, USA.I_S2, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -317,12 +334,12 @@ plt.show()
 #Scenario 3 - TGC
 fig, ax = plt.subplots()
 t = np.arange(20)
-plt.plot(t, AUS.I_S3)
-plt.plot(t, BRA.I_S3)
-plt.plot(t, IRA.I_S3)
-plt.plot(t, JPN.I_S3)
-plt.plot(t, NLD.I_S3)
-plt.plot(t, USA.I_S3)
+plt.plot(t, AUS.I_S3, color = AUScolor)
+plt.plot(t, BRA.I_S3, color = BRAcolor)
+plt.plot(t, IRA.I_S3, color = IRAcolor)
+plt.plot(t, JPN.I_S3, color = JPNcolor)
+plt.plot(t, NLD.I_S3, color = NLDcolor)
+plt.plot(t, USA.I_S3, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -346,10 +363,10 @@ TGC = [sum(x) for x in zip(*list_tgc)]
 
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, NOI)
-plt.plot(t, FIT)
-plt.plot(t, TAX)
-plt.plot(t, TGC)
+plt.plot(t, NOI, color = NOIcolor)
+plt.plot(t, FIT, color = FITcolor)
+plt.plot(t, TAX, color = TAXcolor)
+plt.plot(t, TGC, color = TGCcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -367,12 +384,12 @@ plt.show()
 #Scenario 0
 fig, ax = plt.subplots()
 t = np.arange(20)
-ax.bar(t, AUS.M_S0, align='center')
-ax.bar(t, BRA.M_S0, align='center', bottom = np.array(AUS.M_S0))
-ax.bar(t, IRA.M_S0, align='center', bottom = np.array(AUS.M_S0) + np.array(BRA.M_S0))
-ax.bar(t, JPN.M_S0, align='center', bottom = np.array(AUS.M_S0) + np.array(BRA.M_S0) + np.array(IRA.M_S0))
-ax.bar(t, NLD.M_S0, align='center', bottom = np.array(AUS.M_S0) + np.array(BRA.M_S0) + np.array(IRA.M_S0) + np.array(JPN.M_S0))
-ax.bar(t, USA.M_S0, align='center', bottom = np.array(AUS.M_S0) + np.array(BRA.M_S0) + np.array(IRA.M_S0) + np.array(JPN.M_S0) + np.array(NLD.M_S0))
+ax.bar(t, AUS.M_S0, color = AUScolor, align='center')
+ax.bar(t, BRA.M_S0, color = BRAcolor, align='center', bottom = np.array(AUS.M_S0))
+ax.bar(t, IRA.M_S0, color = IRAcolor, align='center', bottom = np.array(AUS.M_S0) + np.array(BRA.M_S0))
+ax.bar(t, JPN.M_S0, color = JPNcolor, align='center', bottom = np.array(AUS.M_S0) + np.array(BRA.M_S0) + np.array(IRA.M_S0))
+ax.bar(t, NLD.M_S0, color = NLDcolor, align='center', bottom = np.array(AUS.M_S0) + np.array(BRA.M_S0) + np.array(IRA.M_S0) + np.array(JPN.M_S0))
+ax.bar(t, USA.M_S0, color = USAcolor, align='center', bottom = np.array(AUS.M_S0) + np.array(BRA.M_S0) + np.array(IRA.M_S0) + np.array(JPN.M_S0) + np.array(NLD.M_S0))
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -386,12 +403,12 @@ plt.show()
 #Scenario 1
 fig, ax = plt.subplots()
 t = np.arange(20)
-ax.bar(t, AUS.M_S1, align='center')
-ax.bar(t, BRA.M_S1, align='center', bottom = np.array(AUS.M_S1))
-ax.bar(t, IRA.M_S1, align='center', bottom = np.array(AUS.M_S1) + np.array(BRA.M_S1))
-ax.bar(t, JPN.M_S1, align='center', bottom = np.array(AUS.M_S1) + np.array(BRA.M_S1) + np.array(IRA.M_S1))
-ax.bar(t, NLD.M_S1, align='center', bottom = np.array(AUS.M_S1) + np.array(BRA.M_S1) + np.array(IRA.M_S1) + np.array(JPN.M_S1))
-ax.bar(t, USA.M_S1, align='center', bottom = np.array(AUS.M_S1) + np.array(BRA.M_S1) + np.array(IRA.M_S1) + np.array(JPN.M_S1) + np.array(NLD.M_S1))
+ax.bar(t, AUS.M_S1, color = AUScolor, align='center')
+ax.bar(t, BRA.M_S1, color = BRAcolor, align='center', bottom = np.array(AUS.M_S1))
+ax.bar(t, IRA.M_S1, color = IRAcolor, align='center', bottom = np.array(AUS.M_S1) + np.array(BRA.M_S1))
+ax.bar(t, JPN.M_S1, color = JPNcolor, align='center', bottom = np.array(AUS.M_S1) + np.array(BRA.M_S1) + np.array(IRA.M_S1))
+ax.bar(t, NLD.M_S1, color = NLDcolor, align='center', bottom = np.array(AUS.M_S1) + np.array(BRA.M_S1) + np.array(IRA.M_S1) + np.array(JPN.M_S1))
+ax.bar(t, USA.M_S1, color = USAcolor, align='center', bottom = np.array(AUS.M_S1) + np.array(BRA.M_S1) + np.array(IRA.M_S1) + np.array(JPN.M_S1) + np.array(NLD.M_S1))
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -405,12 +422,12 @@ plt.show()
 #Scenario 2
 fig, ax = plt.subplots()
 t = np.arange(20)
-ax.bar(t, AUS.M_S2, align='center')
-ax.bar(t, BRA.M_S2, align='center', bottom = np.array(AUS.M_S2))
-ax.bar(t, IRA.M_S2, align='center', bottom = np.array(AUS.M_S2) + np.array(BRA.M_S2))
-ax.bar(t, JPN.M_S2, align='center', bottom = np.array(AUS.M_S2) + np.array(BRA.M_S2) + np.array(IRA.M_S2))
-ax.bar(t, NLD.M_S2, align='center', bottom = np.array(AUS.M_S2) + np.array(BRA.M_S2) + np.array(IRA.M_S2) + np.array(JPN.M_S2))
-ax.bar(t, USA.M_S2, align='center', bottom = np.array(AUS.M_S2) + np.array(BRA.M_S2) + np.array(IRA.M_S2) + np.array(JPN.M_S2) + np.array(NLD.M_S2))
+ax.bar(t, AUS.M_S2, color = AUScolor, align='center')
+ax.bar(t, BRA.M_S2, color = BRAcolor, align='center', bottom = np.array(AUS.M_S2))
+ax.bar(t, IRA.M_S2, color = IRAcolor, align='center', bottom = np.array(AUS.M_S2) + np.array(BRA.M_S2))
+ax.bar(t, JPN.M_S2, color = JPNcolor, align='center', bottom = np.array(AUS.M_S2) + np.array(BRA.M_S2) + np.array(IRA.M_S2))
+ax.bar(t, NLD.M_S2, color = NLDcolor, align='center', bottom = np.array(AUS.M_S2) + np.array(BRA.M_S2) + np.array(IRA.M_S2) + np.array(JPN.M_S2))
+ax.bar(t, USA.M_S2, color = USAcolor, align='center', bottom = np.array(AUS.M_S2) + np.array(BRA.M_S2) + np.array(IRA.M_S2) + np.array(JPN.M_S2) + np.array(NLD.M_S2))
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -424,12 +441,12 @@ plt.show()
 #Scenario 3
 fig, ax = plt.subplots()
 t = np.arange(20)
-ax.bar(t, AUS.M_S3, align='center')
-ax.bar(t, BRA.M_S3, align='center', bottom = np.array(AUS.M_S3))
-ax.bar(t, IRA.M_S3, align='center', bottom = np.array(AUS.M_S3) + np.array(BRA.M_S3))
-ax.bar(t, JPN.M_S3, align='center', bottom = np.array(AUS.M_S3) + np.array(BRA.M_S3) + np.array(IRA.M_S3))
-ax.bar(t, NLD.M_S3, align='center', bottom = np.array(AUS.M_S3) + np.array(BRA.M_S3) + np.array(IRA.M_S3) + np.array(JPN.M_S3))
-ax.bar(t, USA.M_S3, align='center', bottom = np.array(AUS.M_S3) + np.array(BRA.M_S3) + np.array(IRA.M_S3) + np.array(JPN.M_S3) + np.array(NLD.M_S3))
+ax.bar(t, AUS.M_S3, color = AUScolor, align='center')
+ax.bar(t, BRA.M_S3, color = BRAcolor, align='center', bottom = np.array(AUS.M_S3))
+ax.bar(t, IRA.M_S3, color = IRAcolor, align='center', bottom = np.array(AUS.M_S3) + np.array(BRA.M_S3))
+ax.bar(t, JPN.M_S3, color = JPNcolor, align='center', bottom = np.array(AUS.M_S3) + np.array(BRA.M_S3) + np.array(IRA.M_S3))
+ax.bar(t, NLD.M_S3, color = NLDcolor, align='center', bottom = np.array(AUS.M_S3) + np.array(BRA.M_S3) + np.array(IRA.M_S3) + np.array(JPN.M_S3))
+ax.bar(t, USA.M_S3, color = USAcolor, align='center', bottom = np.array(AUS.M_S3) + np.array(BRA.M_S3) + np.array(IRA.M_S3) + np.array(JPN.M_S3) + np.array(NLD.M_S3))
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -447,12 +464,12 @@ plt.show()
 #Scenario 0
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.P_S0)
-plt.plot(t, BRA.P_S0)
-plt.plot(t, IRA.P_S0)
-plt.plot(t, JPN.P_S0)
-plt.plot(t, NLD.P_S0)
-plt.plot(t, USA.P_S0)
+plt.plot(t, AUS.P_S0, color = AUScolor)
+plt.plot(t, BRA.P_S0, color = BRAcolor)
+plt.plot(t, IRA.P_S0, color = IRAcolor)
+plt.plot(t, JPN.P_S0, color = JPNcolor)
+plt.plot(t, NLD.P_S0, color = NLDcolor)
+plt.plot(t, USA.P_S0, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -465,12 +482,12 @@ plt.show()
 #Scenario 1
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.P_S1)
-plt.plot(t, BRA.P_S1)
-plt.plot(t, IRA.P_S1)
-plt.plot(t, JPN.P_S1)
-plt.plot(t, NLD.P_S1)
-plt.plot(t, USA.P_S1)
+plt.plot(t, AUS.P_S1, color = AUScolor)
+plt.plot(t, BRA.P_S1, color = BRAcolor)
+plt.plot(t, IRA.P_S1, color = IRAcolor)
+plt.plot(t, JPN.P_S1, color = JPNcolor)
+plt.plot(t, NLD.P_S1, color = NLDcolor)
+plt.plot(t, USA.P_S1, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -483,12 +500,12 @@ plt.show()
 #Scenario 2
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.P_S2)
-plt.plot(t, BRA.P_S2)
-plt.plot(t, IRA.P_S2)
-plt.plot(t, JPN.P_S2)
-plt.plot(t, NLD.P_S2)
-plt.plot(t, USA.P_S2)
+plt.plot(t, AUS.P_S2, color = AUScolor)
+plt.plot(t, BRA.P_S2, color = BRAcolor)
+plt.plot(t, IRA.P_S2, color = IRAcolor)
+plt.plot(t, JPN.P_S2, color = JPNcolor)
+plt.plot(t, NLD.P_S2, color = NLDcolor)
+plt.plot(t, USA.P_S2, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -501,12 +518,12 @@ plt.show()
 #Scenario 3
 fig, ax = plt.subplots()
 t = list(range(0,20))
-plt.plot(t, AUS.P_S3)
-plt.plot(t, BRA.P_S3)
-plt.plot(t, IRA.P_S3)
-plt.plot(t, JPN.P_S3)
-plt.plot(t, NLD.P_S3)
-plt.plot(t, USA.P_S3)
+plt.plot(t, AUS.P_S3, color = AUScolor)
+plt.plot(t, BRA.P_S3, color = BRAcolor)
+plt.plot(t, IRA.P_S3, color = IRAcolor)
+plt.plot(t, JPN.P_S3, color = JPNcolor)
+plt.plot(t, NLD.P_S3, color = NLDcolor)
+plt.plot(t, USA.P_S3, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -531,12 +548,12 @@ N = [sum(x) for x in zip(*[NLD.S_S1, NLD.W_S1, NLD.S_S2, NLD.W_S2, NLD.S_S3, NLD
 U = [sum(x) for x in zip(*[USA.S_S1, USA.W_S1, USA.S_S2, USA.W_S2, USA.S_S3, USA.W_S3])]
 
 t = list(range(0,20))
-plt.plot(t, A)
-plt.plot(t, B)
-plt.plot(t, I)
-plt.plot(t, J)
-plt.plot(t, N)
-plt.plot(t, U)
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.plot(t, N, color = NLDcolor)
+plt.plot(t, U, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -557,12 +574,12 @@ N = [sum(x) for x in zip(*[NLD.S_S0, NLD.W_S0])]
 U = [sum(x) for x in zip(*[USA.S_S0, USA.W_S0])]
 
 t = list(range(0,20))
-plt.plot(t, A)
-plt.plot(t, B)
-plt.plot(t, I)
-plt.plot(t, J)
-plt.plot(t, N)
-plt.plot(t, U)
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.plot(t, N, color = NLDcolor)
+plt.plot(t, U, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -582,12 +599,12 @@ N = [sum(x) for x in zip(*[NLD.S_S1, NLD.W_S1])]
 U = [sum(x) for x in zip(*[USA.S_S1, USA.W_S1])]
 
 t = list(range(0,20))
-plt.plot(t, A)
-plt.plot(t, B)
-plt.plot(t, I)
-plt.plot(t, J)
-plt.plot(t, N)
-plt.plot(t, U)
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.plot(t, N, color = NLDcolor)
+plt.plot(t, U, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -607,12 +624,12 @@ N = [sum(x) for x in zip(*[NLD.S_S2, NLD.W_S2])]
 U = [sum(x) for x in zip(*[USA.S_S2, USA.W_S2])]
 
 t = list(range(0,20))
-plt.plot(t, A)
-plt.plot(t, B)
-plt.plot(t, I)
-plt.plot(t, J)
-plt.plot(t, N)
-plt.plot(t, U)
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.plot(t, N, color = NLDcolor)
+plt.plot(t, U, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -633,12 +650,12 @@ N = [sum(x) for x in zip(*[NLD.S_S3, NLD.W_S3])]
 U = [sum(x) for x in zip(*[USA.S_S3, USA.W_S3])]
 
 t = list(range(0,20))
-plt.plot(t, A)
-plt.plot(t, B)
-plt.plot(t, I)
-plt.plot(t, J)
-plt.plot(t, N)
-plt.plot(t, U)
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.plot(t, N, color = NLDcolor)
+plt.plot(t, U, color = USAcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -660,11 +677,10 @@ s1 = [sum(x) for x in zip(*[AUS.S_S1])]
 s2 = [sum(x) for x in zip(*[AUS.S_S2])]
 s3 = [sum(x) for x in zip(*[AUS.S_S3])]
 st = [sum(x) for x in zip(*[AUS.S_S1, AUS.S_S2, AUS.S_S3])]
-
-solar1 = ax.plot(t, s1)
-solar2 = ax.plot(t, s2)
-solar3 = ax.plot(t, s3)
-solar = ax.plot(t, st, '--', color = "black")
+solar1 = ax.plot(t, s1, color = FITcolor)
+solar2 = ax.plot(t, s2, color = TAXcolor)
+solar3 = ax.plot(t, s3, color = TGCcolor)
+solar = ax.plot(t, st, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -680,10 +696,10 @@ w1 = [sum(x) for x in zip(*[AUS.W_S1])]
 w2 = [sum(x) for x in zip(*[AUS.W_S2])]
 w3 = [sum(x) for x in zip(*[AUS.W_S3])]
 wt = [sum(x) for x in zip(*[AUS.W_S1, AUS.W_S2, AUS.W_S3])]
-wind1 = ax.plot(t, w1)
-wind2 = ax.plot(t, w2)
-wind3 = ax.plot(t, w3)
-wind = plt.plot(t, wt, '--', color = "blue")
+wind1 = ax.plot(t, w1, color = FITcolor)
+wind2 = ax.plot(t, w2, color = TAXcolor)
+wind3 = ax.plot(t, w3, color = TGCcolor)
+wind = plt.plot(t, wt, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -702,11 +718,10 @@ s1 = [sum(x) for x in zip(*[BRA.S_S1])]
 s2 = [sum(x) for x in zip(*[BRA.S_S2])]
 s3 = [sum(x) for x in zip(*[BRA.S_S3])]
 st = [sum(x) for x in zip(*[BRA.S_S1, BRA.S_S2, BRA.S_S3])]
-
-solar1 = ax.plot(t, s1)
-solar2 = ax.plot(t, s2)
-solar3 = ax.plot(t, s3)
-solar = ax.plot(t, st, '--', color = "black")
+solar1 = ax.plot(t, s1, color = FITcolor)
+solar2 = ax.plot(t, s2, color = TAXcolor)
+solar3 = ax.plot(t, s3, color = TGCcolor)
+solar = ax.plot(t, st, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -722,10 +737,10 @@ w1 = [sum(x) for x in zip(*[BRA.W_S1])]
 w2 = [sum(x) for x in zip(*[BRA.W_S2])]
 w3 = [sum(x) for x in zip(*[BRA.W_S3])]
 wt = [sum(x) for x in zip(*[BRA.W_S1, BRA.W_S2, BRA.W_S3])]
-wind1 = ax.plot(t, w1)
-wind2 = ax.plot(t, w2)
-wind3 = ax.plot(t, w3)
-wind = plt.plot(t, wt, '--', color = "blue")
+wind1 = ax.plot(t, w1, color = FITcolor)
+wind2 = ax.plot(t, w2, color = TAXcolor)
+wind3 = ax.plot(t, w3, color = TGCcolor)
+wind = plt.plot(t, wt, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -743,11 +758,10 @@ s1 = [sum(x) for x in zip(*[IRA.S_S1])]
 s2 = [sum(x) for x in zip(*[IRA.S_S2])]
 s3 = [sum(x) for x in zip(*[IRA.S_S3])]
 st = [sum(x) for x in zip(*[IRA.S_S1, IRA.S_S2, IRA.S_S3])]
-
-solar1 = ax.plot(t, s1)
-solar2 = ax.plot(t, s2)
-solar3 = ax.plot(t, s3)
-solar = ax.plot(t, st, '--', color = "black")
+solar1 = ax.plot(t, s1, color = FITcolor)
+solar2 = ax.plot(t, s2, color = TAXcolor)
+solar3 = ax.plot(t, s3, color = TGCcolor)
+solar = ax.plot(t, st, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -763,10 +777,10 @@ w1 = [sum(x) for x in zip(*[IRA.W_S1])]
 w2 = [sum(x) for x in zip(*[IRA.W_S2])]
 w3 = [sum(x) for x in zip(*[IRA.W_S3])]
 wt = [sum(x) for x in zip(*[IRA.W_S1, IRA.W_S2, IRA.W_S3])]
-wind1 = ax.plot(t, w1)
-wind2 = ax.plot(t, w2)
-wind3 = ax.plot(t, w3)
-wind = plt.plot(t, wt, '--', color = "blue")
+wind1 = ax.plot(t, w1, color = FITcolor)
+wind2 = ax.plot(t, w2, color = TAXcolor)
+wind3 = ax.plot(t, w3, color = TGCcolor)
+wind = plt.plot(t, wt, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -784,11 +798,10 @@ s1 = [sum(x) for x in zip(*[JPN.S_S1])]
 s2 = [sum(x) for x in zip(*[JPN.S_S2])]
 s3 = [sum(x) for x in zip(*[JPN.S_S3])]
 st = [sum(x) for x in zip(*[JPN.S_S1, JPN.S_S2, JPN.S_S3])]
-
-solar1 = ax.plot(t, s1)
-solar2 = ax.plot(t, s2)
-solar3 = ax.plot(t, s3)
-solar = ax.plot(t, st, '--', color = "black")
+solar1 = ax.plot(t, s1, color = FITcolor)
+solar2 = ax.plot(t, s2, color = TAXcolor)
+solar3 = ax.plot(t, s3, color = TGCcolor)
+solar = ax.plot(t, st, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -804,10 +817,11 @@ w1 = [sum(x) for x in zip(*[JPN.W_S1])]
 w2 = [sum(x) for x in zip(*[JPN.W_S2])]
 w3 = [sum(x) for x in zip(*[JPN.W_S3])]
 wt = [sum(x) for x in zip(*[JPN.W_S1, JPN.W_S2, JPN.W_S3])]
-wind1 = ax.plot(t, w1)
-wind2 = ax.plot(t, w2)
-wind3 = ax.plot(t, w3)
-wind = plt.plot(t, wt, '--', color = "blue")
+wind1 = ax.plot(t, w1, color = FITcolor)
+wind2 = ax.plot(t, w2, color = TAXcolor)
+wind3 = ax.plot(t, w3, color = TGCcolor)
+wind = plt.plot(t, wt, '--', color = TOTALcolor)
+
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -825,11 +839,10 @@ s1 = [sum(x) for x in zip(*[NLD.S_S1])]
 s2 = [sum(x) for x in zip(*[NLD.S_S2])]
 s3 = [sum(x) for x in zip(*[NLD.S_S3])]
 st = [sum(x) for x in zip(*[NLD.S_S1, NLD.S_S2, NLD.S_S3])]
-
-solar1 = ax.plot(t, s1)
-solar2 = ax.plot(t, s2)
-solar3 = ax.plot(t, s3)
-solar = ax.plot(t, st, '--', color = "black")
+solar1 = ax.plot(t, s1, color = FITcolor)
+solar2 = ax.plot(t, s2, color = TAXcolor)
+solar3 = ax.plot(t, s3, color = TGCcolor)
+solar = ax.plot(t, st, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -845,10 +858,10 @@ w1 = [sum(x) for x in zip(*[NLD.W_S1])]
 w2 = [sum(x) for x in zip(*[NLD.W_S2])]
 w3 = [sum(x) for x in zip(*[NLD.W_S3])]
 wt = [sum(x) for x in zip(*[NLD.W_S1, NLD.W_S2, NLD.W_S3])]
-wind1 = ax.plot(t, w1)
-wind2 = ax.plot(t, w2)
-wind3 = ax.plot(t, w3)
-wind = plt.plot(t, wt, '--', color = "blue")
+wind1 = ax.plot(t, w1, color = FITcolor)
+wind2 = ax.plot(t, w2, color = TAXcolor)
+wind3 = ax.plot(t, w3, color = TGCcolor)
+wind = plt.plot(t, wt, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -867,11 +880,10 @@ s1 = [sum(x) for x in zip(*[USA.S_S1])]
 s2 = [sum(x) for x in zip(*[USA.S_S2])]
 s3 = [sum(x) for x in zip(*[USA.S_S3])]
 st = [sum(x) for x in zip(*[USA.S_S1, USA.S_S2, USA.S_S3])]
-
-solar1 = ax.plot(t, s1)
-solar2 = ax.plot(t, s2)
-solar3 = ax.plot(t, s3)
-solar = ax.plot(t, st, '--', color = "black")
+solar1 = ax.plot(t, s1, color = FITcolor)
+solar2 = ax.plot(t, s2, color = TAXcolor)
+solar3 = ax.plot(t, s3, color = TGCcolor)
+solar = ax.plot(t, st, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -887,10 +899,10 @@ w1 = [sum(x) for x in zip(*[USA.W_S1])]
 w2 = [sum(x) for x in zip(*[USA.W_S2])]
 w3 = [sum(x) for x in zip(*[USA.W_S3])]
 wt = [sum(x) for x in zip(*[USA.W_S1, USA.W_S2, USA.W_S3])]
-wind1 = ax.plot(t, w1)
-wind2 = ax.plot(t, w2)
-wind3 = ax.plot(t, w3)
-wind = plt.plot(t, wt, '--', color = "blue")
+wind1 = ax.plot(t, w1, color = FITcolor)
+wind2 = ax.plot(t, w2, color = TAXcolor)
+wind3 = ax.plot(t, w3, color = TGCcolor)
+wind = plt.plot(t, wt, '--', color = TOTALcolor)
 
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
@@ -900,6 +912,7 @@ plt.legend(["Wind FIT", "Wind TAX", "Wind TGC", "Wind Total"], loc='upper left',
 plt.grid(b=True, which='major', color='#666666', linestyle='-')
 plt.savefig('36b - USAEnergy.png')
 plt.show()
+
 
 ######################################
 ###Ratio By Country
@@ -918,9 +931,9 @@ labels = ['FIT', 'TAX', 'TGC']
 x_pos = np.arange(len(labels))
 sizes = [RFIT, RTAX, RTGC]
 colors = ["Green", 'cyan', 'yellow']
-bars1, = plt.bar(x_pos[0],sizes[0], color = 'green', align = 'center', alpha = 0.8)
-bars2, = plt.bar(x_pos[1],sizes[1], color = 'cyan', align = 'center', alpha = 0.8)
-bars3, = plt.bar(x_pos[2],sizes[2], color = 'yellow', align = 'center', alpha = 0.8)
+bars1, = plt.bar(x_pos[0],sizes[0], color = FITcolor, align = 'center', alpha = 0.8)
+bars2, = plt.bar(x_pos[1],sizes[1], color = TAXcolor, align = 'center', alpha = 0.8)
+bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 0.8)
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=16)
 plt.ylabel('USD/KWh', fontsize=16)
@@ -941,9 +954,9 @@ labels = ['FIT', 'TAX', 'TGC']
 x_pos = np.arange(len(labels))
 sizes = [(AUS.RFIT * AUS.RFIT/w), (AUS.RTAX * AUS.RTAX/w) , (AUS.RTGC * AUS.RTGC/w)]
 colors = ["Green", 'cyan', 'yellow']
-bars1, = plt.bar(x_pos[0],sizes[0], color = 'green', align = 'center', alpha = 0.8)
-bars2, = plt.bar(x_pos[1],sizes[1], color = 'cyan', align = 'center', alpha = 0.8)
-bars3, = plt.bar(x_pos[2],sizes[2], color = 'yellow', align = 'center', alpha = 0.8)
+bars1, = plt.bar(x_pos[0],sizes[0], color = FITcolor, align = 'center', alpha = 0.8)
+bars2, = plt.bar(x_pos[1],sizes[1], color = TAXcolor, align = 'center', alpha = 0.8)
+bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 0.8)
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=14)
 plt.ylabel('USD/KWh', fontsize=14)
@@ -963,9 +976,9 @@ labels = ['FIT', 'TAX', 'TGC']
 x_pos = np.arange(len(labels))
 sizes = [BRA.RFIT, BRA.RTAX, BRA.RTGC]
 colors = ["Green", 'cyan', 'yellow']
-bars1, = plt.bar(x_pos[0],sizes[0], color = 'green', align = 'center', alpha = 0.8)
-bars2, = plt.bar(x_pos[1],sizes[1], color = 'cyan', align = 'center', alpha = 0.8)
-bars3, = plt.bar(x_pos[2],sizes[2], color = 'yellow', align = 'center', alpha = 0.8)
+bars1, = plt.bar(x_pos[0],sizes[0], color = FITcolor, align = 'center', alpha = 0.8)
+bars2, = plt.bar(x_pos[1],sizes[1], color = TAXcolor, align = 'center', alpha = 0.8)
+bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 0.8)
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=14)
 plt.ylabel('USD/KWh', fontsize=14)
@@ -985,9 +998,9 @@ labels = ['FIT', 'TAX', 'TGC']
 x_pos = np.arange(len(labels))
 sizes = [IRA.RFIT, IRA.RTAX, IRA.RTGC]
 colors = ["Green", 'cyan', 'yellow']
-bars1, = plt.bar(x_pos[0],sizes[0], color = 'green', align = 'center', alpha = 0.8)
-bars2, = plt.bar(x_pos[1],sizes[1], color = 'cyan', align = 'center', alpha = 0.8)
-bars3, = plt.bar(x_pos[2],sizes[2], color = 'yellow', align = 'center', alpha = 0.8)
+bars1, = plt.bar(x_pos[0],sizes[0], color = FITcolor, align = 'center', alpha = 0.8)
+bars2, = plt.bar(x_pos[1],sizes[1], color = TAXcolor, align = 'center', alpha = 0.8)
+bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 0.8)
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=14)
 plt.ylabel('USD/KWh', fontsize=14)
@@ -1008,9 +1021,9 @@ labels = ['FIT', 'TAX', 'TGC']
 x_pos = np.arange(len(labels))
 sizes = [JPN.RFIT, JPN.RTAX, JPN.RTGC]
 colors = ["Green", 'cyan', 'yellow']
-bars1, = plt.bar(x_pos[0],sizes[0], color = 'green', align = 'center', alpha = 0.8)
-bars2, = plt.bar(x_pos[1],sizes[1], color = 'cyan', align = 'center', alpha = 0.8)
-bars3, = plt.bar(x_pos[2],sizes[2], color = 'yellow', align = 'center', alpha = 0.8)
+bars1, = plt.bar(x_pos[0],sizes[0], color = FITcolor, align = 'center', alpha = 0.8)
+bars2, = plt.bar(x_pos[1],sizes[1], color = TAXcolor, align = 'center', alpha = 0.8)
+bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 0.8)
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=14)
 plt.ylabel('USD/KWh', fontsize=14)
@@ -1031,9 +1044,9 @@ labels = ['FIT', 'TAX', 'TGC']
 x_pos = np.arange(len(labels))
 sizes = [NLD.RFIT, NLD.RTAX, NLD.RTGC]
 colors = ["Green", 'cyan', 'yellow']
-bars1, = plt.bar(x_pos[0],sizes[0], color = 'green', align = 'center', alpha = 0.8)
-bars2, = plt.bar(x_pos[1],sizes[1], color = 'cyan', align = 'center', alpha = 0.8)
-bars3, = plt.bar(x_pos[2],sizes[2], color = 'yellow', align = 'center', alpha = 0.8)
+bars1, = plt.bar(x_pos[0],sizes[0], color = FITcolor, align = 'center', alpha = 0.8)
+bars2, = plt.bar(x_pos[1],sizes[1], color = TAXcolor, align = 'center', alpha = 0.8)
+bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 0.8)
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=14)
 plt.ylabel('USD/KWh', fontsize=14)
@@ -1054,9 +1067,9 @@ labels = ['FIT', 'TAX', 'TGC']
 x_pos = np.arange(len(labels))
 sizes = [USA.RFIT, USA.RTAX, USA.RTGC]
 colors = ["Green", 'cyan', 'yellow']
-bars1, = plt.bar(x_pos[0],sizes[0], color = 'green', align = 'center', alpha = 0.8)
-bars2, = plt.bar(x_pos[1],sizes[1], color = 'cyan', align = 'center', alpha = 0.8)
-bars3, = plt.bar(x_pos[2],sizes[2], color = 'yellow', align = 'center', alpha = 0.8)
+bars1, = plt.bar(x_pos[0],sizes[0], color = FITcolor, align = 'center', alpha = 0.8)
+bars2, = plt.bar(x_pos[1],sizes[1], color = TAXcolor, align = 'center', alpha = 0.8)
+bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 0.8)
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=14)
 plt.ylabel('USD/KWh', fontsize=14)
@@ -1069,4 +1082,11 @@ bars = [bars1, bars2, bars3]
 autolabel(bars)
 plt.savefig('43 - RATIO_usa.png')
 plt.show()
+
+
+
+
+
+
+#np.sum(np.sum(AUS.C_S1)/20 + np.sum(AUS.C_S2)/20 + np.sum(AUS.C_S3)/20 +  np.sum(BRA.C_S1)/20 + np.sum(BRA.C_S2)/20 + np.sum(BRA.C_S3)/20 + np.sum(IRA.C_S1)/20 + np.sum(IRA.C_S2)/20 + np.sum(IRA.C_S3)/20 + np.sum(JPN.C_S1)/20 + np.sum(JPN.C_S2)/20 + np.sum(JPN.C_S3)/20 + np.sum(NLD.C_S1)/20 + np.sum(NLD.C_S2)/20 + np.sum(NLD.C_S3)/20 + np.sum(USA.C_S1)/20 + np.sum(USA.C_S2)/20 + np.sum(USA.C_S3)/20)/18
 

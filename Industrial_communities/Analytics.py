@@ -51,21 +51,7 @@ A00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 #A32 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_AUS_S3-02.csv")
 #A33 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_AUS_S3-03.csv")
 
-##BRAZIL
-#Scenario 0 - No incentives
-B00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_BRA_S0.csv")
-#Scenario 1 - FIT
-#B11 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_BRA_S1-01.csv")
-#B12 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_BRA_S1-02.csv")
-#B13 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_BRA_S1-03.csv")
-#Scenario 2 - TAX
-#B21 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S2 - TAX/Model_run_BRA_S2-01.csv")
-#B22 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S2 - TAX/Model_run_BRA_S2-02.csv")
-#B23 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S2 - TAX/Model_run_BRA_S2-03.csv")
-#Scenario 3 - TGC
-#B31 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_BRA_S3-01.csv")
-#B32 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_BRA_S3-02.csv")
-#B33 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_BRA_S3-03.csv")
+
 
 ##IRAN
 #Scenario 0 - No incentives
@@ -135,26 +121,87 @@ U00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 #### Datacube creation
 ###Scenario 0 - Data Frame
 ##Collectio
-A1, A2, B1, B2, I1, I2, J1, J2, N1, N2, U1, U2 = [], [], [], [], [], [], [], [], [], [], [], []
-
-for j in range(2):
-    for i in ticks[j::20]: 
-        a0 = A00["ActiveCommunities"].iloc[i]
-        b0 = B00["ActiveCommunities"].iloc[i]
-        i0 = I00["ActiveCommunities"].iloc[i]
-        j0 = J00["ActiveCommunities"].iloc[i]
-        n0 = N00["ActiveCommunities"].iloc[i]
-        u0 = U00["ActiveCommunities"].iloc[i]
-        Aj.append(a0)
-        Bj.append(b0)
-        Ij.append(i0)
-        Jj.append(j0)
-        Nj.append(n0)
-        Uj.append(u0)
-
-
-
-
+A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19 = [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+#tick1
+for i in ticks[1::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A1.append(z)
+#tick2
+for i in ticks[2::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A2.append(z)
+#tick3
+for i in ticks[3::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A3.append(z)
+#tick4
+for i in ticks[4::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A4.append(z)
+#tick5
+for i in ticks[5::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A5.append(z)
+#tick6
+for i in ticks[6::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A6.append(z)
+#tick7
+for i in ticks[7::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A7.append(z)
+#tick8
+for i in ticks[8::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A8.append(z)
+#tick9
+for i in ticks[9::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A9.append(z)
+#tick10
+for i in ticks[10::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A10.append(z)
+#tick11
+for i in ticks[11::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A11.append(z)
+#tick12
+for i in ticks[12::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A12.append(z)
+#tick13
+for i in ticks[13::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A13.append(z)
+#tick14
+for i in ticks[14::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A14.append(z)
+#tick15
+for i in ticks[15::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A15.append(z)
+#tick16
+for i in ticks[16::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    A16.append(z)
+#tick17
+for i in ticks[17::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    B17.append(z)
+#tick18
+for i in ticks[18::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    B18.append(z)
+#tick19
+for i in ticks[19::20]: 
+    z = A00["ActiveCommunities"].iloc[i]
+    B19.append(z)
+#tick0
+for i in ticks[0::20]: 
+    z = B00["ActiveCommunities"].iloc[i]
+    B0.append(z)
 
 ###Graph building
 #dirty_graph_pdi = df["pdi"]
