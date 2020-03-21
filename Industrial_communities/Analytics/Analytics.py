@@ -38,6 +38,246 @@ def autolabel(rects):
 
 ###Plots
 ######################################
+##Country specific - Australia
+######################################        
+#Communities
+fig, ax = plt.subplots()
+t = list(range(0,20))
+plt.plot(t, AUS.C_S0, color = AUScolor)
+plt.plot(t, AUS.C_S1, color = BRAcolor)
+plt.plot(t, AUS.C_S2, color = IRAcolor)
+plt.plot(t, AUS.C_S3, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('# of Communities')
+plt.title('Australia')
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='upper left', fancybox=True, shadow=True)
+plt.savefig('51 - AUS-Communities.png')
+plt.show()  
+      
+#Members Exit
+fig, ax = plt.subplots()
+t = np.arange(20)
+bar1 = ax.bar(t, AUS.E_S0, color = AUScolor, align='center')
+bar2 = ax.bar(t, AUS.E_S1, color = BRAcolor, align='center', bottom = np.array(AUS.E_S0))
+bar3 = ax.bar(t, AUS.E_S2, color = IRAcolor, align='center', bottom = np.array(AUS.E_S1) + np.array(AUS.E_S0))
+bar4 = ax.bar(t, AUS.E_S3, color = JPNcolor, align='center', bottom = np.array(AUS.E_S2) + np.array(AUS.E_S1) + np.array(AUS.E_S0))
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('# of Members Exit')
+plt.title('Australia')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('52 - AUS-Quitters.png')
+plt.show()
+
+#Governmental Investment
+fig, ax = plt.subplots()
+t = np.arange(20)
+y = np.vstack([AUS.G_S1, AUS.G_S2, AUS.G_S3]) 
+colors = [FITcolor, TAXcolor, TGCcolor]
+ax.stackplot(t, y, colors = colors, alpha=0.8)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Government funding ($)')
+plt.title('Australia')
+ax.legend(["FIT", "TAX", "TGC"], loc='upper right', bbox_to_anchor=(+1, +0.9), fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('53 - AUS-GovInvestment.png')
+plt.show()
+
+#Community Investment
+fig, ax = plt.subplots()
+t = np.arange(20)
+plt.plot(t, AUS.I_S0, color = AUScolor)
+plt.plot(t, AUS.I_S1, color = BRAcolor)
+plt.plot(t, AUS.I_S2, color = IRAcolor)
+plt.plot(t, AUS.I_S3, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Invested Capital in RE  Generation (10M$)')
+plt.title('Australia')
+ax.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('54 - AUS-IndInvestment.png')
+plt.show()
+
+#Members in community
+fig, ax = plt.subplots()
+t = np.arange(20)
+ax.bar(t, AUS.M_S0, color = AUScolor, align='center')
+ax.bar(t, AUS.M_S1, color = BRAcolor, align='center', bottom = np.array(AUS.M_S0))
+ax.bar(t, AUS.M_S2, color = IRAcolor, align='center', bottom = np.array(AUS.M_S1) + np.array(AUS.M_S0))
+ax.bar(t, AUS.M_S3, color = JPNcolor, align='center', bottom = np.array(AUS.M_S2) + np.array(AUS.M_S1) + np.array(AUS.M_S0))
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('# of Members in communitites')
+plt.title('Australia')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='lower right', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('55 - AUS-Members.png')
+plt.show()
+
+
+#Policy Entrepreneur
+fig, ax = plt.subplots()
+t = list(range(0,20))
+plt.plot(t, AUS.P_S0, color = AUScolor)
+plt.plot(t, AUS.P_S1, color = BRAcolor)
+plt.plot(t, AUS.P_S2, color = IRAcolor)
+plt.plot(t, AUS.P_S3, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Policy Entrepreneur flags')
+plt.title('Australia')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('56 - AUS-Policy.png')
+plt.show()
+
+#Total Energy
+ffig, ax = plt.subplots()
+A = [sum(x) for x in zip(*[AUS.S_S0, AUS.W_S0])]
+B = [sum(x) for x in zip(*[AUS.S_S1, AUS.W_S1])]
+I = [sum(x) for x in zip(*[AUS.S_S2, AUS.W_S2])]
+J = [sum(x) for x in zip(*[AUS.S_S3, AUS.W_S3])]
+t = list(range(0,20))
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('Australia')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('57 - AUS-TotalEnerg.png')
+plt.show()  
+     
+                
+######################################
+##Country specific - Netherlands
+######################################        
+#Communities
+fig, ax = plt.subplots()
+t = list(range(0,20))
+plt.plot(t, NLD.C_S0, color = AUScolor)
+plt.plot(t, NLD.C_S1, color = BRAcolor)
+plt.plot(t, NLD.C_S2, color = IRAcolor)
+plt.plot(t, NLD.C_S3, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('# of Communities')
+plt.title('Netherlands')
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='lower right', fancybox=True, shadow=True)
+plt.savefig('44 - NLD-Communities.png')
+plt.show()  
+      
+#Members Exit
+fig, ax = plt.subplots()
+t = np.arange(20)
+bar1 = ax.bar(t, NLD.E_S0, color = AUScolor, align='center')
+bar2 = ax.bar(t, NLD.E_S1, color = BRAcolor, align='center', bottom = np.array(NLD.E_S0))
+bar3 = ax.bar(t, NLD.E_S2, color = IRAcolor, align='center', bottom = np.array(NLD.E_S1) + np.array(NLD.E_S0))
+bar4 = ax.bar(t, NLD.E_S3, color = JPNcolor, align='center', bottom = np.array(NLD.E_S2) + np.array(NLD.E_S1) + np.array(NLD.E_S0))
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('# of Members Exit')
+plt.title('Netherlands')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='lower right', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('45 - NLD-Quitters.png')
+plt.show()
+
+#Governmental Investment
+fig, ax = plt.subplots()
+t = np.arange(20)
+y = np.vstack([NLD.G_S1, NLD.G_S2, NLD.G_S3]) 
+colors = [FITcolor, TAXcolor, TGCcolor]
+ax.stackplot(t, y, colors = colors, alpha=0.8)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Government funding ($)')
+plt.title('Netherlands')
+ax.legend(["FIT", "TAX", "TGC"], loc='upper right', bbox_to_anchor=(+1, +0.9), fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('46 - NLD-GovInvestment.png')
+plt.show()
+
+#Community Investment
+fig, ax = plt.subplots()
+t = np.arange(20)
+plt.plot(t, NLD.I_S0, color = AUScolor)
+plt.plot(t, NLD.I_S1, color = BRAcolor)
+plt.plot(t, NLD.I_S2, color = IRAcolor)
+plt.plot(t, NLD.I_S3, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Invested Capital in RE  Generation (10M$)')
+plt.title('Netherlands')
+ax.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('47 - NLD-IndInvestment.png')
+plt.show()
+
+#Members in community
+fig, ax = plt.subplots()
+t = np.arange(20)
+ax.bar(t, NLD.M_S0, color = AUScolor, align='center')
+ax.bar(t, NLD.M_S1, color = BRAcolor, align='center', bottom = np.array(NLD.M_S0))
+ax.bar(t, NLD.M_S2, color = IRAcolor, align='center', bottom = np.array(NLD.M_S1) + np.array(NLD.M_S0))
+ax.bar(t, NLD.M_S3, color = JPNcolor, align='center', bottom = np.array(NLD.M_S2) + np.array(NLD.M_S1) + np.array(NLD.M_S0))
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('# of Members in communitites')
+plt.title('Netherlands')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='lower right', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('48 - NLD-Members.png')
+plt.show()
+
+
+#Policy Entrepreneur
+fig, ax = plt.subplots()
+t = list(range(0,20))
+plt.plot(t, NLD.P_S0, color = AUScolor)
+plt.plot(t, NLD.P_S1, color = BRAcolor)
+plt.plot(t, NLD.P_S2, color = IRAcolor)
+plt.plot(t, NLD.P_S3, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Policy Entrepreneur flags')
+plt.title('Netherlands')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='lower right', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('49 - NLD-Policy.png')
+plt.show()
+
+#Total Energy
+ffig, ax = plt.subplots()
+A = [sum(x) for x in zip(*[NLD.S_S0, NLD.W_S0])]
+B = [sum(x) for x in zip(*[NLD.S_S1, NLD.W_S1])]
+I = [sum(x) for x in zip(*[NLD.S_S2, NLD.W_S2])]
+J = [sum(x) for x in zip(*[NLD.S_S3, NLD.W_S3])]
+t = list(range(0,20))
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('Netherlands')
+plt.legend(["Scenario 0", "Scenario 1", "Scenario 2", "Scenario 3"], loc='lower right', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('50 - NLD-TotalEnergy.png')
+plt.show()  
+     
+        
+######################################
 ##Communities
 ######################################
 #Scenario 0
@@ -244,7 +484,7 @@ plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
 plt.ylabel('Government funding ($)')
 plt.title('Scenario 3')
-ax.legend(["Australia", "Brazil", "Iran", "Japan", "Netherlands", "USA"], loc='upper right', bbox_to_anchor=(+1.3, +0.9), fancybox=True, shadow=True)
+ax.legend(["Australia", "Brazil", "Iran", "Japan", "Netherlands", "USA"], loc='upper right', bbox_to_anchor=(+1.1, +0.9), fancybox=True, shadow=True)
 plt.grid(b=True, which='major', color='#666666', linestyle='-')
 plt.savefig('11 - GovInvestment_S3.png')
 plt.show()
@@ -452,7 +692,7 @@ plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
 plt.ylabel('# of Members in communitites')
 plt.title('Scenario 3')
-plt.legend(["Australia", "Brazil", "Iran", "Japan", "Netherlands", "USA"], loc='lower right', bbox_to_anchor=(+1.3, +0.1), fancybox=True, shadow=True)
+plt.legend(["Australia", "Brazil", "Iran", "Japan", "Netherlands", "USA"], loc='lower right', bbox_to_anchor=(+1.1, +0.2), fancybox=True, shadow=True)
 plt.grid(b=True, which='major', color='#666666', linestyle='-')
 plt.savefig('21 - Members_S3.png')
 plt.show()
@@ -558,10 +798,59 @@ plt.plot(t, U, color = USAcolor)
 plt.xlabel('Years')
 plt.xticks(list(range(1,21)))
 plt.ylabel('Total Energy Production (100MWh)')
-plt.title('All Scenarios combined')
+plt.title('Scenarios 1, 2 and 3')
 plt.legend(["Australia", "Brazil", "Iran", "Japan", "Netherlands", "USA"], loc='upper left', fancybox=True, shadow=True)
 plt.grid(b=True, which='major', color='#666666', linestyle='-')
 plt.savefig('26 - TotalEnergy_Total.png')
+plt.show()
+
+#Total Solar
+fig, ax = plt.subplots()
+A = [sum(x) for x in zip(*[AUS.S_S0,  AUS.S_S1,  AUS.S_S2,  AUS.S_S3])]
+B = [sum(x) for x in zip(*[BRA.S_S0,  BRA.S_S1,  BRA.S_S2,  BRA.S_S3])]
+I = [sum(x) for x in zip(*[IRA.S_S0,  IRA.S_S1,  IRA.S_S2,  IRA.S_S3])]
+J = [sum(x) for x in zip(*[JPN.S_S0,  JPN.S_S1,  JPN.S_S2,  JPN.S_S3])]
+N = [sum(x) for x in zip(*[NLD.S_S0,  NLD.S_S1,  NLD.S_S2,  NLD.S_S3])]
+U = [sum(x) for x in zip(*[USA.S_S0,  USA.S_S1,  USA.S_S2,  USA.S_S3])]
+t = list(range(0,20))
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.plot(t, N, color = NLDcolor)
+plt.plot(t, U, color = USAcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('Solar Energy All Scenarios')
+plt.legend(["Australia", "Brazil", "Iran", "Japan", "Netherlands", "USA"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('58 - TotalEnergy_Solar.png')
+plt.show()
+
+
+#Total Wind
+fig, ax = plt.subplots()
+A = [sum(x) for x in zip(*[AUS.W_S0,  AUS.W_S1,  AUS.W_S2,  AUS.W_S3])]
+B = [sum(x) for x in zip(*[BRA.W_S0,  BRA.W_S1,  BRA.W_S2,  BRA.W_S3])]
+I = [sum(x) for x in zip(*[IRA.W_S0,  IRA.W_S1,  IRA.W_S2,  IRA.W_S3])]
+J = [sum(x) for x in zip(*[JPN.W_S0,  JPN.W_S1,  JPN.W_S2,  JPN.W_S3])]
+N = [sum(x) for x in zip(*[NLD.W_S0,  NLD.W_S1,  NLD.W_S2,  NLD.W_S3])]
+U = [sum(x) for x in zip(*[USA.W_S0,  USA.W_S1,  USA.W_S2,  USA.W_S3])]
+t = list(range(0,20))
+plt.plot(t, A, color = AUScolor)
+plt.plot(t, B, color = BRAcolor)
+plt.plot(t, I, color = IRAcolor)
+plt.plot(t, J, color = JPNcolor)
+plt.plot(t, N, color = NLDcolor)
+plt.plot(t, U, color = USAcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('Wind Energy All Scenarios')
+plt.legend(["Australia", "Brazil", "Iran", "Japan", "Netherlands", "USA"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('59 - TotalEnergy_Wind.png')
 plt.show()
 
 #Scenario 0
@@ -673,6 +962,21 @@ plt.show()
 #AUS
 fig, ax = plt.subplots()
 t = list(range(0,20))
+s1 = [sum(x) for x in zip(*[AUS.S_S0, AUS.S_S1, AUS.S_S2, AUS.S_S3])]
+w1 = [sum(x) for x in zip(*[AUS.W_S0, AUS.W_S1, AUS.W_S2, AUS.W_S3])]
+solar1 = ax.plot(t, s1, color = USAcolor)
+Wind = ax.plot(t, w1, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('AUSTRALIA - Total energy')
+plt.legend(["Solar", "Wind"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('31 - AUSEnergy.png')
+plt.show()
+
+fig, ax = plt.subplots()
+t = list(range(0,20))
 s1 = [sum(x) for x in zip(*[AUS.S_S1])]
 s2 = [sum(x) for x in zip(*[AUS.S_S2])]
 s3 = [sum(x) for x in zip(*[AUS.S_S3])]
@@ -712,6 +1016,21 @@ plt.show()
 
 
 #BRA
+fig, ax = plt.subplots()
+t = list(range(0,20))
+s1 = [sum(x) for x in zip(*[BRA.S_S0, BRA.S_S1, BRA.S_S2, BRA.S_S3])]
+w1 = [sum(x) for x in zip(*[BRA.W_S0, BRA.W_S1, BRA.W_S2, BRA.W_S3])]
+solar1 = ax.plot(t, s1, color = USAcolor)
+Wind = ax.plot(t, w1, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('BRAZIL - Total energy')
+plt.legend(["Solar", "Wind"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('32 - BRAEnergy.png')
+plt.show()
+
 fig, ax = plt.subplots()
 t = list(range(0,20))
 s1 = [sum(x) for x in zip(*[BRA.S_S1])]
@@ -754,6 +1073,21 @@ plt.show()
 #IRA
 fig, ax = plt.subplots()
 t = list(range(0,20))
+s1 = [sum(x) for x in zip(*[IRA.S_S0, IRA.S_S1, IRA.S_S2, IRA.S_S3])]
+w1 = [sum(x) for x in zip(*[IRA.W_S0, IRA.W_S1, IRA.W_S2, IRA.W_S3])]
+solar1 = ax.plot(t, s1, color = USAcolor)
+Wind = ax.plot(t, w1, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('IRAN - Total energy')
+plt.legend(["Solar", "Wind"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('33 - IRAEnergy.png')
+plt.show()
+
+fig, ax = plt.subplots()
+t = list(range(0,20))
 s1 = [sum(x) for x in zip(*[IRA.S_S1])]
 s2 = [sum(x) for x in zip(*[IRA.S_S2])]
 s3 = [sum(x) for x in zip(*[IRA.S_S3])]
@@ -792,6 +1126,21 @@ plt.savefig('33b - IRAEnergy.png')
 plt.show()
 
 #JPN
+fig, ax = plt.subplots()
+t = list(range(0,20))
+s1 = [sum(x) for x in zip(*[JPN.S_S0, JPN.S_S1, JPN.S_S2, JPN.S_S3])]
+w1 = [sum(x) for x in zip(*[JPN.W_S0, JPN.W_S1, JPN.W_S2, JPN.W_S3])]
+solar1 = ax.plot(t, s1, color = USAcolor)
+Wind = ax.plot(t, w1, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('JAPAN - Total energy')
+plt.legend(["Solar", "Wind"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('34 - JPNEnergy.png')
+plt.show()
+
 fig, ax = plt.subplots()
 t = list(range(0,20))
 s1 = [sum(x) for x in zip(*[JPN.S_S1])]
@@ -835,6 +1184,22 @@ plt.show()
 #NLD
 fig, ax = plt.subplots()
 t = list(range(0,20))
+s1 = [sum(x) for x in zip(*[NLD.S_S0, NLD.S_S1, NLD.S_S2, NLD.S_S3])]
+w1 = [sum(x) for x in zip(*[NLD.W_S0, NLD.W_S1, NLD.W_S2, NLD.W_S3])]
+solar1 = ax.plot(t, s1, color = USAcolor)
+Wind = ax.plot(t, w1, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('NETHERLANDS - Total energy')
+plt.legend(["Solar", "Wind"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('35 - NLDEnergy.png')
+plt.show()
+
+
+fig, ax = plt.subplots()
+t = list(range(0,20))
 s1 = [sum(x) for x in zip(*[NLD.S_S1])]
 s2 = [sum(x) for x in zip(*[NLD.S_S2])]
 s3 = [sum(x) for x in zip(*[NLD.S_S3])]
@@ -874,6 +1239,21 @@ plt.show()
 
 
 #USA
+fig, ax = plt.subplots()
+t = list(range(0,20))
+s1 = [sum(x) for x in zip(*[USA.S_S0, USA.S_S1, USA.S_S2, USA.S_S3])]
+w1 = [sum(x) for x in zip(*[USA.W_S0, USA.W_S1, USA.W_S2, USA.W_S3])]
+solar1 = ax.plot(t, s1, color = USAcolor)
+Wind = ax.plot(t, w1, color = JPNcolor)
+plt.xlabel('Years')
+plt.xticks(list(range(1,21)))
+plt.ylabel('Total Energy Production (100MWh)')
+plt.title('UNITED STATES - Total energy')
+plt.legend(["Solar", "Wind"], loc='upper left', fancybox=True, shadow=True)
+plt.grid(b=True, which='major', color='#666666', linestyle='-')
+plt.savefig('36 - USAEnergy.png')
+plt.show()
+
 fig, ax = plt.subplots()
 t = list(range(0,20))
 s1 = [sum(x) for x in zip(*[USA.S_S1])]
@@ -960,7 +1340,7 @@ bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=14)
 plt.ylabel('USD/KWh', fontsize=14)
-plt.legend(labels, loc='upper right', bbox_to_anchor=(+1.2, +0.9), fancybox=True, shadow=True)
+plt.legend(labels, loc='upper right', bbox_to_anchor=(+1, +0.3), fancybox=True, shadow=True)
 plt.title('LCOE for each incentive in Australia')
 plt.grid(b=True, which='major', color='#666666', linestyle='-')
 plt.minorticks_on()
@@ -1050,7 +1430,7 @@ bars3, = plt.bar(x_pos[2],sizes[2], color = TGCcolor, align = 'center', alpha = 
 plt.xticks(x_pos, labels)
 plt.xlabel('Financial Incentive', fontsize=14)
 plt.ylabel('USD/KWh', fontsize=14)
-plt.legend(['FIT','TAX', 'TGC'], loc='upper right', bbox_to_anchor=(+1.2, +0.9), fancybox=True, shadow=True)
+plt.legend(['FIT','TAX', 'TGC'], loc='upper right', bbox_to_anchor=(+1, +0.3), fancybox=True, shadow=True)
 plt.title('LCOE for each incentive in the Netherlands')
 plt.grid(b=True, which='major', color='#666666', linestyle='-')
 plt.minorticks_on()

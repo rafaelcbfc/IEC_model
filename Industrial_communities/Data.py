@@ -503,7 +503,7 @@ def projectSelector(me):
     costs3 = (((0.3/float(len(me.members))) * investment_solar3) + (0.7 * investment_solar3) + ((0.3/float(len(me.members))) * investment_wind3) + (0.7 * investment_wind3)) + np.npv(discount_rate, cos3)
     
     NPVc30 = revenue30 - costs3
-    NPVc31 = revenue31-costs3
+    NPVc31 = revenue31 - costs3
     marginc30 = (revenue30 - costs3)/(revenue30 *100)
     marginc31 = (revenue31 - costs3)/(revenue31 *100)
     
