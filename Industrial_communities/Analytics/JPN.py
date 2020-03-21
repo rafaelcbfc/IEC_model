@@ -375,3 +375,5 @@ W_S3 = np.average((W_S31, W_S32, W_S33), axis=0)
 RFIT = sum([sum(x) for x in zip(*[G_S11, G_S12, G_S13, I_S11, I_S12, I_S13])])/sum([sum(x) for x in zip(*[S_S11, S_S12, S_S13, W_S11, W_S12, W_S13])])
 RTAX = sum([sum(x) for x in zip(*[G_S21, G_S22, G_S23, I_S21, I_S22, I_S23])])/sum([sum(x) for x in zip(*[S_S21, S_S22, S_S23, W_S21, W_S12, W_S23])])
 RTGC = sum([sum(x) for x in zip(*[G_S31, G_S32, G_S33, I_S31, I_S32, I_S33])])/sum([sum(x) for x in zip(*[S_S31, S_S32, S_S33, W_S31, W_S32, W_S33])])
+
+
