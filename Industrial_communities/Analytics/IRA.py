@@ -286,15 +286,15 @@ E_S3 = np.average((E_S31, E_S32, E_S33), axis=0)
 G_S11 = [sum(v)/500 for v in g11.values()]
 G_S12 = [sum(v)/500 for v in g12.values()]
 G_S13 = [sum(v)/500 for v in g13.values()]
-G_S1 = np.average((G_S11, G_S12, G_S13), axis=0)
+G_S1 = np.cumsum(np.average((G_S11, G_S12, G_S13), axis=0))
 G_S21 = [sum(v)/500 for v in g21.values()]
 G_S22 = [sum(v)/500 for v in g22.values()]
 G_S23 = [sum(v)/500 for v in g23.values()]
-G_S2 = np.average((G_S21, G_S22, G_S23), axis=0)
+G_S2 = np.cumsum(np.average((G_S21, G_S22, G_S23), axis=0))
 G_S31 = [sum(v)/500 for v in g31.values()]
 G_S32 = [sum(v)/500 for v in g32.values()]
 G_S33 = [sum(v)/500 for v in g33.values()]
-G_S3 = np.average((G_S31, G_S32, G_S33), axis=0)
+G_S3 = np.cumsum(np.average((G_S31, G_S32, G_S33), axis=0))
 
 ##Invested amount
 I_S0 = [sum(v)/1000 for v in i00.values()]
@@ -372,6 +372,19 @@ W_S33 = [sum(v)/500 for v in w33.values()]
 W_S3 = np.average((W_S31, W_S32, W_S33), axis=0)
 
 ###Ratios
-RFIT = sum([sum(x) for x in zip(*[G_S11, G_S12, G_S13, I_S11, I_S12, I_S13])])/sum([sum(x) for x in zip(*[S_S11, S_S12, S_S13, W_S11, W_S12, W_S13])])
-RTAX = sum([sum(x) for x in zip(*[G_S21, G_S22, G_S23, I_S21, I_S22, I_S23])])/sum([sum(x) for x in zip(*[S_S21, S_S22, S_S23, W_S21, W_S12, W_S23])])
-RTGC = sum([sum(x) for x in zip(*[G_S31, G_S32, G_S33, I_S31, I_S32, I_S33])])/sum([sum(x) for x in zip(*[S_S31, S_S32, S_S33, W_S31, W_S32, W_S33])])
+#RFIT2 = sum([sum(x) for x in zip(*[G_S11, G_S12, G_S13, I_S11, I_S12, I_S13])])/sum([sum(x) for x in zip(*[S_S11, S_S12, S_S13, W_S11, W_S12, W_S13])])
+#RTAX2 = sum([sum(x) for x in zip(*[G_S21, G_S22, G_S23, I_S21, I_S22, I_S23])])/sum([sum(x) for x in zip(*[S_S21, S_S22, S_S23, W_S21, W_S12, W_S23])])
+#RTGC2 = sum([sum(x) for x in zip(*[G_S31, G_S32, G_S33, I_S31, I_S32, I_S33])])/sum([sum(x) for x in zip(*[S_S31, S_S32, S_S33, W_S31, W_S32, W_S33])])
+
+
+RFIT_I = sum([sum(x) for x in zip(*[G_S11, G_S12, G_S13])]) + max(I_S11) + max(I_S12) + max(I_S13)
+RFIT_En = sum([sum(x) for x in zip([max(S_S11), max(S_S12), max(S_S13), max(W_S11), max(W_S12), max(W_S13)])])
+RTAX_I = sum([sum(x) for x in zip(*[G_S21, G_S22, G_S23])]) + max(I_S21) + max(I_S22) + max(I_S23)
+RTAX_En = sum([sum(x) for x in zip([max(S_S21), max(S_S22), max(S_S23), max(W_S21), max(W_S12), max(W_S23)])])
+RTGC_I = sum([sum(x) for x in zip(*[G_S31, G_S32, G_S33])]) + max(I_S31) + max(I_S32) + max(I_S33)
+RTGC_En = sum([sum(x) for x in zip([max(S_S31), max(S_S32), max(S_S33), max(W_S31), max(W_S32), max(W_S33)])])
+
+
+RFIT = RFIT_I/RFIT_En
+RTAX = RTAX_I/RTAX_En
+RTGC = RTGC_I/RTGC_En

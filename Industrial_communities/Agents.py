@@ -215,7 +215,7 @@ class Industry(Agent): #Industry agent propoerties
             else:
                 self.loyalty = self.loyalty - 1
         if self.decision_rule > 33 and self.decision_rule <=66: #bargaining
-            self.threshold = 24 #longer slack for tolerance
+                self.threshold = 24 #longer slack for tolerance
             if self.vote == 1 and self.community_vote > 0: 
                 self.loyalty = self.loyalty + 1
             else:
