@@ -35,7 +35,7 @@ ticks = list(range(0,20000))
 
 
 ###Datasets import
-##AUSTRALIA
+##Alpha
 #Scenario 0 - No incentives
 A00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_AUS_s0.csv")
 #Scenario 1 - FIT
@@ -53,7 +53,7 @@ A00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 
 
 
-##IRAN
+##Gamma
 #Scenario 0 - No incentives
 I00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_IRA_S0.csv")
 #Scenario 1 - FIT
@@ -69,7 +69,7 @@ I00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 #I32 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_IRA_S3-02.csv")
 #I33 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_IRA_S3-03.csv")
 
-##JAPAN
+##Delta
 #Scenario 0 - No incentives
 J00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_JPN_S0.csv")
 #Scenario 1 - FIT
@@ -85,7 +85,7 @@ J00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 #J32 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_JPN_S3-02.csv")
 #J33 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_JPN_S3-03.csv")
 
-##NETHERLANDS
+##Epsilon
 #Scenario 0 - No incentives
 N00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_NLD_S0.csv")
 #Scenario 1 - FIT
@@ -101,7 +101,7 @@ N00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 #N32 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_NLD_S3-02.csv")
 #N33 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S3 - TGC/Model_run_NLD_S3-03.csv")
 
-##USA
+##Zeta
 #Scenario 0 - No incentives
 U00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_USA_S0.csv")
 #Scenario 1 - FIT
