@@ -977,21 +977,7 @@ plt.ylabel('Total Energy Production (100MWh)')
 plt.title('Alpha - Total energy')
 plt.legend(["Solar", "Wind"], loc='upper left', fancybox=True, shadow=True)
 plt.grid(b=True, which='major', color='#666666', linestyle='-')
-plt.savefig('47.1 - AlphaEnergy.png')
-plt.show()
-
-fig, ax = plt.subplots()
-t = list(range(0,20))
-s1 = [sum(x) for x in zip(*[Alpha.S_S1, Alpha.S_S2, Alpha.S_S3])]
-w1 = [sum(x) for x in zip(*[Alpha.W_S1, Alpha.W_S2, Alpha.W_S3])]
-solar1 = ax.plot(t, s1, color = Zetacolor)
-Wind = ax.plot(t, w1, color = Deltacolor)
-plt.xlabel('Years')
-plt.xticks(list(range(1,21)))
-plt.ylabel('Total Energy Production (100MWh)')
-plt.title('Alpha - Total energy')
-plt.grid(b=True, which='major', color='#666666', linestyle='-')
-plt.savefig('47.2 - AlphaEnergy.png')
+plt.savefig('47 - AlphaEnergy.png')
 plt.show()
 
 fig, ax = plt.subplots()

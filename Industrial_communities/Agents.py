@@ -50,7 +50,7 @@ def voting(com, member): #Voting process during meetings
 class Industry(Agent): #Industry agent propoerties
     def __init__(self, name, pos, model):
         super().__init__(name, model)
-        self.aff = []
+        self.affiliated_network = []
         self.cba_lvl = 0
         self.cba_lvlc = 0
         self.cba_lvlp = 0
@@ -166,8 +166,8 @@ class Industry(Agent): #Industry agent propoerties
             if f.eng_lvl == 3:
                 self.friends.append(f.id)
             if f.eng_lvl == 4:
-                self.aff.append(f.id)
-        if len(self.friends) > 0 and len(self.friends + self.aff)/len(self.smallworld) >= 0.5: 
+                self.affiliated_network.append(f.id)
+        if len(self.friends) > 0 and len(self.friends + self.affiliated_network)/len(self.smallworld) >= 0.5: 
             self.eng_lvl = 5
             for f in self.smallworld: # and f.which_community == 0:
                 if f.id in self.friends:
@@ -215,7 +215,7 @@ class Industry(Agent): #Industry agent propoerties
             else:
                 self.loyalty = self.loyalty - 1
         if self.decision_rule > 33 and self.decision_rule <=66: #bargaining
-                self.threshold = 24 #longer slack for tolerance
+            self.threshold = 24 #longer slack for tolerance
             if self.vote == 1 and self.community_vote > 0: 
                 self.loyalty = self.loyalty + 1
             else:
@@ -231,7 +231,7 @@ class Industry(Agent): #Industry agent propoerties
         self.decisionStyle()
         self.decisionRule()
         if self.loyalty >= self.threshold:
-                if self.ROI < 0.1:# -----> To be defined
+                if self.ROI < 0.1:
                     self.which_community = 0
                     self.eng_lvl = 0
                     self.exit = 1
@@ -283,7 +283,6 @@ class Community(Agent): #Community agent propoerties
         self.energy = 0
         self.plan_execution = 0
         self.request = 0
-        self.sale = 0
         if self.active == 1:
            self.energyDemand()
            self.initialInvestment()
