@@ -230,7 +230,7 @@ class Industry(Agent): #Industry agent propoerties
     def leaveCommunity(self): #leaving the community routine
         self.decisionStyle()
         self.decisionRule()
-        if self.loyalty >= self.threshold:
+        if self.loyalty <= self.threshold:
                 if self.ROI < 0.1:
                     self.which_community = 0
                     self.eng_lvl = 0
