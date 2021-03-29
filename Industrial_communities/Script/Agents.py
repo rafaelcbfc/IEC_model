@@ -32,15 +32,9 @@ def askforInvestment(com, member): #for project execution ask for investment to 
  
        
 def voting(com, member): #Voting process during meetings
-    if com.strategy == 0:
-        if com.project_tariff0 < gridtariff and com.business_plan == "Feasible":
-            member.vote = 1
-        else: member.vote = 0
-    
-    elif com.strategy == 1:
-        if com.project_margin >= member.expected_return and com.business_plan == "Feasible":
-            member.vote = 1
-        else: member.vote = 0
+    if com.project_tariff0 < gridtariff and com.business_plan == "Feasible":
+        member.vote = 1
+    else: member.vote = 0
     
     com.voting_result  = com.voting_result + member.vote
     member.community_vote = com.voting_result / len(com.members)   
@@ -75,7 +69,6 @@ class Industry(Agent): #Industry agent propoerties
         self.retrn = 0
         self.energy_rtn = 0
         self.smallworld = []
-        self.strategy = random.randrange(0,2) #0 - "energy generation" / 1 - "profit increase"
         self.threshold = 12
         self.vote = 0
         self.which_community = 0 
@@ -107,10 +100,10 @@ class Industry(Agent): #Industry agent propoerties
     def engagementLevel(self): #Define engagement level of each industry
         if self.eng_lvl not in [3, 4, 5]:
                 Data.cbaCalc(self)
-                if self.cba_lvl in [1, 2, 3]:
+                if self.cba_lvl in [1, 2]:
                     if self.cba_lvl == 1:
                         self.eng_lvl = 1
-                    if self.cba_lvl in [2,3]:
+                    if self.cba_lvl == 2:
                             for community in self.c_neighbors: #Search for a community to join
                                 if community.active == 1:
                                     Data.cbaCalcCom(self, community)
@@ -129,14 +122,6 @@ class Industry(Agent): #Industry agent propoerties
                                 if self.cba_lvlp == 2:
                                         self.eng_lvl = 3
                                         neighbor.eng_lvl = 3
-                                        self.strategy = 0
-                                        neighbor.strategy = 0
-                                        break
-                                if self.cba_lvlp == 3:
-                                        self.eng_lvl = 3
-                                        neighbor.eng_lvl = 3
-                                        self.strategy = 1
-                                        neighbor.strategy = 1
                                         break
         else:
             pass
@@ -271,9 +256,7 @@ class Community(Agent): #Community agent propoerties
         self.plan_execution = "" 
         self.request = 0
         self.revenue = 0
-        self.sale0 = 0
-        self.sale1 = 0
-        self.strategy = 0
+        self.sale = 0
         self.voting_result = 0
         self.money = 0    
         
@@ -348,17 +331,10 @@ class Community(Agent): #Community agent propoerties
         if self.plan_execution == "Approved":
             self.money = self.money - float(self.project_cost) #Pay for project
             self.energy_total_total  = self.energy_total_total + (self.energy_solar + self.energy_wind) #Increase generation park
-            self.sale0 = ((self.energy_solar + self.energy_wind)) * self.project_tariff0 #Produce energy
-            self.sale1 = self.project_tariff1 * (self.energy_solar + self.energy_wind)
-            
-            #Cummulative measures
-            if self.strategy == 0:
-                self.money = self.money + float(self.sale0)
-                self.revenue = self.revenue + self.sale0
-            if self.strategy == 1:
-                self.money =  self.money + float(self.sale1)
-                self.revenue = self.revenue + self.sale1
-                
+            self.sale = ((self.energy_solar + self.energy_wind)) * self.project_tariff0 #Produce energy
+            #Capitalization of the project
+            self.money = self.money + float(self.sale)
+            self.revenue = self.revenue + self.sale
             self.costs = self.costs + self.project_cost 
             self.energy_total_solar = self.energy_total_solar + self.energy_solar
             self.energy_total_wind = self.energy_total_wind +  self.energy_wind
@@ -403,12 +379,8 @@ class Community(Agent): #Community agent propoerties
             if self.premium == 0:
                 member.retrn = member.retrn + 0
             else:
-                if self.strategy == 0:
-                    member.retrn = member.retrn + float(delta * member.energy)
-                    pass
-                elif self.strategy == 1:
-                    member.retrn = member.retrn + ((self.sale1 - self.project_cost) * 0.7)/len(self.members)
-                    pass
+                member.retrn = member.retrn + float(delta * member.energy)
+                pass
         else:
             pass 
     
