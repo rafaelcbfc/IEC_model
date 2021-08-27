@@ -7,13 +7,10 @@ Created on Sun Feb  2 22:24:02 2020
 """
 ###Imports
 import sys
-sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
-import pandas as pd
-import numpy as np
-import statistics
+sys.path.append("/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities")
+import pandas as pd, numpy as np, statistics, matplotlib.pylab as plt, Data
 from scipy import stats
 from scipy.stats import uniform
-import matplotlib.pylab as plt
 from itertools import cycle, islice
 
 
@@ -34,10 +31,12 @@ Governmental_expenditure = pd.DataFrame()
 ticks = list(range(0,20000))
 
 
+country = Data.country
+
 ###Datasets import
 ##Alpha
 #Scenario 0 - No incentives
-A00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_AUS_s0.csv")
+A00 = pd.read_csv(r"/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_AUS_s0.csv")
 #Scenario 1 - FIT
 #A11 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_AUS_S1-01.csv")
 #A12 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_AUS_S1-02.csv")
@@ -55,7 +54,7 @@ A00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 
 ##Gamma
 #Scenario 0 - No incentives
-I00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_IRA_S0.csv")
+I00 = pd.read_csv(r"/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_IRA_S0.csv")
 #Scenario 1 - FIT
 #I11 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_IRA_S1-01.csv")
 #I12 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_IRA_S1-02.csv")
@@ -71,7 +70,7 @@ I00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 
 ##Delta
 #Scenario 0 - No incentives
-J00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_JPN_S0.csv")
+J00 = pd.read_csv(r"/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_JPN_S0.csv")
 #Scenario 1 - FIT
 #J11 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_JPN_S1-01.csv")
 #J12 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_JPN_S1-02.csv")
@@ -87,7 +86,7 @@ J00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 
 ##Epsilon
 #Scenario 0 - No incentives
-N00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_NLD_S0.csv")
+N00 = pd.read_csv(r"/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_NLD_S0.csv")
 #Scenario 1 - FIT
 #N11 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_NLD_S1-01.csv")
 #N12 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_NLD_S1-02.csv")
@@ -103,7 +102,7 @@ N00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_commun
 
 ##Zeta
 #Scenario 0 - No incentives
-U00 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_USA_S0.csv")
+U00 = pd.read_csv(r"/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities/Modelrun/S0 - No incentive/Model_run_USA_S0.csv")
 #Scenario 1 - FIT
 #U11 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_USA_S1-01.csv")
 #U12 = pd.read_csv(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/Modelrun/S1 - FIT/Model_run_USA_S1-02.csv")
