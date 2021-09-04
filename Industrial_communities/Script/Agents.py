@@ -112,11 +112,18 @@ class Industry(Agent): #Industry agent propoerties
                     for community in self.c_neighbors: #Map active communities
                         if community.active == 1:
                             community_data[community.name] = len(community.members)
+                            community_energy[community.name] = community.energy
+                            print(' bla')
+                            print(community_data)
+                            print(community_energy)
                     if self.cba_calc == 1:  # Grid energy is cheaper individually
                         self.eng_lvl = 1
                         if len(community_data) > 0:
                             com_test = max(community_data, key = community_data.get)
-                            Data.cbaCalcCom(self, com_test)
+                            energy_test = community_energy[com_test]
+                            print("test")
+                            print(energy_test)
+                            Data.cbaCalcCom(self, energy_test)
                             if self.cba_calc_com == 1: # Grid energy is cheaper in group
                                 pass
                             if self.cba_calc_com == 2: #Producing energy is cheaper in group
@@ -168,6 +175,7 @@ class Industry(Agent): #Industry agent propoerties
                     if f.eng_lvl == 5: 
                        f.which_community = community.name
                        community.members.append(f)
+                       community.energy = community.energy + f.energy
     
                
     def industryNetwork(self): #Define the strong network
@@ -291,7 +299,6 @@ class Community(Agent): #Community agent propoerties
       
 #Community functions   
     def step(self):
-        self.energy = 0
         self.plan_execution = 0
         self.request = 0
         if self.active == 1:
@@ -312,8 +319,9 @@ class Community(Agent): #Community agent propoerties
         
     def energyDemand(self): #update the member list
         if len(self.members) == 0:
-            self.active = 0 
+            self.active = 0
         else:
+            self.energy = 0
             for member in self.members:
                 self.energy = self.energy + member.energy    
      
