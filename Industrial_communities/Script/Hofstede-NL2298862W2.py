@@ -5,7 +5,7 @@
 """
 
 import sys
-sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
+sys.path.append("/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities")
 import pandas as pd
 import numpy as np
 import statistics
@@ -18,7 +18,7 @@ from itertools import cycle, islice
 ###Hofstede's Analysis
 ##Global DataFrames
 dt = pd.DataFrame()
-df = pd.read_excel(r"/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities/6dimensions.xlsx")
+df = pd.read_excel(r"/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities/6dimensions.xlsx")
 df = df.drop("ctr", axis=1)
 
 #Selected countries 

@@ -6,7 +6,7 @@ Created on Sat Dec  7 11:47:19 2019
 @author: rafael
 """
 import sys
-sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
+sys.path.append("/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities")
 from mesa.datacollection import DataCollector
 from Model import Modelrun
 ##Batchrun
@@ -21,7 +21,7 @@ n_industries = [75]
 model_param = {"n_industries": n_industries, "n_communities": n_communities} #All variables in place - Everything that can be changed enters here
 
 #Batchrun settings      
-br = BatchRunner(Modelrun, model_param, iterations = 500, max_steps = 20, model_reporters = {"Data Collector": lambda m: m.datacollector})
+br = BatchRunner(Modelrun, model_param, iterations = 100, max_steps = 20, model_reporters = {"Data Collector": lambda m: m.datacollector})
 br.run_all()
 
 

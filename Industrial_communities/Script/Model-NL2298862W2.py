@@ -8,11 +8,11 @@
 ###Model creation
 ##Imports
 import sys
-sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
+sys.path.append("/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities")
 import itertools
 from random import shuffle
 from mesa import Model
-from mesa.time import RandomActivation
+from mesa.time import BaseScheduler
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from Agents import Industry, Community
@@ -153,7 +153,7 @@ class Modelrun(Model):
         self.n_industries = n_industries
         self.n_communities = n_communities
         self.running = True
-        self.schedule = RandomActivation(self)
+        self.schedule = BaseScheduler(self)
         self.tick = 0    
         self.network = []
         
@@ -167,7 +167,7 @@ class Modelrun(Model):
         
         #Add community       
         for c in range(self.n_communities):
-            com = Community(c, geo_c[c], 0, self)
+            com = Community(c+75, geo_c[c], 0, self)
             self.schedule.add(com)
             self.grid.place_agent(com, geo_c[c])  
 

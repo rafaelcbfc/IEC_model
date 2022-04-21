@@ -9,7 +9,7 @@
 ###Model agents
 ##Imports
 import sys
-sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
+sys.path.append("/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities")
 import Data
 import random
 import numpy as np
@@ -45,9 +45,8 @@ class Industry(Agent): #Industry agent propoerties
     def __init__(self, name, pos, model):
         super().__init__(name, model)
         self.affiliated_network = []
-        self.cba_lvl = 0
-        self.cba_lvlc = 0
-        self.cba_lvlp = 0
+        self.cba_calc = 0
+        self.cba_calc_com = 0
         self.com_premium = 0
         self.community_vote = 0
         self.decision_style = random.choice(decision_style)
@@ -79,6 +78,7 @@ class Industry(Agent): #Industry agent propoerties
     def step(self): #Action per tick
         self.updateNeighbors()
         self.energyLevel()
+        Data.cbaCalc(self)
         self.engagementLevel()
         self.createCommunity()
         self.returnofInvestment()
@@ -98,28 +98,64 @@ class Industry(Agent): #Industry agent propoerties
 
     
     def engagementLevel(self): #Define engagement level of each industry
-        if self.eng_lvl not in [3, 4, 5]:
-                Data.cbaCalc(self)
-                if self.cba_lvl in [1, 2]:
-                    if self.cba_lvl == 1:
+        community_data, community_energy, founders_data = {},{}, []
+#0 Initial value = not engaged
+#1 Business as Usual = Buying grid energy is cheaper
+#2 Producer = Opted to produce energy individually
+#3 Enthusiast = There is at least one motivated partner to create a community
+#4 Member = There is a community available
+#5 Founder = Founder and co-founders of a community
+    
+        if self.eng_lvl not in [3, 4, 5]: #Not a member of a community
+                if self.cba_calc in [1, 2]: #Only run for industries with calculated CBAs
+                    
+                    for community in self.c_neighbors: #Map active communities
+                        if community.active == 1:
+                            community_data[community.name] = len(community.members)
+                            community_energy[community.name] = community.energy
+                            print(' bla')
+                            print(community_data)
+                            print(community_energy)
+                    if self.cba_calc == 1:  # Grid energy is cheaper individually
                         self.eng_lvl = 1
-                    if self.cba_lvl == 2:
-                            for community in self.c_neighbors: #Search for a community to join
-                                if community.active == 1:
-                                    Data.cbaCalcCom(self, community)
-                                    if self.cba_lvlc == 1:
-                                        self.eng_lvl = 4
-                                        self.which_community = community.name
-                                        community.members.append(self)
-                                        self.joinCommunity()
-                                        break
-                                    
-                    if self.eng_lvl not in [1, 4, 5]:
-                            for neighbor in self.i_neighbors: #If no communities exists, look for industries
-                                Data.cbaCalcPeer(self, neighbor)
-                                if self.cba_lvlp == 1:
-                                        self.eng_lvl = 2
-                                if self.cba_lvlp == 2:
+                        if len(community_data) > 0:
+                            com_test = max(community_data, key = community_data.get)
+                            energy_test = community_energy[com_test]
+                            print("test")
+                            print(energy_test)
+                            Data.cbaCalcCom(self, energy_test)
+                            if self.cba_calc_com == 1: # Grid energy is cheaper in group
+                                pass
+                            if self.cba_calc_com == 2: #Producing energy is cheaper in group
+                                self.which_community = com_test
+                                community.members.append(self)
+                                self.eng_lvl = 4
+                                self.joinCommunity()
+                        
+                        
+                    if self.cba_calc == 2: #Producing energy is cheaper individually
+                        if len(community_data) == 1: #Joining the only one community
+                            self.which_community = list(community_data.keys())[0]
+                            community.members.append(self)
+                            self.eng_lvl = 4
+                            self.joinCommunity()
+                        
+                        if len(community_data) > 1: #Join the community with more members
+                            self.which_community = max(community_data, key = community_data.get)
+                            community.members.append(self)
+                            self.eng_lvl = 4
+                            self.joinCommunity()
+                        
+                        if len(community_data) == 0: #No communities exists
+                            for neighbor in self.i_neighbors: # Search other industries
+                                if neighbor.cba_calc == 2: 
+                                        founders_data.append(neighbor.id)
+
+                            if len(founders_data) == 0: #No other interested industries
+                                self.eng_lvl = 2
+                            if len(founders_data) > 0:
+                               for neighbor in self.i_neighbors:  
+                                   if neighbor.id in founders_data:
                                         self.eng_lvl = 3
                                         neighbor.eng_lvl = 3
                                         break
@@ -134,12 +170,12 @@ class Industry(Agent): #Industry agent propoerties
                 for community in [x for x in self.c_neighbors if x.active == 0]: break
                 self.which_community = community.name
                 community.members.append(self)
-                community.strategy = self.strategy
                 community.active = 1
                 for f in self.smallworld:
                     if f.eng_lvl == 5: 
                        f.which_community = community.name
                        community.members.append(f)
+                       community.energy = community.energy + f.energy
     
                
     def industryNetwork(self): #Define the strong network
@@ -226,7 +262,7 @@ class Industry(Agent): #Industry agent propoerties
 class Community(Agent): #Community agent propoerties
     def __init__(self, name, pos, activity, model):
         super().__init__(name, model)
-        self.active = activity #0 - No / 1 - Yes
+        self.active = 0 #0 - No / 1 - Yes
         self.business_plan = 0 
         self.costs = 0
         self.energy = 0
@@ -263,7 +299,6 @@ class Community(Agent): #Community agent propoerties
       
 #Community functions   
     def step(self):
-        self.energy = 0
         self.plan_execution = 0
         self.request = 0
         if self.active == 1:
@@ -284,8 +319,9 @@ class Community(Agent): #Community agent propoerties
         
     def energyDemand(self): #update the member list
         if len(self.members) == 0:
-            self.active = 0 
+            self.active = 0
         else:
+            self.energy = 0
             for member in self.members:
                 self.energy = self.energy + member.energy    
      

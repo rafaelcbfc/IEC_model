@@ -7,16 +7,18 @@ Created on Sun Jan 19 17:03:06 2020
 """
 ###Imports
 import sys
-
-sys.path.append("/Users/rafael/Documents/GitHub/InCES-model/Industrial_communities")
+sys.path.append("/Users/rafaelcosta/Documents/GitHub/InCES_model/Industrial_communities")
 import Hofstede
 import random
-import numpy as np
+import numpy_financial as npf
 
 
 ###Calculation varialbes
 pool_countries = ["AUS", "BRA", "IRA", "JPN", "NLD", "USA"]
-country = pool_countries[5]
+pool_financial_investments = ["feed-in-tariff", "tax-incentive", "tradable-certificates"]
+
+
+country = pool_countries[1]
 discount_rate = getattr(Hofstede, country + "_discount_rate")
 sunshine = getattr(Hofstede, country + "_sunshine")
 wind_dist =getattr(Hofstede, country + "_wind_dist")  
@@ -31,9 +33,7 @@ gridtariff = getattr(Hofstede, country + "_gridtariff")
 wind_threshold = 5000 #in KW, minimum value to make it a possibility for wind energy production - https://www.irena.org/-/media/Files/IRENA/Agency/Publication/2019/May/IRENA_Renewable-Power-Generations-Costs-in-2018.pdf?la=en&hash=99683CDDBC40A729A5F51C20DA7B6C297F794C5D
 depreciation_period = 20
 
-pool_financial_investments = ["feed-in-tariff", "tax-incentive", "tradable-certificates"]
-
-financial_investment = "tradable-certificates" 
+financial_investment = pool_financial_investments[0] 
 
 if financial_investment == 'feed-in-tariff':
     fit = 3 #2.1 , 2.5, 3
@@ -82,7 +82,7 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid or produce energy?
     for i in range(depreciation_period):
         rev0.append(r0)
         
-    Baseline_cost = np.npv(discount_rate, rev0)
+    Baseline_cost = npf.npv(discount_rate, rev0)
     
 ##Case 1 - All solar
     solar_energy1 = annual_demand
@@ -98,8 +98,8 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid or produce energy?
         rev1.append(r1)
         cos1.append(c1)
     
-    revenue1 = np.npv(discount_rate, rev1)
-    costs1 = investment_solar1 + np.npv(discount_rate, cos1)
+    revenue1 = npf.npv(discount_rate, rev1)
+    costs1 = investment_solar1 + npf.npv(discount_rate, cos1)
     NPV1 = revenue1-costs1
     
 ##Case 2 - All wind 
@@ -118,8 +118,8 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid or produce energy?
         rev2.append(r2)
         cos2.append(c2)
     
-    revenue2 = np.npv(discount_rate, rev2)
-    costs2 = investment_wind2 + np.npv(discount_rate, cos2)
+    revenue2 = npf.npv(discount_rate, rev2)
+    costs2 = investment_wind2 + npf.npv(discount_rate, cos2)
     NPV2 = revenue2-costs2
     
 ##Case 3- Mixed sources
@@ -143,15 +143,15 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid or produce energy?
     except:
         LCOE_solar3 = 0
         
-    r3 = gridtariff1 * annual_demand + (tgc * annual_demand)                                                                      #Produce energy 
+    r3 = gridtariff1 * annual_demand + (tgc * annual_demand) #Produce energy 
     c3 =  OM_wind3 + OM_solar3 
     
     for i in range(depreciation_period):
         rev3.append(r3)
         cos3.append(c3)
     
-    revenue3 = np.npv(discount_rate, rev3)
-    costs3 = (investment_solar3 + investment_wind3) + np.npv(discount_rate, cos3)    
+    revenue3 = npf.npv(discount_rate, rev3)
+    costs3 = (investment_solar3 + investment_wind3) + npf.npv(discount_rate, cos3)    
     NPV3 = revenue3 - costs3
     
     ratio_solar = energy3_solar/(energy3_wind+energy3_solar)
@@ -173,35 +173,35 @@ def cbaCalc(me): #Individual Cost benefit: Buy from grid or produce energy?
             count = count + 1
     
     if count == 0:
-        me.cba_lvl = 1 #Grid energy is cheaper than RE and no positive NPV
+        me.cba_calc= 1 #Grid energy is cheaper than RE and no positive NPV
     
-  #2nd evaluation => I am going for renewable, but is it better to produce to my self?
-    if me.cba_lvl != 1:
-        me.cba_lvl = 2 #Producing energy is the preference
+    else:
+        me.cba_calc = 2 #Producing energy is the preference
         option_i = produce.index(max(produce))
         
-        #What is the levelized cost of my option  
-        if option_i == 0:
-            me.LCOE = LCOE_solar1
-        if option_i == 1:
-            me.LCOE = LCOE_wind2
-        if option_i == 2:
-            me.LCOE = (LCOE_solar3 * ratio_solar + LCOE_wind3 * ratio_wind)
+    #What is the levelized cost of my option  
+    if option_i == 0:
+        me.LCOE = LCOE_solar1
+    if option_i == 1:
+        me.LCOE = LCOE_wind2
+    if option_i == 2:
+        me.LCOE = (LCOE_solar3 * ratio_solar + LCOE_wind3 * ratio_wind)
     
     return me.LCOE
-    return me.cba_lvl
+    return me.cba_calc
+
+### Removed for the paper ###
+#def cbaCalcCom(me, peer):
+#    if me.LCOE < peer.premium:
+#        me.cba_lvlc = 0
+#    else:
+#        me.cba_lvlc = 1
+### - - #### - - #### - - ####                 
 
 def cbaCalcCom(me, peer):
-    if me.LCOE < peer.premium:
-        me.cba_lvlc = 0
-    else:
-        me.cba_lvlc = 1
-                
-
-def cbaCalcPeer(me, peer):
 ##Variables    
   #Global variables
-    rev1, rev2, rev3, cos1, cos2, cos3 = [], [], [], [], [], []
+    rev10, rev11, rev20, rev21, rev30, rev31, cos1, cos2, cos3 = [], [], [], [], [], [], [], [], []
     gridtariff2 = random.choice(gridtariff)
     solar_implement_Costs =random.choice(solar_costs)  * tax_incentive
     wind_implement_Costs =random.choice(wind_costs)  * tax_incentive
@@ -218,17 +218,21 @@ def cbaCalcPeer(me, peer):
     OM_solar1 = solar_OM2 * (investment_solar1/(solar_energy1 * depreciation_period)) * solar_energy1
     LCOE_solar1 = (investment_solar1 + OM_solar1 * depreciation_period)/(solar_energy1 * depreciation_period) 
     
-    r1 = gridtariff2 * solar_energy1 + (tgc * solar_energy1)                        #Produce energy
+    r10 = (gridtariff2 - LCOE_solar1) * solar_energy1 * fit + (tgc * solar_energy1)  #Sell energy
+    r11 = gridtariff2 * solar_energy1 + (tgc * solar_energy1)                        #Produce energy
     c1=  OM_solar1
     
     for i in range(depreciation_period):
-        rev1.append(r1)
+        rev10.append(r10)
+        rev11.append(r11)
         cos1.append(c1)
     
-    revenue1 = np.npv(discount_rate, rev1)
-    costs1 = (0.15 * investment_solar1) + (0.7 * investment_solar1) + np.npv(discount_rate, cos1)
-    NPVp1 = revenue1-costs1
-
+    revenue10 = npf.npv(discount_rate, rev10)
+    revenue11 = npf.npv(discount_rate, rev11)
+    costs1 = (0.15 * investment_solar1) + (0.7 * investment_solar1) + npf.npv(discount_rate, cos1)
+    
+    NPVp10 = revenue10-costs1
+    NPVp11 = revenue11-costs1
    
 ##Case 2 - All wind
     if annual_demand > wind_threshold:
@@ -239,17 +243,22 @@ def cbaCalcPeer(me, peer):
     OM_wind2 = wind_OM2 * wind_energy2
     LCOE_wind2 = (investment_wind2 + OM_wind2 * depreciation_period)/(wind_energy2 * depreciation_period) 
     
-    r2 = gridtariff2 * wind_energy2 + (tgc * wind_energy2)                      #Produce energy
+    r20 = (gridtariff2 - LCOE_wind2) * wind_energy2 * fit + (tgc *wind_energy2)  #Sell energy
+    r21 = gridtariff2 * wind_energy2 + (tgc * wind_energy2)                      #Produce energy
     c2 =  OM_wind2
     
     for i in range(depreciation_period):
-        rev2.append(r2)
+        rev20.append(r20)
+        rev21.append(r21)
         cos2.append(c2)
      
         
-    revenue2 = np.npv(discount_rate, rev2)
-    costs2 = (0.15 * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)    
-    NPVp2 = revenue2 - costs2
+    revenue20 = npf.npv(discount_rate, rev20)
+    revenue21 = npf.npv(discount_rate, rev21)
+    costs2 = (0.15 * investment_wind2) + (0.7 * investment_wind2) + npf.npv(discount_rate, cos2)
+    
+    NPVp20 = revenue20 - costs2
+    NPVp21 = revenue21-costs2
    
     
 ##Case 3- Mixed sources
@@ -272,41 +281,47 @@ def cbaCalcPeer(me, peer):
         LCOE_solar3 = (investment_solar3 + OM_solar3 * depreciation_period)/(solar_energy3 * depreciation_period) 
     except:
         LCOE_solar3 = 0
-         
-    r3 = gridtariff2 * annual_demand + (tgc * annual_demand)                                                                        #Produce energy 
+        
+    r30 = ((gridtariff2 - LCOE_solar3) * solar_energy3 + (gridtariff2 - LCOE_wind3) * wind_energy3) * fit + (tgc * annual_demand)    #Sell energy 
+    r31 = gridtariff2 * annual_demand + (tgc * annual_demand)                                                                        #Produce energy 
     c3 =  OM_wind3 + OM_solar3 
     
     for i in range(depreciation_period):
-        rev3.append(r3)
+        rev30.append(r30)
+        rev31.append(r31)
         cos3.append(c3)
     
-    revenue3 = np.npv(discount_rate, rev3)
-    costs3 = ((0.15 * investment_solar3) + (0.7 * investment_solar3) + (0.15 * investment_wind3) + (0.7 * investment_wind3)) + np.npv(discount_rate, cos3)
-    NPVp3 = revenue3-costs3
+    revenue30 = npf.npv(discount_rate, rev30)
+    revenue31 = npf.npv(discount_rate, rev31)
+    costs3 = ((0.15 * investment_solar3) + (0.7 * investment_solar3) + (0.15 * investment_wind3) + (0.7 * investment_wind3)) + npf.npv(discount_rate, cos3)
+    
+    NPVp30 = revenue30 - costs3
+    NPVp31 = revenue31-costs3
     
 ##Avaliation
     if test == 1:
-       NPVp2 = -100000
-    produce_p = [NPVp1, NPVp2, NPVp3]
+       NPVp20 = -100000
+       NPVp21 = -100000
+    produce_p = [NPVp11, NPVp21, NPVp31]
+    sell_p = [NPVp10, NPVp20, NPVp30]
     
     
   #1st evaluation => doing business with peer is more advantageous?
     count2 = 0 
-    max_npvp = max(produce_p)
+    max_npvp = max(produce_p + sell_p)
     if max_npvp <= 0: #Negative NPV
         count2 = count2 + 1
     if me.max_re > max_npvp: #Producing individually is cheaper
         count2 = count2 + 1
-    if peer.max_re > max_npvp: #Producing in group is cheaper
+    if peer.max_re > max_npvp: #Producing individually is cheaper
         count2 = count2 + 1
     
     if count2 > 0:
-        me.cba_lvlp == 1 #producing individually is cheper than in group
+        me.cba_calc_com == 1 #producing individually is cheper than in group
     
-  #2nd evaluation => if we are doing business, produce is a good alternative?
-    if me.cba_lvlp != 1:
-       me.cba_lvlp = 2 #Producing has a higher NPV
-
+    else:
+        me.cba_calc_com = 2 #Producing has a higher NPV than selling
+          
    
 def projectSelector(me):
     me.energy_solar = 0
@@ -353,15 +368,15 @@ def projectSelector(me):
         rg1_fit.append(g1_fit)
         rg1_tgc.append(g1_tgc)
         
-    revenue1 = np.npv(discount_rate, rev1)
-    costs1 = ((0.3/float(len(me.members))) * investment_solar1) + (0.7 * investment_solar1) + np.npv(discount_rate, cos1)
+    revenue1 = npf.npv(discount_rate, rev1)
+    costs1 = ((0.3/float(len(me.members))) * investment_solar1) + (0.7 * investment_solar1) + npf.npv(discount_rate, cos1)
 
     NPVc1= revenue1-costs1
     marginc1 = (revenue1 - costs1)/(revenue1 *100)
     
-    tgc_inc1 = np.npv(discount_rate, rg1_tgc)
+    tgc_inc1 = npf.npv(discount_rate, rg1_tgc)
     if g1_fit != r1:
-        fit1 = np.npv(discount_rate, rg1_fit)
+        fit1 = npf.npv(discount_rate, rg1_fit)
     else:
         fit1 = 0
     if investment_solarg1 != investment_solar1:
@@ -391,15 +406,15 @@ def projectSelector(me):
         rg2_fit.append(g2_fit)
         rg2_tgc.append(g2_tgc)
     
-    revenue2 = np.npv(discount_rate, rev2)
-    costs2 = ((0.3/float(len(me.members))) * investment_wind2) + (0.7 * investment_wind2) + np.npv(discount_rate, cos2)
+    revenue2 = npf.npv(discount_rate, rev2)
+    costs2 = ((0.3/float(len(me.members))) * investment_wind2) + (0.7 * investment_wind2) + npf.npv(discount_rate, cos2)
     
     NPVc2 = revenue2 - costs2
     marginc2 = (revenue2 - costs2)/(revenue2 *100)
     
-    tgc_inc2 = np.npv(discount_rate, rg2_tgc)
+    tgc_inc2 = npf.npv(discount_rate, rg2_tgc)
     if g2_fit != r2:
-        fit2 = np.npv(discount_rate, rg2_fit)
+        fit2 = npf.npv(discount_rate, rg2_fit)
     else:
         fit2 = 0
     if investment_windg2 != investment_wind2:
@@ -430,7 +445,7 @@ def projectSelector(me):
     except:
         LCOE_solar3 = 0
         
-    r3 = gridtariff3 * annual_demand + (tgc * annual_demand)                                                                    #Produce energy 
+    r3 = gridtariff3 * annual_demand + (tgc * annual_demand)                  #Produce energy 
     c3 =  OM_wind3 + OM_solar3 
     g3_fit = r3/fit
     g3_tgc = (tgc * annual_demand)
@@ -441,8 +456,8 @@ def projectSelector(me):
         rg3_fit.append(g3_fit)
         rg3_tgc.append(g3_tgc)
     
-    revenue3 = np.npv(discount_rate, rev3)
-    costs3 = (((0.3/float(len(me.members))) * investment_solar3) + (0.7 * investment_solar3) + ((0.3/float(len(me.members))) * investment_wind3) + (0.7 * investment_wind3)) + np.npv(discount_rate, cos3)
+    revenue3 = npf.npv(discount_rate, rev3)
+    costs3 = (((0.3/float(len(me.members))) * investment_solar3) + (0.7 * investment_solar3) + ((0.3/float(len(me.members))) * investment_wind3) + (0.7 * investment_wind3)) + npf.npv(discount_rate, cos3)
     
     NPVc3 = revenue3 - costs3
     marginc3 = (revenue3 - costs3)/(revenue3 *100)
@@ -450,9 +465,9 @@ def projectSelector(me):
     ratio_solar = energy3_solar/(energy3_wind+energy3_solar)
     ratio_wind = energy3_wind / (energy3_wind+energy3_solar)
 
-    tgc_inc3 = np.npv(discount_rate, rg3_tgc)
+    tgc_inc3 = npf.npv(discount_rate, rg3_tgc)
     if g3_fit != r3:
-        fit3 = np.npv(discount_rate, rg3_fit)
+        fit3 = npf.npv(discount_rate, rg3_fit)
     else:
         fit3 = 0
     if investment_solarg3 != investment_solar3:
@@ -484,7 +499,7 @@ def projectSelector(me):
     if option_c == 0: #Solar
         me.project_tariff0 = LCOE_solar1
         me.project_tariff1 = r1
-        me.project_margin = max(marginc1)
+        me.project_margin = marginc1
         me.project_cost = costs1
         me.energy_solar = energy1 * 20
         me.energy_wind = 0
